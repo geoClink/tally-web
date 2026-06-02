@@ -11,12 +11,13 @@ export default function Dashboard() {
   const [todayHours, setTodayHours] = useState(0)
   const [weekHours, setWeekHours] = useState(0)
   const [weekGoal, setWeekGoal] = useState(40)
+  const [clientGoals, setClientGoals] = useState([])
+  const [weekByClient, setWeekByClient] = useState({})
   const [recentSessions, setRecentSessions] = useState([])
   const [loading, setLoading] = useState(true)
 
   const today = todayString()
   const weekStart = weekStartString()
-  // Free tier: cap history at 7 days ago
   const historyStart = isPro ? null : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
   useEffect(() => {
@@ -40,7 +41,7 @@ export default function Dashboard() {
   async function fetchWeekSessions() {
     let query = supabase
       .from('sessions')
-      .select('hours')
+      .select('hours, client')
       .eq('user_id', user.id)
       .gte('date', weekStart)
     if (historyStart && historyStart > weekStart) {
@@ -48,15 +49,23 @@ export default function Dashboard() {
     }
     const { data } = await query
     setWeekHours(data?.reduce((sum, s) => sum + (s.hours ?? 0), 0) ?? 0)
+
+    // Group by client for per-client progress
+    const byClient = {}
+    data?.forEach(s => {
+      byClient[s.client] = (byClient[s.client] ?? 0) + (s.hours ?? 0)
+    })
+    setWeekByClient(byClient)
   }
 
   async function fetchGoal() {
     const { data } = await supabase
       .from('config')
-      .select('weekly_goal')
+      .select('weekly_goal, client_goals')
       .eq('user_id', user.id)
       .maybeSingle()
     if (data?.weekly_goal) setWeekGoal(data.weekly_goal)
+    if (data?.client_goals) setClientGoals(data.client_goals)
   }
 
   async function fetchRecentSessions() {
@@ -115,31 +124,65 @@ export default function Dashboard() {
         </div>
       )}
 
+      {clientGoals.length > 0 && (
+        <>
+          <div className="section-header" style={{ marginBottom: '0.75rem' }}>
+            <h2 className="section-title">Client Goals This Week</h2>
+            <Link to="/settings" className="section-link">Edit goals</Link>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
+            {clientGoals.map(g => {
+              const tracked = weekByClient[g.client] ?? 0
+              const progress = g.weekly_hours > 0 ? Math.min((tracked / g.weekly_hours) * 100, 100) : 0
+              return (
+                <div key={g.client} className="card" style={{ padding: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                    <span style={{ fontWeight: 500, fontSize: '0.9rem' }}>{g.client}</span>
+                    <span className="text-muted" style={{ fontSize: '0.85rem' }}>
+                      {formatHours(tracked)} / {formatHours(g.weekly_hours)}
+                    </span>
+                  </div>
+                  <div className="progress-bar">
+                    <div
+                      className={`progress-fill${progress >= 100 ? ' complete' : ''}`}
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                  <div className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.3rem' }}>
+                    {progress >= 100 ? 'Goal reached!' : `${formatHours(Math.max(g.weekly_hours - tracked, 0))} remaining`}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+
       <div className="section-header">
         <h2 className="section-title">Recent Sessions</h2>
         <Link to="/sessions" className="section-link">View all</Link>
       </div>
 
       {recentSessions.length === 0 ? (
-        <div className="empty-state">No sessions yet. Track time in the Tally iOS app to see it here.</div>
+        <div className="empty-state">No sessions yet. Track time using the timer or add one manually.</div>
       ) : (
         <div className="table-wrapper">
           <table>
             <thead>
               <tr>
-                <th>Date</th>
+                <th style={{ whiteSpace: 'nowrap' }}>Date</th>
                 <th>Client</th>
                 <th>Hours</th>
-                <th>Note</th>
+                <th className="hide-mobile">Note</th>
               </tr>
             </thead>
             <tbody>
               {recentSessions.map(s => (
                 <tr key={s.id}>
-                  <td>{s.date}</td>
+                  <td style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
                   <td>{s.client}</td>
-                  <td>{formatHours(s.hours)}</td>
-                  <td className="text-muted">{s.task_note || '—'}</td>
+                  <td style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
+                  <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
                 </tr>
               ))}
             </tbody>
