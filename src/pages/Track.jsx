@@ -57,12 +57,16 @@ export default function Track() {
   }, [running, startTime])
 
   async function fetchClients() {
-    const { data } = await supabase
-      .from('client_rates')
-      .select('client')
-      .eq('user_id', user.id)
-      .order('client')
-    setClients(data?.map(c => c.client) ?? [])
+    // Pull from both client_rates and sessions so all known clients appear
+    const [{ data: rates }, { data: sessions }] = await Promise.all([
+      supabase.from('client_rates').select('client').eq('user_id', user.id),
+      supabase.from('sessions').select('client').eq('user_id', user.id),
+    ])
+    const all = [
+      ...(rates?.map(r => r.client) ?? []),
+      ...(sessions?.map(s => s.client) ?? []),
+    ]
+    setClients([...new Set(all)].sort())
   }
 
   function startTimer() {
