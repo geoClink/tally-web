@@ -32,11 +32,12 @@ export default function Billing() {
 
   // Stripe redirects back here with ?upgraded=pro or ?upgraded=business after payment
   useEffect(() => {
+    if (!user) return
     const upgradedTier = searchParams.get('upgraded')
-    if (upgradedTier && (upgradedTier === 'pro' || upgradedTier === 'business')) {
+    if (upgradedTier === 'pro' || upgradedTier === 'business') {
       handleStripeSuccess(upgradedTier)
     }
-  }, [])
+  }, [user])
 
   async function handleStripeSuccess(upgradedTier) {
     // Write the subscription record. In production this should be done via
