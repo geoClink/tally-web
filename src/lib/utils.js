@@ -1,8 +1,11 @@
 // Converts a decimal hours value to a human-readable string: 1.5 → "1h 30m"
 export function formatHours(h) {
   if (!h || h <= 0) return '0m'
-  const hours = Math.floor(h)
-  const mins = Math.round((h - hours) * 60)
+  const totalSecs = Math.round(h * 3600)
+  const hours = Math.floor(totalSecs / 3600)
+  const mins = Math.floor((totalSecs % 3600) / 60)
+  const secs = totalSecs % 60
+  if (!hours && !mins) return `${secs}s`
   if (!hours) return `${mins}m`
   if (!mins) return `${hours}h`
   return `${hours}h ${mins}m`
