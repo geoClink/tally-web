@@ -129,7 +129,7 @@ export default function Team() {
     if (fnError) console.error('Edge Function error:', fnError)
 
     setInviting(false)
-    setSuccess(`Invite sent to ${inviteEmail}`)
+    setSuccess(`Invite created for ${inviteEmail}. Ask them to sign up at tally-web-nu.vercel.app using that email address.`)
     setInviteEmail('')
     await fetchMembers(workspace.id)
   }
