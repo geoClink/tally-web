@@ -115,8 +115,9 @@ export default function Invoices() {
               <label>Hourly Rate ($)</label>
               <input
                 type="number"
-                value={rate}
+                value={rate || ''}
                 onChange={e => setRate(parseFloat(e.target.value) || 0)}
+                placeholder="0.00"
                 min="0"
                 step="0.01"
               />
