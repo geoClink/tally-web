@@ -40,18 +40,22 @@ export default function Billing() {
   }, [user])
 
   async function handleStripeSuccess(upgradedTier) {
-    // Write the subscription record. In production this should be done via
-    // a Stripe webhook → Supabase Edge Function for security.
     const expiresAt = upgradedTier === 'business'
       ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
       : null
 
-    await supabase.from('subscriptions').insert({
+    const { error } = await supabase.from('subscriptions').insert({
       user_id: user.id,
       tier: upgradedTier,
       source: 'stripe',
       expires_at: expiresAt,
     })
+
+    if (error) {
+      console.error('Subscription insert error:', error)
+      alert(`Failed to activate subscription: ${error.message}`)
+      return
+    }
 
     await refetch()
     setUpgraded(true)
@@ -155,10 +159,6 @@ export default function Billing() {
         </div>
       )}
 
-      <div className="alert alert-info" style={{ marginTop: '1.5rem', fontSize: '0.85rem' }}>
-        <strong>Note:</strong> For a production app, configure a Stripe webhook to automatically
-        activate subscriptions. See <code>supabase/schema.sql</code> for notes.
-      </div>
     </div>
   )
 }
