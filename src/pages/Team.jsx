@@ -244,52 +244,40 @@ export default function Team() {
           {members.length === 0 ? (
             <div className="empty-state">No members yet. Invite someone above.</div>
           ) : (
-            <div className="table-wrapper">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    {isAdmin && <th></th>}
-                  </tr>
-                </thead>
-                <tbody>
-                  {members.map(m => (
-                    <tr key={m.id}>
-                      <td>{m.invited_email}</td>
-                      <td>
-                        {isAdmin && m.invited_email !== user.email ? (
-                          <select
-                            value={m.role}
-                            onChange={e => changeRole(m.id, e.target.value)}
-                            style={{ width: 'auto', padding: '0.25rem 0.5rem' }}
-                          >
-                            <option value="member">Member</option>
-                            <option value="admin">Admin</option>
-                          </select>
-                        ) : (
-                          <span style={{ textTransform: 'capitalize' }}>{m.role}</span>
-                        )}
-                      </td>
-                      <td>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {members.map(m => (
+                <div key={m.id} className="card" style={{ padding: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div style={{ overflow: 'hidden' }}>
+                      <div style={{ fontWeight: 500, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {m.invited_email}
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.4rem', alignItems: 'center' }}>
                         <span className={m.accepted_at ? 'badge-success' : 'badge-pending'}>
                           {m.accepted_at ? 'Accepted' : 'Pending'}
                         </span>
-                      </td>
-                      {isAdmin && (
-                        <td>
-                          {m.invited_email !== user.email && (
-                            <button className="btn btn-danger btn-sm" onClick={() => removeMember(m.id)}>
-                              Remove
-                            </button>
-                          )}
-                        </td>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
+                      {isAdmin && m.invited_email !== user.email ? (
+                        <select
+                          value={m.role}
+                          onChange={e => changeRole(m.id, e.target.value)}
+                          style={{ width: 'auto', padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
+                        >
+                          <option value="member">Member</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                      ) : (
+                        <span style={{ textTransform: 'capitalize', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{m.role}</span>
                       )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      {isAdmin && m.invited_email !== user.email && (
+                        <button className="btn btn-danger btn-sm" onClick={() => removeMember(m.id)}>Remove</button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </>
