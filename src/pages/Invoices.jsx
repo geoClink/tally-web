@@ -24,12 +24,18 @@ export default function Invoices() {
   }, [user, isBusiness])
 
   async function fetchClients() {
-    const { data } = await supabase
-      .from('client_rates')
-      .select('client, hourly_rate')
-      .eq('user_id', user.id)
-      .order('client')
-    setClients(data ?? [])
+    const [{ data: rates }, { data: sessions }] = await Promise.all([
+      supabase.from('client_rates').select('client, hourly_rate').eq('user_id', user.id),
+      supabase.from('sessions').select('client').eq('user_id', user.id),
+    ])
+    // Merge unique clients from both sources
+    const rateMap = {}
+    rates?.forEach(r => { rateMap[r.client] = r.hourly_rate })
+    const allClients = [...new Set([
+      ...(rates?.map(r => r.client) ?? []),
+      ...(sessions?.map(s => s.client) ?? []),
+    ])].sort().map(c => ({ client: c, hourly_rate: rateMap[c] ?? 0 }))
+    setClients(allClients)
   }
 
   function handleClientChange(e) {
