@@ -25,7 +25,9 @@ export default function Team() {
 
   async function fetchWorkspace() {
     setLoading(true)
-    const { data } = await supabase
+
+    // Check if user owns a workspace
+    const { data: owned } = await supabase
       .from('workspaces')
       .select('*')
       .eq('owner_id', user.id)
@@ -33,8 +35,39 @@ export default function Team() {
       .limit(1)
       .maybeSingle()
 
-    setWorkspace(data)
-    if (data) await fetchMembers(data.id)
+    if (owned) {
+      setWorkspace(owned)
+      await fetchMembers(owned.id)
+      setLoading(false)
+      return
+    }
+
+    // Check if user was invited to a workspace
+    const { data: memberOf } = await supabase
+      .from('workspace_members')
+      .select('workspace_id')
+      .eq('invited_email', user.email)
+      .maybeSingle()
+
+    if (memberOf) {
+      const { data: ws } = await supabase
+        .from('workspaces')
+        .select('*')
+        .eq('id', memberOf.workspace_id)
+        .maybeSingle()
+      setWorkspace(ws)
+      if (ws) {
+        await fetchMembers(ws.id)
+        // Auto-accept invite on first visit
+        await supabase
+          .from('workspace_members')
+          .update({ accepted_at: new Date().toISOString() })
+          .eq('workspace_id', ws.id)
+          .eq('invited_email', user.email)
+          .is('accepted_at', null)
+      }
+    }
+
     setLoading(false)
   }
 
@@ -46,6 +79,11 @@ export default function Team() {
       .order('invited_email')
     setMembers(data ?? [])
   }
+
+  // Determine current user's permission level
+  const isOwner = workspace?.owner_id === user.id
+  const currentMember = members.find(m => m.invited_email === user.email)
+  const isAdmin = isOwner || currentMember?.role === 'admin'
 
   async function createWorkspace(e) {
     e.preventDefault()
@@ -75,15 +113,20 @@ export default function Team() {
 
     if (err) { setInviting(false); setError(err.message); return }
 
-    // Send the invite email via Supabase Edge Function
+    // Send invite email via Edge Function
     const { data: { session } } = await supabase.auth.getSession()
-    await supabase.functions.invoke('send-invite-email', {
+    const { error: fnError } = await supabase.functions.invoke('send-invite-email', {
       body: {
         invitedEmail: inviteEmail.trim(),
         workspaceName: workspace.name,
         inviterEmail: session?.user?.email ?? 'A teammate',
       },
+      headers: {
+        Authorization: `Bearer ${session?.access_token}`,
+      },
     })
+
+    if (fnError) console.error('Edge Function error:', fnError)
 
     setInviting(false)
     setSuccess(`Invite sent to ${inviteEmail}`)
@@ -95,6 +138,15 @@ export default function Team() {
     if (!confirm('Remove this member?')) return
     await supabase.from('workspace_members').delete().eq('id', id)
     setMembers(prev => prev.filter(m => m.id !== id))
+  }
+
+  async function changeRole(id, newRole) {
+    const { error: err } = await supabase
+      .from('workspace_members')
+      .update({ role: newRole })
+      .eq('id', id)
+    if (err) { setError(err.message); return }
+    setMembers(prev => prev.map(m => m.id === id ? { ...m, role: newRole } : m))
   }
 
   if (!isBusiness) {
@@ -117,8 +169,17 @@ export default function Team() {
   return (
     <div>
       <div className="page-header">
-        <h1 className="page-title">Team</h1>
-        {workspace && <p className="page-subtitle">{workspace.name}</p>}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div>
+            <h1 className="page-title">Team</h1>
+            {workspace && <p className="page-subtitle">{workspace.name}</p>}
+          </div>
+          {workspace && (
+            <span className={`current-tier ${isOwner ? 'tier-business' : 'tier-pro'}`}>
+              {isOwner ? 'Owner' : currentMember?.role ?? 'Member'}
+            </span>
+          )}
+        </div>
       </div>
 
       {!workspace ? (
@@ -145,30 +206,40 @@ export default function Team() {
           {error && <div className="auth-error">{error}</div>}
           {success && <div className="alert alert-success">{success}</div>}
 
-          <div className="card" style={{ marginBottom: '1.5rem' }}>
-            <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Invite Member</h2>
-            <form onSubmit={inviteMember}>
-              <div className="inline-form">
-                <div className="form-group">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    value={inviteEmail}
-                    onChange={e => setInviteEmail(e.target.value)}
-                    placeholder="teammate@example.com"
-                  />
+          {!isAdmin && (
+            <div className="alert alert-info" style={{ marginBottom: '1.5rem' }}>
+              You are a member of this workspace. Contact an admin to make changes.
+            </div>
+          )}
+
+          {isAdmin && (
+            <div className="card" style={{ marginBottom: '1.5rem' }}>
+              <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Invite Member</h2>
+              <form onSubmit={inviteMember}>
+                <div className="inline-form">
+                  <div className="form-group">
+                    <label>Email</label>
+                    <input
+                      type="email"
+                      value={inviteEmail}
+                      onChange={e => setInviteEmail(e.target.value)}
+                      placeholder="teammate@example.com"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Role</label>
+                    <select value={inviteRole} onChange={e => setInviteRole(e.target.value)}>
+                      <option value="member">Member — view only</option>
+                      <option value="admin">Admin — can invite & remove</option>
+                    </select>
+                  </div>
+                  <button type="submit" className="btn btn-primary" disabled={inviting}>
+                    {inviting ? 'Sending…' : 'Invite'}
+                  </button>
                 </div>
-                <div className="form-group">
-                  <label>Role</label>
-                  <select value={inviteRole} onChange={e => setInviteRole(e.target.value)}>
-                    <option value="member">Member</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
-                <button type="submit" className="btn btn-primary" disabled={inviting}>Invite</button>
-              </div>
-            </form>
-          </div>
+              </form>
+            </div>
+          )}
 
           {members.length === 0 ? (
             <div className="empty-state">No members yet. Invite someone above.</div>
@@ -180,22 +251,41 @@ export default function Team() {
                     <th>Email</th>
                     <th>Role</th>
                     <th>Status</th>
-                    <th></th>
+                    {isAdmin && <th></th>}
                   </tr>
                 </thead>
                 <tbody>
                   {members.map(m => (
                     <tr key={m.id}>
                       <td>{m.invited_email}</td>
-                      <td style={{ textTransform: 'capitalize' }}>{m.role}</td>
+                      <td>
+                        {isAdmin && m.invited_email !== user.email ? (
+                          <select
+                            value={m.role}
+                            onChange={e => changeRole(m.id, e.target.value)}
+                            style={{ width: 'auto', padding: '0.25rem 0.5rem' }}
+                          >
+                            <option value="member">Member</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                        ) : (
+                          <span style={{ textTransform: 'capitalize' }}>{m.role}</span>
+                        )}
+                      </td>
                       <td>
                         <span className={m.accepted_at ? 'badge-success' : 'badge-pending'}>
                           {m.accepted_at ? 'Accepted' : 'Pending'}
                         </span>
                       </td>
-                      <td>
-                        <button className="btn btn-danger btn-sm" onClick={() => removeMember(m.id)}>Remove</button>
-                      </td>
+                      {isAdmin && (
+                        <td>
+                          {m.invited_email !== user.email && (
+                            <button className="btn btn-danger btn-sm" onClick={() => removeMember(m.id)}>
+                              Remove
+                            </button>
+                          )}
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
