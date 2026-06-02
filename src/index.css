@@ -692,6 +692,8 @@ select:focus {
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   box-shadow: var(--shadow);
+  overflow: hidden;
+  min-width: 0;
 }
 
 /* =============================================
@@ -883,6 +885,16 @@ select:focus {
 /* =============================================
    PRINT STYLES
    ============================================= */
+@media (max-width: 480px) {
+  .hide-mobile {
+    display: none;
+  }
+  td, th {
+    padding: 0.6rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}
+
 @media print {
   .sidebar,
   .menu-btn,

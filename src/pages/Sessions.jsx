@@ -97,22 +97,22 @@ export default function Sessions() {
           <table>
             <thead>
               <tr>
-                <th>Date</th>
+                <th style={{ whiteSpace: 'nowrap' }}>Date</th>
                 <th>Client</th>
                 <th>Hours</th>
-                <th>Note</th>
-                <th>Source</th>
+                <th className="hide-mobile">Note</th>
+                <th className="hide-mobile">Source</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
               {sessions.map(s => (
                 <tr key={s.id}>
-                  <td>{s.date}</td>
+                  <td style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
                   <td>{s.client}</td>
-                  <td>{formatHours(s.hours)}</td>
-                  <td className="text-muted">{s.task_note || '—'}</td>
-                  <td className="text-muted">{s.is_manual ? 'Manual' : 'Timer'}</td>
+                  <td style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
+                  <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
+                  <td className="text-muted hide-mobile">{s.is_manual ? 'Manual' : 'Timer'}</td>
                   <td>
                     <button
                       className="btn btn-danger btn-sm"
