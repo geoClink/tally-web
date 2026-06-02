@@ -11,6 +11,7 @@ import ClientRates from './pages/ClientRates'
 import Team from './pages/Team'
 import Billing from './pages/Billing'
 import Invoices from './pages/Invoices'
+import Track from './pages/Track'
 
 // Think of this like the App struct in SwiftUI — it sets up the navigation stack
 // and wraps everything in the shared context providers (like @EnvironmentObject).
@@ -31,6 +32,7 @@ export default function App() {
             >
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
+              <Route path="track" element={<Track />} />
               <Route path="reports" element={<Reports />} />
               <Route path="sessions" element={<Sessions />} />
               <Route path="clients" element={<ClientRates />} />

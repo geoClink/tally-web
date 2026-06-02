@@ -4,6 +4,7 @@ import { useSubscription } from '../context/SubscriptionContext'
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard' },
+  { to: '/track', label: 'Track Time' },
   { to: '/reports', label: 'Reports' },
   { to: '/sessions', label: 'Sessions' },
   { to: '/clients', label: 'Client Rates' },
