@@ -9,6 +9,7 @@ const navItems = [
   { to: '/sessions', label: 'Sessions' },
   { to: '/clients', label: 'Client Rates' },
   { to: '/team', label: 'Team', tier: 'business' },
+  { to: '/team-dashboard', label: 'Team Dashboard', tier: 'business' },
   { to: '/invoices', label: 'Invoices', tier: 'business' },
   { to: '/billing', label: 'Billing' },
   { to: '/settings', label: 'Settings' },

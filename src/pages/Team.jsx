@@ -58,10 +58,10 @@ export default function Team() {
       setWorkspace(ws)
       if (ws) {
         await fetchMembers(ws.id)
-        // Auto-accept invite on first visit
+        // Auto-accept invite on first visit, storing user_id for team session queries
         await supabase
           .from('workspace_members')
-          .update({ accepted_at: new Date().toISOString() })
+          .update({ accepted_at: new Date().toISOString(), user_id: user.id })
           .eq('workspace_id', ws.id)
           .eq('invited_email', user.email)
           .is('accepted_at', null)
