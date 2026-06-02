@@ -70,6 +70,7 @@ Run `supabase/schema.sql` in your Supabase SQL editor to create the `subscriptio
 The iOS companion app (iPhone, Apple Watch, Mac via Catalyst) is available at:
 👉 [github.com/geoClink/tally-ios](https://github.com/geoClink/tally-ios)
 
+
 Both apps share the same Supabase project. Subscriptions, sessions, client rates, and team workspaces all sync in real time across platforms.
 
 ---
