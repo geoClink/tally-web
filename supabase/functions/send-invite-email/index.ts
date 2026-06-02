@@ -39,7 +39,9 @@ Deno.serve(async (req) => {
     })
 
     const data = await res.json()
-    if (!res.ok) throw new Error(data.message ?? 'Failed to send email')
+    console.log('Resend response status:', res.status)
+    console.log('Resend response body:', JSON.stringify(data))
+    if (!res.ok) throw new Error(JSON.stringify(data))
 
     return new Response(JSON.stringify({ success: true }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
