@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { todayString } from '../lib/utils'
+import ClientSelect from '../components/ClientSelect'
 
 // Timer state is persisted in localStorage so navigating away doesn't lose it
 const STORAGE_KEY = 'tally_active_timer'
@@ -202,15 +203,11 @@ export default function Track() {
 
           <div className="form-group" style={{ marginTop: '1.5rem' }}>
             <label>Client</label>
-            <input
-              list="timer-clients"
+            <ClientSelect
+              clients={clients}
               value={timerClient}
-              onChange={e => updateTimerField('client', e.target.value)}
-              placeholder="Select or type a client name"
+              onChange={v => updateTimerField('client', v)}
             />
-            <datalist id="timer-clients">
-              {clients.map(c => <option key={c} value={c} />)}
-            </datalist>
           </div>
 
           <div className="form-group">
@@ -270,16 +267,11 @@ export default function Track() {
               </div>
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label>Client</label>
-                <input
-                  list="manual-clients"
+                <ClientSelect
+                  clients={clients}
                   value={manualClient}
-                  onChange={e => setManualClient(e.target.value)}
-                  placeholder="Select or type a client name"
-                  required
+                  onChange={v => setManualClient(v)}
                 />
-                <datalist id="manual-clients">
-                  {clients.map(c => <option key={c} value={c} />)}
-                </datalist>
               </div>
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label>Hours</label>

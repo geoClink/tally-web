@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import ClientSelect from '../components/ClientSelect'
 
 export default function Settings() {
   const { user } = useAuth()
@@ -143,15 +144,11 @@ export default function Settings() {
           <div className="inline-form">
             <div className="form-group">
               <label>Client</label>
-              <input
-                list="settings-clients"
+              <ClientSelect
+                clients={clients}
                 value={newClientGoalName}
-                onChange={e => setNewClientGoalName(e.target.value)}
-                placeholder="Select or type client"
+                onChange={v => setNewClientGoalName(v)}
               />
-              <datalist id="settings-clients">
-                {clients.map(c => <option key={c} value={c} />)}
-              </datalist>
             </div>
             <div className="form-group">
               <label>Hours / week</label>
