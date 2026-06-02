@@ -68,11 +68,24 @@ export default function Team() {
     setSuccess('')
     if (!inviteEmail.trim()) return
     setInviting(true)
+
     const { error: err } = await supabase
       .from('workspace_members')
       .insert({ workspace_id: workspace.id, invited_email: inviteEmail.trim(), role: inviteRole })
+
+    if (err) { setInviting(false); setError(err.message); return }
+
+    // Send the invite email via Supabase Edge Function
+    const { data: { session } } = await supabase.auth.getSession()
+    await supabase.functions.invoke('send-invite-email', {
+      body: {
+        invitedEmail: inviteEmail.trim(),
+        workspaceName: workspace.name,
+        inviterEmail: session?.user?.email ?? 'A teammate',
+      },
+    })
+
     setInviting(false)
-    if (err) { setError(err.message); return }
     setSuccess(`Invite sent to ${inviteEmail}`)
     setInviteEmail('')
     await fetchMembers(workspace.id)
