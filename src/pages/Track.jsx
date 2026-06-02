@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { todayString } from '../lib/utils'
 import ClientSelect from '../components/ClientSelect'
+import useVoiceControl from '../hooks/useVoiceControl'
 
 // Timer state is persisted in localStorage so navigating away doesn't lose it
 const STORAGE_KEY = 'tally_active_timer'
@@ -14,6 +15,12 @@ export default function Track() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [saving, setSaving] = useState(false)
+
+  // Voice control — refs so commands can access latest state
+  const runningRef = useRef(false)
+  const elapsedRef = useRef(0)
+  const startTimeRef = useRef(null)
+  const timerClientRef = useRef('')
 
   // --- Timer state ---
   const [timerClient, setTimerClient] = useState('')
@@ -74,7 +81,9 @@ export default function Track() {
     setError('')
     const now = new Date()
     setStartTime(now)
+    startTimeRef.current = now
     setRunning(true)
+    runningRef.current = true
     setElapsed(0)
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       start: now.toISOString(),
@@ -85,12 +94,46 @@ export default function Track() {
 
   function stopTimer() {
     setRunning(false)
-    // Keep localStorage so they can save or resume
+    runningRef.current = false
   }
 
   function resumeTimer() {
     setRunning(true)
+    runningRef.current = true
   }
+
+  // Keep refs in sync so voice commands can read latest state
+  useEffect(() => { runningRef.current = running }, [running])
+  useEffect(() => { elapsedRef.current = elapsed }, [elapsed])
+  useEffect(() => { startTimeRef.current = startTime }, [startTime])
+  useEffect(() => { timerClientRef.current = timerClient }, [timerClient])
+
+  function handleVoiceCommand(text) {
+    if (text.includes('start')) {
+      if (!runningRef.current && timerClientRef.current) startTimer()
+      else if (!timerClientRef.current) showSuccess('Say a client name first')
+    } else if (text.includes('stop') || text.includes('pause')) {
+      if (runningRef.current) stopTimer()
+    } else if (text.includes('save')) {
+      if (!runningRef.current && elapsedRef.current > 0) saveTimer()
+    } else if (text.includes('resume')) {
+      if (!runningRef.current && elapsedRef.current > 0) resumeTimer()
+    } else if (text.includes('discard')) {
+      discardTimer()
+    } else {
+      // Try to match a client name
+      const match = clients.find(c => text.includes(c.toLowerCase()))
+      if (match) {
+        setTimerClient(match)
+        timerClientRef.current = match
+        showSuccess(`Client set to ${match}`)
+      }
+    }
+  }
+
+  const { listening, supported, transcript, toggleListening } = useVoiceControl({
+    onCommand: handleVoiceCommand,
+  })
 
   async function saveTimer() {
     setError('')
@@ -185,14 +228,33 @@ export default function Track() {
         <p className="page-subtitle">Start a timer or log time manually</p>
       </div>
 
-      <div className="tab-bar">
-        <button className={`tab-btn${tab === 'timer' ? ' active' : ''}`} onClick={() => { setTab('timer'); setError('') }}>
-          Timer
-        </button>
-        <button className={`tab-btn${tab === 'manual' ? ' active' : ''}`} onClick={() => { setTab('manual'); setError('') }}>
-          Manual Entry
-        </button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
+        <div className="tab-bar" style={{ marginBottom: 0, borderBottom: 'none' }}>
+          <button className={`tab-btn${tab === 'timer' ? ' active' : ''}`} onClick={() => { setTab('timer'); setError('') }}>
+            Timer
+          </button>
+          <button className={`tab-btn${tab === 'manual' ? ' active' : ''}`} onClick={() => { setTab('manual'); setError('') }}>
+            Manual Entry
+          </button>
+        </div>
+        {supported && tab === 'timer' && (
+          <button
+            className={`btn btn-secondary btn-sm${listening ? ' voice-active' : ''}`}
+            onClick={toggleListening}
+            title="Voice control"
+            style={{ gap: '0.35rem' }}
+          >
+            {listening ? '🎙 Listening…' : '🎙 Voice'}
+          </button>
+        )}
       </div>
+      <div style={{ borderBottom: '1px solid var(--border)', marginBottom: '1.25rem' }} />
+
+      {transcript && (
+        <div className="alert alert-info" style={{ fontSize: '0.82rem' }}>
+          Heard: "{transcript}"
+        </div>
+      )}
 
       {error && <div className="auth-error" style={{ marginTop: '1rem' }}>{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
