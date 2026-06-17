@@ -14,6 +14,7 @@ import Invoices from './pages/Invoices'
 import Track from './pages/Track'
 import Settings from './pages/Settings'
 import TeamDashboard from './pages/TeamDashboard'
+import Calendar from './pages/Calendar'
 
 // Think of this like the App struct in SwiftUI — it sets up the navigation stack
 // and wraps everything in the shared context providers (like @EnvironmentObject).
@@ -43,6 +44,7 @@ export default function App() {
               <Route path="invoices" element={<Invoices />} />
               <Route path="settings" element={<Settings />} />
               <Route path="team-dashboard" element={<TeamDashboard />} />
+              <Route path="calendar" element={<Calendar />} />
             </Route>
           </Routes>
         </SubscriptionProvider>

@@ -1,17 +1,20 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { useSubscription } from '../context/SubscriptionContext'
 import { todayString } from '../lib/utils'
 import ClientSelect from '../components/ClientSelect'
 import useVoiceControl from '../hooks/useVoiceControl'
 
-// Timer state is persisted in localStorage so navigating away doesn't lose it
 const STORAGE_KEY = 'tally_active_timer'
 
 export default function Track() {
   const { user } = useAuth()
+  const { isPro } = useSubscription()
   const [tab, setTab] = useState('timer')
   const [clients, setClients] = useState([])
+  const [workspaceClients, setWorkspaceClients] = useState([])
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [saving, setSaving] = useState(false)
@@ -26,8 +29,8 @@ export default function Track() {
   const [timerClient, setTimerClient] = useState('')
   const [timerNote, setTimerNote] = useState('')
   const [running, setRunning] = useState(false)
-  const [startTime, setStartTime] = useState(null) // Date object
-  const [elapsed, setElapsed] = useState(0) // seconds
+  const [startTime, setStartTime] = useState(null)
+  const [elapsed, setElapsed] = useState(0)
   const intervalRef = useRef(null)
 
   // --- Manual entry state ---
@@ -39,7 +42,6 @@ export default function Track() {
   useEffect(() => {
     fetchClients()
 
-    // Restore a running timer from localStorage (survives page navigation)
     const saved = localStorage.getItem(STORAGE_KEY)
     if (saved) {
       const { start, client, note } = JSON.parse(saved)
@@ -52,7 +54,6 @@ export default function Track() {
     }
   }, [])
 
-  // Tick every second while running
   useEffect(() => {
     if (running && startTime) {
       intervalRef.current = setInterval(() => {
@@ -65,16 +66,48 @@ export default function Track() {
   }, [running, startTime])
 
   async function fetchClients() {
-    // Pull from both client_rates and sessions so all known clients appear
-    const [{ data: rates }, { data: sessions }] = await Promise.all([
+    const [{ data: rates }, { data: sessions }, { data: ownedWs }] = await Promise.all([
       supabase.from('client_rates').select('client').eq('user_id', user.id),
       supabase.from('sessions').select('client').eq('user_id', user.id),
+      supabase.from('workspaces').select('client_name').eq('owner_id', user.id),
     ])
+
+    // Also fetch workspace client names for workspaces user has joined
+    const { data: memberOf } = await supabase
+      .from('workspace_members')
+      .select('workspace_id')
+      .eq('invited_email', user.email)
+      .not('accepted_at', 'is', null)
+
+    let wsClientNames = ownedWs?.filter(w => w.client_name).map(w => w.client_name) ?? []
+    if (memberOf?.length) {
+      const { data: memberWs } = await supabase
+        .from('workspaces')
+        .select('client_name')
+        .in('id', memberOf.map(m => m.workspace_id))
+      wsClientNames = [...wsClientNames, ...(memberWs?.filter(w => w.client_name).map(w => w.client_name) ?? [])]
+    }
+    wsClientNames = [...new Set(wsClientNames)]
+    setWorkspaceClients(wsClientNames)
+
     const all = [
       ...(rates?.map(r => r.client) ?? []),
       ...(sessions?.map(s => s.client) ?? []),
     ]
-    setClients([...new Set(all)].sort())
+    // Workspace client names appear first so members can easily find them
+    const otherClients = [...new Set(all)].sort().filter(c => !wsClientNames.includes(c))
+    setClients([...wsClientNames, ...otherClients])
+  }
+
+  // Returns an error string if the free-tier 3-client limit would be exceeded, or null if OK
+  async function checkClientLimit(newClient) {
+    if (isPro) return null
+    const { data } = await supabase.from('sessions').select('client').eq('user_id', user.id)
+    const existing = [...new Set(data?.map(s => s.client) ?? [])]
+    if (existing.length >= 3 && !existing.includes(newClient.trim())) {
+      return 'Free tier is limited to 3 clients. Upgrade to Pro for unlimited clients.'
+    }
+    return null
   }
 
   function startTimer() {
@@ -102,7 +135,6 @@ export default function Track() {
     runningRef.current = true
   }
 
-  // Keep refs in sync so voice commands can read latest state
   useEffect(() => { runningRef.current = running }, [running])
   useEffect(() => { elapsedRef.current = elapsed }, [elapsed])
   useEffect(() => { startTimeRef.current = startTime }, [startTime])
@@ -121,7 +153,6 @@ export default function Track() {
     } else if (text.includes('discard')) {
       discardTimer()
     } else {
-      // Try to match a client name
       const match = clients.find(c => text.includes(c.toLowerCase()))
       if (match) {
         setTimerClient(match)
@@ -142,6 +173,9 @@ export default function Track() {
     if (hours < 0.001) { setError('No time recorded yet'); return }
 
     setSaving(true)
+    const limitErr = await checkClientLimit(timerClient)
+    if (limitErr) { setError(limitErr); setSaving(false); return }
+
     const { error: err } = await supabase.from('sessions').insert({
       user_id: user.id,
       client: timerClient.trim(),
@@ -162,6 +196,7 @@ export default function Track() {
     setStartTime(null)
     setTimerClient('')
     setTimerNote('')
+    fetchClients()
     showSuccess('Session saved!')
   }
 
@@ -175,7 +210,6 @@ export default function Track() {
     setTimerNote('')
   }
 
-  // Update localStorage when client/note change while timer is running
   function updateTimerField(field, value) {
     if (field === 'client') setTimerClient(value)
     else setTimerNote(value)
@@ -193,6 +227,9 @@ export default function Track() {
     if (isNaN(hours) || hours <= 0) { setError('Enter valid hours (e.g. 1.5)'); return }
 
     setSaving(true)
+    const limitErr = await checkClientLimit(manualClient)
+    if (limitErr) { setError(limitErr); setSaving(false); return }
+
     const { error: err } = await supabase.from('sessions').insert({
       user_id: user.id,
       client: manualClient.trim(),
@@ -207,6 +244,7 @@ export default function Track() {
 
     setManualHours('')
     setManualNote('')
+    fetchClients()
     showSuccess('Session saved!')
   }
 
@@ -215,7 +253,6 @@ export default function Track() {
     setTimeout(() => setSuccess(''), 3000)
   }
 
-  // Format elapsed seconds → HH:MM:SS
   const hrs = Math.floor(elapsed / 3600)
   const mins = Math.floor((elapsed % 3600) / 60)
   const secs = elapsed % 60
@@ -256,7 +293,13 @@ export default function Track() {
         </div>
       )}
 
-      {error && <div className="auth-error" style={{ marginTop: '1rem' }}>{error}</div>}
+      {!isPro && (
+        <div className="alert alert-info" style={{ marginBottom: '1rem' }}>
+          Free tier: up to 3 clients. <Link to="/billing" className="alert-link">Upgrade to Pro</Link> for unlimited.
+        </div>
+      )}
+
+      {error && <div className="auth-error" style={{ marginTop: '0.5rem' }}>{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
 
       {tab === 'timer' && (
@@ -269,7 +312,13 @@ export default function Track() {
               clients={clients}
               value={timerClient}
               onChange={v => updateTimerField('client', v)}
+              placeholder={workspaceClients.length ? `Select client (e.g. ${workspaceClients[0]})` : 'Select or type client'}
             />
+            {workspaceClients.length > 0 && !timerClient && (
+              <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.35rem' }}>
+                Team clients: {workspaceClients.join(', ')} — use the exact name for hours to roll up to your workspace.
+              </p>
+            )}
           </div>
 
           <div className="form-group">

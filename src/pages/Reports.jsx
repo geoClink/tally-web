@@ -81,11 +81,34 @@ export default function Reports() {
 
   const activeFilter = FILTERS.find(f => f.value === filter)
 
+  function exportCSV() {
+    const header = 'Client,Hours'
+    const rows = clients.map(c => `${c},${byClient[c].toFixed(2)}`)
+    const csv = [header, ...rows, `Total,${totalHours.toFixed(2)}`].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `tally-report-${filter}-${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div>
       <div className="page-header">
-        <h1 className="page-title">Reports</h1>
-        <p className="page-subtitle">Hours breakdown by client</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div>
+            <h1 className="page-title">Reports</h1>
+            <p className="page-subtitle">Hours breakdown by client</p>
+          </div>
+          {isPro && clients.length > 0 && (
+            <button className="btn btn-secondary" onClick={exportCSV}>Export CSV</button>
+          )}
+          {!isPro && (
+            <Link to="/billing" className="btn btn-secondary">Upgrade for CSV</Link>
+          )}
+        </div>
       </div>
 
       <div className="filter-bar">

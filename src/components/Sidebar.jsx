@@ -7,6 +7,7 @@ const navItems = [
   { to: '/track', label: 'Track Time' },
   { to: '/reports', label: 'Reports' },
   { to: '/sessions', label: 'Sessions' },
+  { to: '/calendar', label: 'Activity' },
   { to: '/clients', label: 'Client Rates' },
   { to: '/team', label: 'Team', tier: 'business' },
   { to: '/team-dashboard', label: 'Team Dashboard', tier: 'business' },

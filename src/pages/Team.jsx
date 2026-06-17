@@ -15,8 +15,17 @@ export default function Team() {
   const [inviting, setInviting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+
+  // Create workspace
   const [newWorkspaceName, setNewWorkspaceName] = useState('')
+  const [newClientName, setNewClientName] = useState('')
   const [creating, setCreating] = useState(false)
+
+  // Edit workspace
+  const [editing, setEditing] = useState(false)
+  const [editName, setEditName] = useState('')
+  const [editClientName, setEditClientName] = useState('')
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (isBusiness) fetchWorkspace()
@@ -26,7 +35,6 @@ export default function Team() {
   async function fetchWorkspace() {
     setLoading(true)
 
-    // Check if user owns a workspace
     const { data: owned } = await supabase
       .from('workspaces')
       .select('*')
@@ -42,7 +50,6 @@ export default function Team() {
       return
     }
 
-    // Check if user was invited to a workspace
     const { data: memberOf } = await supabase
       .from('workspace_members')
       .select('workspace_id')
@@ -58,7 +65,6 @@ export default function Team() {
       setWorkspace(ws)
       if (ws) {
         await fetchMembers(ws.id)
-        // Auto-accept invite on first visit, storing user_id for team session queries
         await supabase
           .from('workspace_members')
           .update({ accepted_at: new Date().toISOString(), user_id: user.id })
@@ -80,24 +86,50 @@ export default function Team() {
     setMembers(data ?? [])
   }
 
-  // Determine current user's permission level
   const isOwner = workspace?.owner_id === user.id
   const currentMember = members.find(m => m.invited_email === user.email)
   const isAdmin = isOwner || currentMember?.role === 'admin'
 
+  function showSuccess(msg) {
+    setSuccess(msg)
+    setTimeout(() => setSuccess(''), 4000)
+  }
+
   async function createWorkspace(e) {
     e.preventDefault()
-    if (!newWorkspaceName.trim()) return
+    if (!newWorkspaceName.trim() || !newClientName.trim()) return
     setCreating(true)
     const { data, error: err } = await supabase
       .from('workspaces')
-      .insert({ name: newWorkspaceName.trim(), owner_id: user.id })
+      .insert({ name: newWorkspaceName.trim(), client_name: newClientName.trim(), owner_id: user.id })
       .select()
       .single()
     setCreating(false)
     if (err) { setError(err.message); return }
     setWorkspace(data)
     setNewWorkspaceName('')
+    setNewClientName('')
+  }
+
+  async function saveEdit(e) {
+    e.preventDefault()
+    if (!editName.trim() || !editClientName.trim()) return
+    setSaving(true)
+    const { error: err } = await supabase
+      .from('workspaces')
+      .update({ name: editName.trim(), client_name: editClientName.trim() })
+      .eq('id', workspace.id)
+    setSaving(false)
+    if (err) { setError(err.message); return }
+    setWorkspace(prev => ({ ...prev, name: editName.trim(), client_name: editClientName.trim() }))
+    setEditing(false)
+    showSuccess('Workspace updated.')
+  }
+
+  function startEdit() {
+    setEditName(workspace.name)
+    setEditClientName(workspace.client_name ?? '')
+    setEditing(true)
   }
 
   async function inviteMember(e) {
@@ -113,7 +145,6 @@ export default function Team() {
 
     if (err) { setInviting(false); setError(err.message); return }
 
-    // Send invite email via Edge Function
     const { data: { session } } = await supabase.auth.getSession()
     const { error: fnError } = await supabase.functions.invoke('send-invite-email', {
       body: {
@@ -121,15 +152,12 @@ export default function Team() {
         workspaceName: workspace.name,
         inviterEmail: session?.user?.email ?? 'A teammate',
       },
-      headers: {
-        Authorization: `Bearer ${session?.access_token}`,
-      },
+      headers: { Authorization: `Bearer ${session?.access_token}` },
     })
-
     if (fnError) console.error('Edge Function error:', fnError)
 
     setInviting(false)
-    setSuccess(`Invite created for ${inviteEmail}. Ask them to sign up at tally-web-nu.vercel.app using that email address.`)
+    showSuccess(`Invite created for ${inviteEmail}. Ask them to sign up using that email address.`)
     setInviteEmail('')
     await fetchMembers(workspace.id)
   }
@@ -147,6 +175,27 @@ export default function Team() {
       .eq('id', id)
     if (err) { setError(err.message); return }
     setMembers(prev => prev.map(m => m.id === id ? { ...m, role: newRole } : m))
+  }
+
+  async function leaveWorkspace() {
+    if (!confirm('Leave this workspace? You will lose access to the team.')) return
+    const myMember = members.find(m => m.invited_email === user.email)
+    if (!myMember) return
+    const { error: err } = await supabase.from('workspace_members').delete().eq('id', myMember.id)
+    if (err) { setError(err.message); return }
+    setWorkspace(null)
+    setMembers([])
+  }
+
+  async function deleteWorkspace() {
+    if (!confirm('Delete this workspace? All members will lose access. This cannot be undone.')) return
+    if (!confirm('Are you sure? This permanently deletes the workspace.')) return
+    // Delete members first, then workspace
+    await supabase.from('workspace_members').delete().eq('workspace_id', workspace.id)
+    const { error: err } = await supabase.from('workspaces').delete().eq('id', workspace.id)
+    if (err) { setError(err.message); return }
+    setWorkspace(null)
+    setMembers([])
   }
 
   if (!isBusiness) {
@@ -172,39 +221,112 @@ export default function Team() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div>
             <h1 className="page-title">Team</h1>
-            {workspace && <p className="page-subtitle">{workspace.name}</p>}
+            {workspace && (
+              <p className="page-subtitle">
+                {workspace.name}
+                {workspace.client_name && (
+                  <span className="text-muted"> · client: <strong style={{ color: 'var(--text)' }}>{workspace.client_name}</strong></span>
+                )}
+              </p>
+            )}
           </div>
           {workspace && (
-            <span className={`current-tier ${isOwner ? 'tier-business' : 'tier-pro'}`}>
-              {isOwner ? 'Owner' : currentMember?.role ?? 'Member'}
-            </span>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <span className={`current-tier ${isOwner ? 'tier-business' : 'tier-pro'}`}>
+                {isOwner ? 'Owner' : currentMember?.role ?? 'Member'}
+              </span>
+              {isOwner && (
+                <button className="btn btn-secondary btn-sm" onClick={startEdit}>Edit</button>
+              )}
+              {!isOwner && (
+                <button className="btn btn-secondary btn-sm" onClick={leaveWorkspace}>Leave</button>
+              )}
+            </div>
           )}
         </div>
       </div>
 
+      {error && <div className="auth-error">{error}</div>}
+      {success && <div className="alert alert-success">{success}</div>}
+
       {!workspace ? (
         <div className="card">
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Create a Workspace</h2>
-          {error && <div className="auth-error">{error}</div>}
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Create a Workspace</h2>
+          <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+            The client name links your team's sessions together — all members must log time under this exact name.
+          </p>
           <form onSubmit={createWorkspace}>
-            <div className="inline-form">
-              <div className="form-group">
-                <label>Workspace Name</label>
-                <input
-                  type="text"
-                  value={newWorkspaceName}
-                  onChange={e => setNewWorkspaceName(e.target.value)}
-                  placeholder="My Agency"
-                />
-              </div>
-              <button type="submit" className="btn btn-primary" disabled={creating}>Create</button>
+            <div className="form-group">
+              <label>Workspace Name</label>
+              <input
+                type="text"
+                value={newWorkspaceName}
+                onChange={e => setNewWorkspaceName(e.target.value)}
+                placeholder="My Agency"
+                required
+              />
             </div>
+            <div className="form-group">
+              <label>Client Name</label>
+              <input
+                type="text"
+                value={newClientName}
+                onChange={e => setNewClientName(e.target.value)}
+                placeholder="Acme Corp"
+                required
+              />
+              <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.35rem' }}>
+                Team hours are tracked to this client name. Members must log time under this exact name.
+              </p>
+            </div>
+            <button type="submit" className="btn btn-primary" disabled={creating}>
+              {creating ? 'Creating…' : 'Create Workspace'}
+            </button>
           </form>
         </div>
       ) : (
         <>
-          {error && <div className="auth-error">{error}</div>}
-          {success && <div className="alert alert-success">{success}</div>}
+          {editing && (
+            <div className="card" style={{ marginBottom: '1.5rem' }}>
+              <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Edit Workspace</h2>
+              <form onSubmit={saveEdit}>
+                <div className="form-group">
+                  <label>Workspace Name</label>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={e => setEditName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Client Name</label>
+                  <input
+                    type="text"
+                    value={editClientName}
+                    onChange={e => setEditClientName(e.target.value)}
+                    required
+                  />
+                  <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.35rem' }}>
+                    Changing this will affect how team hours are counted — existing sessions won't move.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
+                  <button type="submit" className="btn btn-primary" disabled={saving}>
+                    {saving ? 'Saving…' : 'Save Changes'}
+                  </button>
+                  <button type="button" className="btn btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {!editing && !workspace.client_name && (
+            <div className="alert alert-warning" style={{ marginBottom: '1.5rem' }}>
+              This workspace has no client name set — team hours won't roll up until you add one.{' '}
+              {isOwner && <button className="alert-link" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', fontWeight: 600, fontSize: 'inherit', padding: 0 }} onClick={startEdit}>Set client name →</button>}
+            </div>
+          )}
 
           {!isAdmin && (
             <div className="alert alert-info" style={{ marginBottom: '1.5rem' }}>
@@ -259,7 +381,7 @@ export default function Team() {
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
-                      {isAdmin && m.invited_email !== user.email ? (
+                      {isOwner && m.invited_email !== user.email ? (
                         <select
                           value={m.role}
                           onChange={e => changeRole(m.id, e.target.value)}
@@ -278,6 +400,18 @@ export default function Team() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {isOwner && (
+            <div className="card" style={{ marginTop: '2rem', borderColor: 'var(--danger)' }}>
+              <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--danger)' }}>
+                Delete Workspace
+              </h2>
+              <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+                Permanently removes the workspace and removes all members. Sessions are not deleted.
+              </p>
+              <button className="btn btn-danger" onClick={deleteWorkspace}>Delete Workspace</button>
             </div>
           )}
         </>

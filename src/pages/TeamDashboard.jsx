@@ -19,14 +19,14 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
 const FILTERS = [
   { label: 'This Week', value: 'week' },
   { label: 'This Month', value: 'month' },
+  { label: 'All Time', value: 'all' },
 ]
 
 export default function TeamDashboard() {
   const { user } = useAuth()
   const { isBusiness } = useSubscription()
   const [workspace, setWorkspace] = useState(null)
-  const [members, setMembers] = useState([])
-  const [memberSessions, setMemberSessions] = useState([]) // { email, hours, sessions[] }
+  const [memberSessions, setMemberSessions] = useState([])
   const [filter, setFilter] = useState('week')
   const [loading, setLoading] = useState(true)
 
@@ -38,7 +38,6 @@ export default function TeamDashboard() {
   async function loadTeamData() {
     setLoading(true)
 
-    // Find workspace (owned or member of)
     let ws = null
     const { data: owned } = await supabase
       .from('workspaces')
@@ -67,31 +66,29 @@ export default function TeamDashboard() {
     if (!ws) { setLoading(false); return }
     setWorkspace(ws)
 
-    // Get all accepted members with user_ids
     const { data: membersData } = await supabase
       .from('workspace_members')
       .select('invited_email, role, user_id, accepted_at')
       .eq('workspace_id', ws.id)
       .not('accepted_at', 'is', null)
 
-    setMembers(membersData ?? [])
-
-    // Collect all user_ids to query (owner + accepted members)
     const userIds = [
       ws.owner_id,
       ...(membersData?.filter(m => m.user_id).map(m => m.user_id) ?? []),
     ]
 
-    const dateStart = filter === 'week' ? weekStartString() : monthStartString()
-
-    // Query sessions for all team members
-    const { data: sessions } = await supabase
+    // Build session query — filter by client_name so only workspace-related hours count
+    let sessionQuery = supabase
       .from('sessions')
       .select('user_id, client, hours, date')
       .in('user_id', userIds)
-      .gte('date', dateStart)
 
-    // Group by user_id
+    if (filter === 'week') sessionQuery = sessionQuery.gte('date', weekStartString())
+    if (filter === 'month') sessionQuery = sessionQuery.gte('date', monthStartString())
+    if (ws.client_name) sessionQuery = sessionQuery.eq('client', ws.client_name)
+
+    const { data: sessions } = await sessionQuery
+
     const byUser = {}
     userIds.forEach(id => { byUser[id] = { hours: 0, sessions: [] } })
     sessions?.forEach(s => {
@@ -101,9 +98,8 @@ export default function TeamDashboard() {
       }
     })
 
-    // Map to member emails for display
     const emailMap = {
-      [ws.owner_id]: 'Owner (' + (membersData?.find(m => m.user_id === ws.owner_id)?.invited_email ?? 'you') + ')',
+      [ws.owner_id]: membersData?.find(m => m.user_id === ws.owner_id)?.invited_email ?? user.email,
       ...(membersData?.reduce((acc, m) => ({ ...acc, [m.user_id]: m.invited_email }), {}) ?? {}),
     }
 
@@ -113,7 +109,6 @@ export default function TeamDashboard() {
         userId: id,
         email: emailMap[id] ?? id,
         hours: byUser[id].hours,
-        sessions: byUser[id].sessions,
       }))
       .sort((a, b) => b.hours - a.hours)
 
@@ -175,8 +170,20 @@ export default function TeamDashboard() {
     <div>
       <div className="page-header">
         <h1 className="page-title">Team Dashboard</h1>
-        <p className="page-subtitle">{workspace.name}</p>
+        <p className="page-subtitle">
+          {workspace.name}
+          {workspace.client_name && (
+            <span className="text-muted"> · {workspace.client_name}</span>
+          )}
+        </p>
       </div>
+
+      {!workspace.client_name && (
+        <div className="alert alert-warning">
+          No client name is set for this workspace — hours shown are unfiltered.{' '}
+          <Link to="/team">Set a client name →</Link>
+        </div>
+      )}
 
       <div className="filter-bar">
         {FILTERS.map(f => (
@@ -194,7 +201,9 @@ export default function TeamDashboard() {
         <div className="card">
           <div className="card-title">Team Total</div>
           <div className="card-value">{formatHours(totalHours)}</div>
-          <div className="card-subtitle">{filter === 'week' ? 'this week' : 'this month'}</div>
+          <div className="card-subtitle">
+            {filter === 'week' ? 'this week' : filter === 'month' ? 'this month' : 'all time'}
+          </div>
         </div>
         <div className="card">
           <div className="card-title">Active Members</div>

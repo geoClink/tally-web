@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import ClientSelect from '../components/ClientSelect'
 
 export default function Settings() {
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
+  const navigate = useNavigate()
   const [weeklyGoal, setWeeklyGoal] = useState('')
   const [clientGoals, setClientGoals] = useState([]) // [{ client, weekly_hours }]
   const [clients, setClients] = useState([])
@@ -14,6 +16,7 @@ export default function Settings() {
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     loadAll()
@@ -71,6 +74,34 @@ export default function Settings() {
 
   function removeClientGoal(client) {
     setClientGoals(prev => prev.filter(g => g.client !== client))
+  }
+
+  async function deleteAccount() {
+    if (!confirm('This will permanently delete your account and all data. This cannot be undone. Continue?')) return
+    if (!confirm('Last chance — are you absolutely sure?')) return
+    setDeleting(true)
+
+    // Delete owned workspaces and their members
+    const { data: ownedWs } = await supabase.from('workspaces').select('id').eq('owner_id', user.id)
+    if (ownedWs?.length) {
+      for (const ws of ownedWs) {
+        await supabase.from('workspace_members').delete().eq('workspace_id', ws.id)
+      }
+      await supabase.from('workspaces').delete().eq('owner_id', user.id)
+    }
+
+    // Remove this user from any workspaces they joined
+    await supabase.from('workspace_members').delete().eq('invited_email', user.email)
+
+    // Delete all user data
+    await supabase.from('sessions').delete().eq('user_id', user.id)
+    await supabase.from('config').delete().eq('user_id', user.id)
+    await supabase.from('subscriptions').delete().eq('user_id', user.id)
+    await supabase.from('client_rates').delete().eq('user_id', user.id)
+
+    setDeleting(false)
+    await signOut()
+    navigate('/login')
   }
 
   if (loading) return <div className="loading">Loading…</div>
@@ -169,6 +200,23 @@ export default function Settings() {
           {saving ? 'Saving…' : 'Save Settings'}
         </button>
       </form>
+
+      <div className="card" style={{ marginTop: '2rem', borderColor: 'var(--danger)' }}>
+        <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--danger)' }}>
+          Delete Account
+        </h2>
+        <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+          Permanently deletes all your sessions, goals, subscriptions, and workspace data. This cannot be undone.
+        </p>
+        <button
+          type="button"
+          className="btn btn-danger"
+          onClick={deleteAccount}
+          disabled={deleting}
+        >
+          {deleting ? 'Deleting…' : 'Delete My Account'}
+        </button>
+      </div>
     </div>
   )
 }
