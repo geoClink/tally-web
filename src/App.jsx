@@ -15,6 +15,7 @@ import Track from './pages/Track'
 import Settings from './pages/Settings'
 import TeamDashboard from './pages/TeamDashboard'
 import Calendar from './pages/Calendar'
+import Demo from './pages/Demo'
 
 // Think of this like the App struct in SwiftUI — it sets up the navigation stack
 // and wraps everything in the shared context providers (like @EnvironmentObject).
@@ -25,6 +26,7 @@ export default function App() {
         <SubscriptionProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/demo" element={<Demo />} />
             <Route
               path="/"
               element={
