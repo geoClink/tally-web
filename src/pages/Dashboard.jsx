@@ -196,6 +196,7 @@ export default function Dashboard() {
                         to={`/track?${params.toString()}`}
                         className="btn btn-secondary btn-sm"
                         title="Log time for this client and task"
+                        style={{ padding: '0.35rem 0.85rem', whiteSpace: 'nowrap' }}
                       >
                         Log again
                       </Link>
