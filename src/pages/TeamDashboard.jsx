@@ -40,10 +40,15 @@ export default function TeamDashboard() {
 
     if (user.email === import.meta.env.VITE_DEMO_EMAIL) {
       setWorkspace({ name: 'Design Team', client_name: 'Acme Corp' })
+      const demoHours = {
+        week:  [28.5, 22.0, 15.5],
+        month: [112,  87,   63],
+        all:   [340,  265,  198],
+      }[filter]
       setMemberSessions([
-        { userId: 'demo', email: 'demo@tally.app', hours: 28.5 },
-        { userId: 'alice', email: 'alice@designteam.co', hours: 22.0 },
-        { userId: 'bob', email: 'bob@designteam.co', hours: 15.5 },
+        { userId: 'demo',  email: 'demo@tally.app',        hours: demoHours[0] },
+        { userId: 'alice', email: 'alice@designteam.co',   hours: demoHours[1] },
+        { userId: 'bob',   email: 'bob@designteam.co',     hours: demoHours[2] },
       ])
       setLoading(false)
       return
