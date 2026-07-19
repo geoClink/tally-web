@@ -62,6 +62,10 @@ export default function Billing() {
   }
 
   function handleUpgrade(plan) {
+    if (user?.email === import.meta.env.VITE_DEMO_EMAIL) {
+      alert('This is a demo account. Sign up for a real account to upgrade.')
+      return
+    }
     const link = import.meta.env[plan.envKey]
     if (!link) {
       alert(`Set ${plan.envKey} in your .env file to enable Stripe payments.`)

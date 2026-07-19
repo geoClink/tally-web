@@ -1,0 +1,535 @@
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Nav ── */
+.landing-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.landing-logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+
+.landing-nav-signin {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.landing-nav-signin:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* ── Hero ── */
+.landing-hero {
+  text-align: center;
+  padding: 4rem 1.5rem 3rem;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-headline {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.landing-subhead {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.landing-hero-ctas {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.landing-hero-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── Buttons ── */
+.landing-btn-primary {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.landing-btn-primary:hover {
+  background: var(--accent-hover);
+  text-decoration: none;
+  color: #fff;
+}
+
+.landing-btn-secondary {
+  display: inline-block;
+  background: var(--bg-secondary);
+  color: var(--text);
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  transition: background 0.15s;
+}
+
+.landing-btn-secondary:hover {
+  background: var(--border);
+  text-decoration: none;
+  color: var(--text);
+}
+
+.landing-btn-outline {
+  display: inline-block;
+  background: transparent;
+  color: var(--accent);
+  padding: 0.65rem 1.2rem;
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid var(--accent);
+  transition: background 0.15s;
+  text-align: center;
+  width: 100%;
+}
+
+.landing-btn-outline:hover {
+  background: var(--accent-light);
+  text-decoration: none;
+}
+
+/* ── Section title ── */
+.landing-section-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Live demo ── */
+.landing-demo {
+  padding: 3rem 1.5rem;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-demo-sub {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Browser chrome bezel */
+.landing-browser-mockup {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 12px 40px rgba(0, 0, 0, 0.14);
+}
+
+.landing-browser-bar {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.landing-browser-dots {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.landing-browser-dots span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.landing-browser-dots span:nth-child(1) { background: #ff5f57; }
+.landing-browser-dots span:nth-child(2) { background: #febc2e; }
+.landing-browser-dots span:nth-child(3) { background: #28c840; }
+
+.landing-browser-url {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.22rem 0.65rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.landing-browser-mockup--link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.landing-browser-mockup--link:hover {
+  text-decoration: none;
+}
+
+.landing-demo-preview {
+  position: relative;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.landing-demo-screenshot {
+  width: 100%;
+  display: block;
+  max-height: 520px;
+  object-fit: cover;
+  object-position: top;
+}
+
+.landing-demo-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.landing-browser-mockup--link:hover .landing-demo-overlay {
+  opacity: 1;
+}
+
+.landing-demo-cta {
+  background: var(--accent);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* ── iOS Screenshots ── */
+.landing-screenshots {
+  padding: 3rem 0 2rem;
+}
+
+.landing-screenshots-header {
+  padding: 0 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.landing-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 0.2rem 0.65rem;
+  border-radius: 99px;
+}
+
+.landing-screenshots-sub {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.landing-scroll-track {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.75rem 1.5rem 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+  justify-content: safe center;
+}
+
+.landing-scroll-track::-webkit-scrollbar { height: 5px; }
+.landing-scroll-track::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.landing-scroll-item {
+  flex: 0 0 auto;
+  width: 240px;
+  scroll-snap-align: start;
+}
+
+.landing-scroll-item p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.65rem;
+  text-align: center;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* iPhone bezel */
+.landing-phone-mockup {
+  width: 100%;
+  background: #111113;
+  border-radius: 34px;
+  padding: 4px 4px 6px;
+  position: relative;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 0 0 1.5px #5c5c61,
+    0 0 0 3.5px #111113,
+    0 0 0 5px #3e3e43,
+    0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+/* Power button */
+.landing-phone-mockup::before {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 124px;
+  width: 4px;
+  height: 50px;
+  background: #4a4a50;
+  border-radius: 0 3px 3px 0;
+  z-index: 15;
+}
+
+/* Dynamic Island hidden — baked into screenshots */
+.landing-phone-mockup::after {
+  display: none;
+}
+
+/* Volume / mute buttons */
+.landing-phone-btns-left {
+  position: absolute;
+  left: -8px;
+  top: 80px;
+  width: 4px;
+  height: 10px;
+  background: #4a4a50;
+  border-radius: 3px 0 0 3px;
+  z-index: 15;
+}
+
+.landing-phone-btns-left::before {
+  content: '';
+  position: absolute;
+  top: 24px;
+  left: 0;
+  width: 4px;
+  height: 30px;
+  background: #4a4a50;
+  border-radius: 3px 0 0 3px;
+}
+
+.landing-phone-btns-left::after {
+  content: '';
+  position: absolute;
+  top: 62px;
+  left: 0;
+  width: 4px;
+  height: 30px;
+  background: #4a4a50;
+  border-radius: 3px 0 0 3px;
+}
+
+.landing-phone-screen-static {
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.landing-phone-screen-static img {
+  width: 100%;
+  display: block;
+}
+
+/* ── Features ── */
+.landing-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  padding: 3rem 1.5rem;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.landing-feature-card h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: var(--text);
+}
+
+.landing-feature-card p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* ── Pricing ── */
+.landing-pricing {
+  padding: 3rem 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-pricing-sub {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+.landing-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.landing-tier {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--shadow);
+}
+
+.landing-tier--highlight {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), var(--shadow);
+}
+
+.landing-tier-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.landing-tier--highlight .landing-tier-name { color: var(--accent); }
+
+.landing-tier-price {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.landing-tier-period {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.landing-tier-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+  margin-bottom: 0.5rem;
+}
+
+.landing-tier-features li {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  padding-left: 1.25rem;
+  position: relative;
+}
+
+.landing-tier-features li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--success);
+  font-size: 0.8rem;
+}
+
+.landing-tier .landing-btn-primary {
+  width: 100%;
+  text-align: center;
+}
+
+/* ── Footer ── */
+.landing-footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem;
+  margin-top: auto;
+}
+
+.landing-footer-inner {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.landing-footer-inner a {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.landing-footer-inner a:hover { color: var(--accent); }

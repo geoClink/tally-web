@@ -105,7 +105,6 @@ a:hover {
   margin-left: var(--sidebar-width);
   flex: 1;
   padding: 2rem 2.5rem;
-  max-width: 900px;
   min-width: 0;
   overflow-x: hidden;
 }
@@ -519,15 +518,45 @@ select:focus {
 
 .auth-title {
   font-size: 1.6rem;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--accent);
   margin-bottom: 0.2rem;
+  letter-spacing: -0.02em;
+}
+
+.auth-tagline {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 1.25rem;
 }
 
 .auth-subtitle {
   color: var(--text-muted);
-  font-size: 0.875rem;
-  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+  margin-bottom: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.auth-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.auth-links a, .auth-links-dot {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.auth-links a:hover {
+  color: var(--accent);
 }
 
 .auth-error {

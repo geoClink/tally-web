@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+
+const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
 
 export default function Login() {
   const [mode, setMode] = useState('signin') // 'signin' | 'signup'
@@ -8,8 +10,10 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { signIn, signUp } = useAuth()
+  const { signIn, signUp, user, loading: authLoading } = useAuth()
   const navigate = useNavigate()
+
+  if (!authLoading && user) return <Navigate to="/dashboard" replace />
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -33,8 +37,9 @@ export default function Login() {
     <div className="auth-page">
       <div className="auth-card">
         <h1 className="auth-title">Tally</h1>
+        <p className="auth-tagline">Track every hour. Get paid for all of it.</p>
         <p className="auth-subtitle">
-          {mode === 'signin' ? 'Sign in to your account' : 'Create a new account'}
+          {mode === 'signin' ? 'Sign in to your account' : 'Create your free account'}
         </p>
 
         {error && <div className="auth-error">{error}</div>}
@@ -73,8 +78,14 @@ export default function Login() {
           {mode === 'signin' ? "Don't have an account?" : 'Already have an account?'}
           {' '}
           <button onClick={() => { setMode(mode === 'signin' ? 'signup' : 'signin'); setError('') }}>
-            {mode === 'signin' ? 'Sign up' : 'Sign in'}
+            {mode === 'signin' ? 'Sign up free' : 'Sign in'}
           </button>
+        </div>
+
+        <div className="auth-links">
+          <Link to="/demo">Try demo</Link>
+          <span className="auth-links-dot">·</span>
+          <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">App Store</a>
         </div>
       </div>
     </div>
