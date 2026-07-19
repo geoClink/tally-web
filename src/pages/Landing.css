@@ -106,6 +106,44 @@
   color: var(--text);
 }
 
+/* App Store badge */
+.landing-appstore-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #000;
+  color: #fff;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: opacity 0.15s;
+}
+
+.landing-appstore-badge:hover {
+  opacity: 0.85;
+  text-decoration: none;
+  color: #fff;
+}
+
+.landing-appstore-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.landing-appstore-sub {
+  font-size: 0.6rem;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.15rem;
+}
+
+.landing-appstore-main {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
 .landing-btn-outline {
   display: inline-block;
   background: transparent;
@@ -533,3 +571,106 @@
 }
 
 .landing-footer-inner a:hover { color: var(--accent); }
+
+/* ── Privacy page ── */
+.privacy-page {
+  min-height: 100vh;
+  background: var(--bg);
+  padding: 3rem 1.5rem;
+}
+
+.privacy-content {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.privacy-back {
+  display: inline-block;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  margin-bottom: 2rem;
+}
+
+.privacy-back:hover { color: var(--accent); }
+
+.privacy-content h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.privacy-date {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+}
+
+.privacy-content h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.75rem 0 0.5rem;
+}
+
+.privacy-content p, .privacy-content li {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.privacy-content ul {
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.privacy-content a { color: var(--accent); }
+
+/* ── Mobile responsive ── */
+@media (max-width: 640px) {
+  .landing-hero {
+    padding: 2.5rem 1.25rem 2rem;
+  }
+
+  .landing-hero-ctas {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .landing-appstore-badge,
+  .landing-btn-primary {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .landing-scroll-item {
+    width: 200px;
+  }
+
+  .landing-features {
+    grid-template-columns: 1fr;
+    padding: 2rem 1.25rem;
+  }
+
+  .landing-pricing {
+    padding: 2rem 1.25rem;
+  }
+
+  .landing-pricing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-demo {
+    padding: 2rem 1.25rem;
+  }
+
+  .landing-demo-iframe {
+    height: 380px;
+  }
+
+  .landing-section-title {
+    font-size: 1.25rem;
+  }
+}

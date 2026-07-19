@@ -17,6 +17,7 @@ import Settings from './pages/Settings'
 import TeamDashboard from './pages/TeamDashboard'
 import Calendar from './pages/Calendar'
 import Demo from './pages/Demo'
+import Privacy from './pages/Privacy'
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/demo" element={<Demo />} />
+            <Route path="/privacy" element={<Privacy />} />
             <Route
               element={
                 <ProtectedRoute>

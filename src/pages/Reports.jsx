@@ -73,6 +73,7 @@ export default function Reports() {
 
   const chartOptions = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: { legend: { display: false } },
     scales: {
       y: { beginAtZero: true, ticks: { callback: v => `${v}h` } },

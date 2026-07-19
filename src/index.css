@@ -278,7 +278,8 @@ a:hover {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  max-width: 860px;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -630,6 +631,12 @@ select:focus {
   border: 1px solid rgba(217, 119, 6, 0.3);
 }
 
+@media (prefers-color-scheme: dark) {
+  .alert-warning {
+    background: rgba(217, 119, 6, 0.1);
+  }
+}
+
 /* =============================================
    TIER BADGES
    ============================================= */
@@ -676,6 +683,12 @@ select:focus {
   border-radius: 4px;
   font-size: 0.78rem;
   font-weight: 500;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-success {
+    background: rgba(22, 163, 74, 0.12);
+  }
 }
 
 .badge-pending {
@@ -725,6 +738,8 @@ select:focus {
   box-shadow: var(--shadow);
   overflow: hidden;
   min-width: 0;
+  height: 340px;
+  max-width: 960px;
 }
 
 /* =============================================
