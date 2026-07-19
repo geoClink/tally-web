@@ -40,12 +40,14 @@ export default function Invoices() {
   const [clientName, setClientName] = useState('')
   const [generated, setGenerated] = useState(false)
   const [invoiceNumber, setInvoiceNumber] = useState('')
+  const [clientEmail, setClientEmail] = useState('')
   const [loading, setLoading] = useState(false)
 
   // history
   const [savedInvoices, setSavedInvoices] = useState([])
   const [statusFilter, setStatusFilter] = useState('all')
   const [saving, setSaving] = useState(false)
+  const [sending, setSending] = useState(null)
   const [viewingInvoice, setViewingInvoice] = useState(null)
 
   useEffect(() => {
@@ -86,6 +88,7 @@ export default function Invoices() {
     setRate(found?.hourly_rate ?? 0)
     setGenerated(false)
     setViewingInvoice(null)
+    setClientEmail('')
   }
 
   async function generateInvoice(e) {
@@ -115,6 +118,7 @@ export default function Invoices() {
       invoice_number: invoiceNumber,
       your_name: yourName || null,
       client: selectedClient,
+      client_email: clientEmail.trim() || null,
       start_date: startDate,
       end_date: endDate,
       total_hours: totalHours,
@@ -132,7 +136,33 @@ export default function Invoices() {
     if (error) { console.error(error); return }
     setGenerated(false)
     setSessions([])
+    setClientEmail('')
     await fetchSavedInvoices()
+  }
+
+  async function sendInvoice(inv) {
+    if (!inv.client_email) {
+      alert('No client email on this invoice. Edit it to add one.')
+      return
+    }
+    setSending(inv.id)
+    const { error } = await supabase.functions.invoke('send-invoice', {
+      body: {
+        invoiceNumber: inv.invoice_number,
+        yourName: inv.your_name,
+        clientName: inv.client,
+        clientEmail: inv.client_email,
+        startDate: inv.start_date,
+        endDate: inv.end_date,
+        lineItems: inv.line_items ?? [],
+        hourlyRate: inv.hourly_rate,
+        totalHours: inv.total_hours,
+        totalAmount: inv.total_amount,
+      },
+    })
+    if (error) { setSending(null); alert('Failed to send: ' + error.message); return }
+    await updateStatus(inv.id, 'sent')
+    setSending(null)
   }
 
   async function updateStatus(id, status) {
@@ -239,11 +269,21 @@ export default function Invoices() {
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', flexShrink: 0 }}>
                       {statusBadge(inv.status)}
+                      {inv.status !== 'paid' && (
+                        <button
+                          className="btn btn-primary btn-sm"
+                          onClick={() => sendInvoice(inv)}
+                          disabled={sending === inv.id}
+                          title={inv.client_email ? `Send to ${inv.client_email}` : 'No client email — add one when generating'}
+                        >
+                          {sending === inv.id ? 'Sending…' : inv.client_email ? 'Send Email' : 'Send Email ⚠'}
+                        </button>
+                      )}
                       {inv.status === 'draft' && (
                         <button className="btn btn-secondary btn-sm" onClick={() => updateStatus(inv.id, 'sent')}>Mark Sent</button>
                       )}
                       {inv.status === 'sent' && (
-                        <button className="btn btn-primary btn-sm" onClick={() => updateStatus(inv.id, 'paid')}>Mark Paid</button>
+                        <button className="btn btn-secondary btn-sm" onClick={() => updateStatus(inv.id, 'paid')}>Mark Paid</button>
                       )}
                       <button
                         className="btn btn-secondary btn-sm"
@@ -301,6 +341,15 @@ export default function Invoices() {
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label>End Date</label>
               <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} required />
+            </div>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label>Client Email (optional)</label>
+              <input
+                type="email"
+                value={clientEmail}
+                onChange={e => setClientEmail(e.target.value)}
+                placeholder="client@example.com"
+              />
             </div>
           </div>
           <div style={{ marginTop: '1rem' }}>

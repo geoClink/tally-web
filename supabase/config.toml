@@ -1,4 +1,10 @@
 
+[functions.send-invoice]
+enabled = true
+verify_jwt = true
+import_map = "./functions/send-invoice/deno.json"
+entrypoint = "./functions/send-invoice/index.ts"
+
 [functions.send-invite-email]
 enabled = true
 verify_jwt = true
