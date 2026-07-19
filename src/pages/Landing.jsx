@@ -153,7 +153,6 @@ export default function Landing() {
       <footer className="landing-footer">
         <div className="landing-footer-inner">
           <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">Download on App Store</a>
-          <a href="https://github.com/geoClink/tally-web" target="_blank" rel="noopener noreferrer">GitHub</a>
           <Link to="/login">Sign in</Link>
         </div>
       </footer>
