@@ -20,6 +20,13 @@ export function SubscriptionProvider({ children }) {
 
   async function fetchSubscription() {
     setLoading(true)
+
+    if (user.email === import.meta.env.VITE_DEMO_EMAIL) {
+      setSubscription({ tier: 'business', source: 'demo' })
+      setLoading(false)
+      return
+    }
+
     const { data } = await supabase
       .from('subscriptions')
       .select('*')

@@ -38,6 +38,17 @@ export default function TeamDashboard() {
   async function loadTeamData() {
     setLoading(true)
 
+    if (user.email === import.meta.env.VITE_DEMO_EMAIL) {
+      setWorkspace({ name: 'Design Team', client_name: 'Acme Corp' })
+      setMemberSessions([
+        { userId: 'demo', email: 'demo@tally.app', hours: 28.5 },
+        { userId: 'alice', email: 'alice@designteam.co', hours: 22.0 },
+        { userId: 'bob', email: 'bob@designteam.co', hours: 15.5 },
+      ])
+      setLoading(false)
+      return
+    }
+
     let ws = null
     const { data: owned } = await supabase
       .from('workspaces')

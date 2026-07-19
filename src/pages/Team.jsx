@@ -28,8 +28,18 @@ export default function Team() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    if (isBusiness) fetchWorkspace()
-    else setLoading(false)
+    if (!isBusiness) { setLoading(false); return }
+    if (user.email === import.meta.env.VITE_DEMO_EMAIL) {
+      setWorkspace({ id: 'demo', name: 'Design Team', client_name: 'Acme Corp', owner_id: user.id })
+      setMembers([
+        { id: 'alice', invited_email: 'alice@designteam.co', role: 'admin', accepted_at: '2026-07-01T00:00:00Z' },
+        { id: 'bob',   invited_email: 'bob@designteam.co',   role: 'member', accepted_at: '2026-07-05T00:00:00Z' },
+        { id: 'carol', invited_email: 'carol@designteam.co', role: 'member', accepted_at: null },
+      ])
+      setLoading(false)
+      return
+    }
+    fetchWorkspace()
   }, [user, isBusiness])
 
   async function fetchWorkspace() {
@@ -86,6 +96,12 @@ export default function Team() {
     setMembers(data ?? [])
   }
 
+  const isDemo = user.email === import.meta.env.VITE_DEMO_EMAIL
+  function demoGuard() {
+    if (isDemo) { setError('Changes are disabled in demo mode.'); return true }
+    return false
+  }
+
   const isOwner = workspace?.owner_id === user.id
   const currentMember = members.find(m => m.invited_email === user.email)
   const isAdmin = isOwner || currentMember?.role === 'admin'
@@ -97,6 +113,7 @@ export default function Team() {
 
   async function createWorkspace(e) {
     e.preventDefault()
+    if (demoGuard()) return
     if (!newWorkspaceName.trim() || !newClientName.trim()) return
     setCreating(true)
     const { data, error: err } = await supabase
@@ -113,6 +130,7 @@ export default function Team() {
 
   async function saveEdit(e) {
     e.preventDefault()
+    if (demoGuard()) return
     if (!editName.trim() || !editClientName.trim()) return
     setSaving(true)
     const { error: err } = await supabase
@@ -136,6 +154,7 @@ export default function Team() {
     e.preventDefault()
     setError('')
     setSuccess('')
+    if (demoGuard()) return
     if (!inviteEmail.trim()) return
     setInviting(true)
 
@@ -163,12 +182,14 @@ export default function Team() {
   }
 
   async function removeMember(id) {
+    if (demoGuard()) return
     if (!confirm('Remove this member?')) return
     await supabase.from('workspace_members').delete().eq('id', id)
     setMembers(prev => prev.filter(m => m.id !== id))
   }
 
   async function changeRole(id, newRole) {
+    if (demoGuard()) return
     const { error: err } = await supabase
       .from('workspace_members')
       .update({ role: newRole })
@@ -178,6 +199,7 @@ export default function Team() {
   }
 
   async function leaveWorkspace() {
+    if (demoGuard()) return
     if (!confirm('Leave this workspace? You will lose access to the team.')) return
     const myMember = members.find(m => m.invited_email === user.email)
     if (!myMember) return
@@ -188,6 +210,7 @@ export default function Team() {
   }
 
   async function deleteWorkspace() {
+    if (demoGuard()) return
     if (!confirm('Delete this workspace? All members will lose access. This cannot be undone.')) return
     if (!confirm('Are you sure? This permanently deletes the workspace.')) return
     // Delete members first, then workspace
