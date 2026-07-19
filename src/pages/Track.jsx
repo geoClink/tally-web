@@ -24,11 +24,13 @@ export default function Track() {
   const elapsedRef = useRef(0)
   const startTimeRef = useRef(null)
   const timerClientRef = useRef('')
+  const pausedRef = useRef(false)
 
   // --- Timer state ---
   const [timerClient, setTimerClient] = useState('')
   const [timerNote, setTimerNote] = useState('')
   const [running, setRunning] = useState(false)
+  const [paused, setPaused] = useState(false)
   const [startTime, setStartTime] = useState(null)
   const [elapsed, setElapsed] = useState(0)
   const intervalRef = useRef(null)
@@ -44,18 +46,25 @@ export default function Track() {
 
     const saved = localStorage.getItem(STORAGE_KEY)
     if (saved) {
-      const { start, client, note } = JSON.parse(saved)
-      const startDate = new Date(start)
-      setStartTime(startDate)
+      const { start, client, note, paused: wasPaused, pausedElapsed } = JSON.parse(saved)
       setTimerClient(client || '')
       setTimerNote(note || '')
       setRunning(true)
-      setElapsed(Math.floor((Date.now() - startDate.getTime()) / 1000))
+      if (wasPaused && pausedElapsed !== undefined) {
+        setElapsed(pausedElapsed)
+        setPaused(true)
+        pausedRef.current = true
+        setStartTime(new Date(Date.now() - pausedElapsed * 1000))
+      } else {
+        const startDate = new Date(start)
+        setStartTime(startDate)
+        setElapsed(Math.floor((Date.now() - startDate.getTime()) / 1000))
+      }
     }
   }, [])
 
   useEffect(() => {
-    if (running && startTime) {
+    if (running && startTime && !paused) {
       intervalRef.current = setInterval(() => {
         setElapsed(Math.floor((Date.now() - startTime.getTime()) / 1000))
       }, 1000)
@@ -63,7 +72,7 @@ export default function Track() {
       clearInterval(intervalRef.current)
     }
     return () => clearInterval(intervalRef.current)
-  }, [running, startTime])
+  }, [running, startTime, paused])
 
   async function fetchClients() {
     const [{ data: rates }, { data: sessions }, { data: ownedWs }] = await Promise.all([
@@ -117,6 +126,8 @@ export default function Track() {
     startTimeRef.current = now
     setRunning(true)
     runningRef.current = true
+    setPaused(false)
+    pausedRef.current = false
     setElapsed(0)
     localStorage.setItem(STORAGE_KEY, JSON.stringify({
       start: now.toISOString(),
@@ -125,9 +136,28 @@ export default function Track() {
     }))
   }
 
+  function pauseTimer() {
+    setPaused(true)
+    pausedRef.current = true
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...saved, paused: true, pausedElapsed: elapsedRef.current }))
+  }
+
+  function resumeFromPause() {
+    const newStart = new Date(Date.now() - elapsedRef.current * 1000)
+    setStartTime(newStart)
+    startTimeRef.current = newStart
+    setPaused(false)
+    pausedRef.current = false
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...saved, start: newStart.toISOString(), paused: false, pausedElapsed: undefined }))
+  }
+
   function stopTimer() {
     setRunning(false)
     runningRef.current = false
+    setPaused(false)
+    pausedRef.current = false
   }
 
   function resumeTimer() {
@@ -139,17 +169,21 @@ export default function Track() {
   useEffect(() => { elapsedRef.current = elapsed }, [elapsed])
   useEffect(() => { startTimeRef.current = startTime }, [startTime])
   useEffect(() => { timerClientRef.current = timerClient }, [timerClient])
+  useEffect(() => { pausedRef.current = paused }, [paused])
 
   function handleVoiceCommand(text) {
     if (text.includes('start')) {
       if (!runningRef.current && timerClientRef.current) startTimer()
       else if (!timerClientRef.current) showSuccess('Say a client name first')
-    } else if (text.includes('stop') || text.includes('pause')) {
+    } else if (text.includes('stop')) {
       if (runningRef.current) stopTimer()
+    } else if (text.includes('pause')) {
+      if (runningRef.current && !pausedRef.current) pauseTimer()
     } else if (text.includes('save')) {
       if (!runningRef.current && elapsedRef.current > 0) saveTimer()
     } else if (text.includes('resume')) {
-      if (!runningRef.current && elapsedRef.current > 0) resumeTimer()
+      if (runningRef.current && pausedRef.current) resumeFromPause()
+      else if (!runningRef.current && elapsedRef.current > 0) resumeTimer()
     } else if (text.includes('discard')) {
       discardTimer()
     } else {
@@ -204,6 +238,9 @@ export default function Track() {
     if (!confirm('Discard this session?')) return
     localStorage.removeItem(STORAGE_KEY)
     setRunning(false)
+    runningRef.current = false
+    setPaused(false)
+    pausedRef.current = false
     setElapsed(0)
     setStartTime(null)
     setTimerClient('')
@@ -304,7 +341,12 @@ export default function Track() {
 
       {tab === 'timer' && (
         <div className="card">
-          <div className={`timer-display${running ? ' timer-running' : ''}`}>{timerDisplay}</div>
+          <div className={`timer-display${running && !paused ? ' timer-running' : ''}`}>{timerDisplay}</div>
+          {running && (
+            <p style={{ textAlign: 'center', fontSize: '0.8rem', color: paused ? 'var(--warning, #d97706)' : 'var(--success, #16a34a)', marginTop: '0.25rem' }}>
+              {paused ? 'Paused' : 'Running'}
+            </p>
+          )}
 
           <div className="form-group" style={{ marginTop: '1.5rem' }}>
             <label>Client</label>
@@ -342,7 +384,14 @@ export default function Track() {
               </button>
             )}
             {running && (
-              <button className="btn btn-danger" onClick={stopTimer}>Stop</button>
+              <>
+                {!paused ? (
+                  <button className="btn btn-secondary" onClick={pauseTimer}>Pause</button>
+                ) : (
+                  <button className="btn btn-primary" onClick={resumeFromPause}>Resume</button>
+                )}
+                <button className="btn btn-danger" onClick={stopTimer}>Stop</button>
+              </>
             )}
             {!running && elapsed > 0 && (
               <>

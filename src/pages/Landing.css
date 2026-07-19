@@ -627,6 +627,18 @@
 
 .privacy-content a { color: var(--accent); }
 
+/* ── Tablet responsive ── */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .landing-scroll-item {
+    width: 200px;
+  }
+
+  .landing-scroll-track {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
 /* ── Mobile responsive ── */
 @media (max-width: 640px) {
   .landing-hero {

@@ -64,8 +64,12 @@ export default function Dashboard() {
       .select('weekly_goal, client_goals')
       .eq('user_id', user.id)
       .maybeSingle()
-    if (data?.weekly_goal) setWeekGoal(data.weekly_goal)
-    if (data?.client_goals) setClientGoals(data.client_goals)
+    if (data?.client_goals?.length > 0) {
+      setClientGoals(data.client_goals)
+      setWeekGoal(data.client_goals.reduce((sum, g) => sum + (g.weekly_hours ?? 0), 0))
+    } else if (data?.weekly_goal) {
+      setWeekGoal(data.weekly_goal)
+    }
   }
 
   async function fetchRecentSessions() {
