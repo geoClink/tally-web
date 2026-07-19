@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
@@ -12,6 +12,7 @@ const STORAGE_KEY = 'tally_active_timer'
 export default function Track() {
   const { user } = useAuth()
   const { isPro } = useSubscription()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [tab, setTab] = useState('timer')
   const [clients, setClients] = useState([])
   const [workspaceClients, setWorkspaceClients] = useState([])
@@ -43,6 +44,16 @@ export default function Track() {
 
   useEffect(() => {
     fetchClients()
+
+    // Pre-fill from "Log again" link on Dashboard
+    const prefillClient = searchParams.get('client')
+    const prefillNote   = searchParams.get('note')
+    if (prefillClient) {
+      setTab('manual')
+      setManualClient(prefillClient)
+      if (prefillNote) setManualNote(prefillNote)
+      setSearchParams({}, { replace: true })
+    }
 
     const saved = localStorage.getItem(STORAGE_KEY)
     if (saved) {

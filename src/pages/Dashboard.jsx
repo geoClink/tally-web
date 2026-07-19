@@ -178,17 +178,31 @@ export default function Dashboard() {
                 <th>Client</th>
                 <th>Hours</th>
                 <th className="hide-mobile">Note</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
-              {recentSessions.map(s => (
-                <tr key={s.id}>
-                  <td style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
-                  <td>{s.client}</td>
-                  <td style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
-                  <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
-                </tr>
-              ))}
+              {recentSessions.map(s => {
+                const params = new URLSearchParams({ client: s.client })
+                if (s.task_note) params.set('note', s.task_note)
+                return (
+                  <tr key={s.id}>
+                    <td style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
+                    <td>{s.client}</td>
+                    <td style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
+                    <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
+                    <td>
+                      <Link
+                        to={`/track?${params.toString()}`}
+                        className="btn btn-secondary btn-sm"
+                        title="Log time for this client and task"
+                      >
+                        Log again
+                      </Link>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
