@@ -14,6 +14,12 @@ const screenshots = [
   { src: '/images/tallyios/IMG_1221_paywall.PNG', alt: 'Tally iOS subscription upgrade', caption: 'Business — unlock team workspaces and client invoicing with a 7-day free trial.' },
 ]
 
+const watchScreenshots = [
+  { src: '/images/tallyios/watch-start.PNG', alt: 'Tally Apple Watch client select', caption: 'Select a client and start tracking from your wrist.' },
+  { src: '/images/tallyios/watch-running.PNG', alt: 'Tally Apple Watch timer running', caption: 'Live timer with pause and stop — no phone needed.' },
+  { src: '/images/tallyios/watch-paused.PNG', alt: 'Tally Apple Watch timer paused', caption: 'Resume or stop a session without reaching for your phone.' },
+]
+
 const features = [
   { title: 'Live Activity & Dynamic Island', body: 'Your running timer stays on the lock screen and Dynamic Island the entire time — no need to open the app.' },
   { title: 'Widgets & Siri', body: 'Small and medium home screen widgets show your active session. Start and stop timers by voice via App Intents and Siri Shortcuts.' },
@@ -126,6 +132,22 @@ export default function Landing() {
               <p>{s.caption}</p>
             </div>
           ))}
+        </div>
+
+        <div className="landing-watch-row">
+          <p className="landing-watch-row-label">Apple Watch</p>
+          <div className="landing-watch-track">
+            {watchScreenshots.map((s) => (
+              <div key={s.src} className="landing-watch-item">
+                <div className="landing-watch-mockup">
+                  <div className="landing-watch-screen">
+                    <img src={s.src} alt={s.alt} loading="lazy" />
+                  </div>
+                </div>
+                <p>{s.caption}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
