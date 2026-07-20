@@ -14,6 +14,13 @@ const screenshots = [
   { src: '/images/tallyios/IMG_1221_paywall.PNG', alt: 'Tally iOS subscription upgrade', caption: 'Business — unlock team workspaces and client invoicing with a 7-day free trial.' },
 ]
 
+const ipadScreenshots = [
+  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.02.54.png', alt: 'Tally iPad timer view', caption: 'Timer — full iPad layout with sidebar navigation and large-format controls.' },
+  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.00.png', alt: 'Tally iPad reports view', caption: 'Reports — Swift Charts with per-client breakdowns and full session history.' },
+  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.17.png', alt: 'Tally iPad activity calendar', caption: 'Activity — split-view calendar with day-by-day client session detail.' },
+  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.26.png', alt: 'Tally iPad team workspace', caption: 'Team — full team workspace with member hours and weekly goal progress.' },
+]
+
 const watchScreenshots = [
   { src: '/images/tallyios/watch-start.PNG', alt: 'Tally Apple Watch client select', caption: 'Select a client and start tracking from your wrist.' },
   { src: '/images/tallyios/watch-running.PNG', alt: 'Tally Apple Watch timer running', caption: 'Live timer with pause and stop — no phone needed.' },
@@ -132,6 +139,22 @@ export default function Landing() {
               <p>{s.caption}</p>
             </div>
           ))}
+        </div>
+
+        <div className="landing-ipad-row">
+          <p className="landing-ipad-row-label">iPad</p>
+          <div className="landing-ipad-track">
+            {ipadScreenshots.map((s) => (
+              <div key={s.src} className="landing-ipad-item">
+                <div className="landing-ipad-mockup">
+                  <div className="landing-ipad-screen">
+                    <img src={s.src} alt={s.alt} loading="lazy" />
+                  </div>
+                </div>
+                <p>{s.caption}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="landing-watch-row">

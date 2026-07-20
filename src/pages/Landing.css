@@ -431,6 +431,107 @@
   display: block;
 }
 
+/* iPad row */
+.landing-ipad-row {
+  padding: 2rem 0 0.5rem;
+}
+
+.landing-ipad-row-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.landing-ipad-track {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.75rem 0 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.landing-ipad-track::-webkit-scrollbar { height: 5px; }
+.landing-ipad-track::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.landing-ipad-item:first-child { margin-left: 2rem; }
+.landing-ipad-item:last-child  { margin-right: 2rem; }
+
+.landing-ipad-item {
+  flex: 0 0 auto;
+  width: 380px;
+  scroll-snap-align: start;
+}
+
+.landing-ipad-item p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.65rem;
+  text-align: center;
+  line-height: 1.4;
+  font-style: italic;
+}
+
+/* iPad bezel — landscape */
+.landing-ipad-mockup {
+  width: 100%;
+  background: #111113;
+  border-radius: 18px;
+  padding: 5px;
+  position: relative;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    0 0 0 1.5px #5c5c61,
+    0 0 0 3.5px #111113,
+    0 0 0 5px #3e3e43,
+    0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+/* Power button on top edge */
+.landing-ipad-mockup::before {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 56px;
+  width: 28px;
+  height: 5px;
+  background: #4a4a50;
+  border-radius: 3px 3px 0 0;
+  z-index: 15;
+}
+
+/* Volume buttons on top edge */
+.landing-ipad-mockup::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 100px;
+  width: 44px;
+  height: 5px;
+  background: #4a4a50;
+  border-radius: 3px 3px 0 0;
+  z-index: 15;
+}
+
+.landing-ipad-screen {
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+.landing-ipad-screen img {
+  width: 100%;
+  display: block;
+}
+
 /* Apple Watch row */
 .landing-watch-row {
   padding: 2rem 0 0.5rem;
