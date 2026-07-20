@@ -44,8 +44,9 @@ const tiers = [
     name: 'Business',
     price: '$4.99',
     period: 'per month',
-    features: ['Team workspaces', 'Stripe invoicing', '7-day free trial', 'All Pro features'],
-    cta: 'Start free trial',
+    features: ['Team workspaces', 'Client invoicing via email', '7-day free trial (iOS)', 'All Pro features'],
+    cta: 'Start free trial on iOS',
+    ctaHref: APP_STORE_URL,
     highlight: false,
   },
 ]
@@ -150,9 +151,15 @@ export default function Landing() {
               <ul className="landing-tier-features">
                 {t.features.map((f) => <li key={f}>{f}</li>)}
               </ul>
-              <Link to="/login" className={t.highlight ? 'landing-btn-primary' : 'landing-btn-outline'}>
-                {t.cta}
-              </Link>
+              {t.ctaHref ? (
+                <a href={t.ctaHref} target="_blank" rel="noopener noreferrer" className={t.highlight ? 'landing-btn-primary' : 'landing-btn-outline'}>
+                  {t.cta}
+                </a>
+              ) : (
+                <Link to="/login" className={t.highlight ? 'landing-btn-primary' : 'landing-btn-outline'}>
+                  {t.cta}
+                </Link>
+              )}
             </div>
           ))}
         </div>
