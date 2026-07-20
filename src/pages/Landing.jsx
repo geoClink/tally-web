@@ -5,11 +5,11 @@ import './Landing.css'
 const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
 
 const screenshots = [
-  { src: '/images/tallyios/tallyiostimerview.webp', alt: 'Tally iOS timer view', caption: 'Timer — one-tap tracking with client and project tagging.' },
-  { src: '/images/tallyios/tallyioscalendar.webp', alt: 'Tally iOS calendar view', caption: 'Calendar — visual day and week breakdown of logged sessions.' },
-  { src: '/images/tallyios/tallyiosreportview.webp', alt: 'Tally iOS report view', caption: 'Reports — earnings summary by client with CSV export.' },
-  { src: '/images/tallyios/tallyiosaccountview.webp', alt: 'Tally iOS account view', caption: 'Account — subscription status and cross-platform sync.' },
-  { src: '/images/tallyios/tallyiosworkspacesubscriptionpage.webp', alt: 'Tally iOS workspace page', caption: 'Workspace — Business tier team management.' },
+  { src: '/images/tallyios/IMG_1217.PNG', alt: 'Tally iOS client earnings detail', caption: 'Client detail — total hours and earnings with one-tap invoice generation.' },
+  { src: '/images/tallyios/IMG_1219.PNG', alt: 'Tally iOS team workspace', caption: 'Team — shared workspace with per-member hours and weekly goal progress.' },
+  { src: '/images/tallyios/IMG_1216.PNG', alt: 'Tally iOS reports view', caption: 'Reports — hours and earnings by client with progress toward your weekly goal.' },
+  { src: '/images/tallyios/IMG_1218.PNG', alt: 'Tally iOS activity calendar', caption: 'Activity — visual calendar showing every day you logged time.' },
+  { src: '/images/tallyios/IMG_1220.PNG', alt: 'Tally iOS account view', caption: 'Account — subscription status and cross-platform sync.' },
 ]
 
 const features = [
