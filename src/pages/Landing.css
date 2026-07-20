@@ -4,6 +4,49 @@
   flex-direction: column;
 }
 
+/* ── Hero Banner ── */
+.landing-banner {
+  background: linear-gradient(150deg, #1e3a8a 0%, #2563eb 100%);
+}
+
+.landing-banner .landing-nav {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.landing-banner .landing-logo {
+  color: #fff;
+}
+
+.landing-banner .landing-nav-signin {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.landing-banner .landing-nav-signin:hover {
+  color: #fff;
+}
+
+.landing-banner .landing-headline {
+  color: #fff;
+}
+
+.landing-banner .landing-subhead {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.landing-banner .landing-hero-note {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.landing-banner .landing-btn-primary {
+  background: #fff;
+  color: #2563eb;
+}
+
+.landing-banner .landing-btn-primary:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1d4ed8;
+}
+
 /* ── Nav ── */
 .landing-nav {
   display: flex;
@@ -468,7 +511,7 @@
 
 .landing-ipad-item {
   flex: 0 0 auto;
-  width: 380px;
+  width: 480px;
   scroll-snap-align: start;
 }
 
@@ -634,6 +677,7 @@
 .landing-feature-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
   border-radius: var(--radius);
   padding: 1.25rem 1.5rem;
   box-shadow: var(--shadow);

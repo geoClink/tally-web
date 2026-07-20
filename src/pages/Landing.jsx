@@ -5,11 +5,11 @@ import './Landing.css'
 const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
 
 const screenshots = [
-  { src: '/images/tallyios/IMG_1215.PNG', alt: 'Tally iOS timer view', caption: 'Timer — one-tap tracking with your weekly goal always in view.' },
   { src: '/images/tallyios/IMG_1217.PNG', alt: 'Tally iOS client earnings detail', caption: 'Client detail — total hours and earnings with one-tap invoice generation.' },
-  { src: '/images/tallyios/IMG_1219.PNG', alt: 'Tally iOS team workspace', caption: 'Team — shared workspace with per-member hours and weekly goal progress.' },
   { src: '/images/tallyios/IMG_1216_reports.PNG', alt: 'Tally iOS reports view', caption: 'Reports — hours and earnings by client with progress toward your weekly goal.' },
+  { src: '/images/tallyios/IMG_1219.PNG', alt: 'Tally iOS team workspace', caption: 'Team — shared workspace with per-member hours and weekly goal progress.' },
   { src: '/images/tallyios/IMG_1218.PNG', alt: 'Tally iOS activity calendar', caption: 'Activity — visual calendar showing every day you logged time.' },
+  { src: '/images/tallyios/IMG_1215.PNG', alt: 'Tally iOS timer view', caption: 'Timer — one-tap tracking with your weekly goal always in view.' },
   { src: '/images/tallyios/IMG_1220.PNG', alt: 'Tally iOS account view', caption: 'Account — subscription status and cross-platform sync.' },
   { src: '/images/tallyios/IMG_1221_paywall.PNG', alt: 'Tally iOS subscription upgrade', caption: 'Business — unlock team workspaces and client invoicing with a 7-day free trial.' },
 ]
@@ -71,6 +71,7 @@ export default function Landing() {
 
   return (
     <div className="landing">
+      <header className="landing-banner">
       <nav className="landing-nav">
         <span className="landing-logo">Tally</span>
         <Link to="/login" className="landing-nav-signin">Sign in →</Link>
@@ -96,6 +97,7 @@ export default function Landing() {
         </div>
         <p className="landing-hero-note">Free to start · No credit card required · Live on App Store</p>
       </section>
+      </header>
 
       <section className="landing-demo">
         <h2 className="landing-section-title">See it in action</h2>
@@ -123,9 +125,9 @@ export default function Landing() {
 
       <section className="landing-screenshots">
         <div className="landing-screenshots-header">
-          <span className="landing-platform-badge">iOS · watchOS · macOS · Web</span>
+          <span className="landing-platform-badge">iPhone · iPad · Apple Watch · Web</span>
           <h2 className="landing-section-title">Native on every Apple device</h2>
-          <p className="landing-screenshots-sub">iPhone, Apple Watch, iPad, and Mac Catalyst — plus a full web dashboard. One Supabase backend, everything in sync.</p>
+          <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, and a full web dashboard — one Supabase backend, everything in sync.</p>
         </div>
         <div className="landing-scroll-track">
           {screenshots.map((s) => (
