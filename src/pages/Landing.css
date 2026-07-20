@@ -330,11 +330,8 @@
   scrollbar-color: var(--border) transparent;
 }
 
-.landing-scroll-track::before,
-.landing-scroll-track::after {
-  content: '';
-  flex: 0 0 2rem;
-}
+.landing-scroll-item:first-child { margin-left: 2rem; }
+.landing-scroll-item:last-child  { margin-right: 2rem; }
 
 .landing-scroll-track::-webkit-scrollbar { height: 5px; }
 .landing-scroll-track::-webkit-scrollbar-thumb {
@@ -639,8 +636,8 @@
   }
 
   .landing-scroll-track {
-    padding-left: 3rem;
-    padding-right: 3rem;
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
