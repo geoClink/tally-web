@@ -28,6 +28,7 @@ if (authError || !user) { console.error('Auth failed:', authError?.message); pro
 const { error: deleteError } = await supabase.rpc('delete_own_sessions')
 if (deleteError) { console.error('Delete failed:', deleteError.message); process.exit(1) }
 
+
 function weekMonday() {
   const now = new Date()
   const day = now.getDay()
@@ -133,4 +134,8 @@ const rows = [...historicalRows, ...thisWeekRows]
 const { error } = await supabase.from('sessions').insert(rows)
 if (error) { console.error('Insert failed:', error.message); process.exit(1) }
 
-console.log(`Demo reset complete — inserted ${rows.length} sessions (${thisWeekRows.length} this week + ${historicalRows.length} historical).`)
+// Reset alice + bob's sessions server-side via SECURITY DEFINER function
+const { error: teamError } = await supabase.rpc('reset_team_sessions')
+if (teamError) console.warn('Team sessions warning:', teamError.message)
+
+console.log(`Demo reset complete — inserted ${rows.length} demo sessions + team sessions reset.`)

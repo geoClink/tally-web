@@ -15,30 +15,23 @@ export default function Team() {
   const [inviting, setInviting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [teamWeekHours, setTeamWeekHours] = useState(null)
 
   // Create workspace
   const [newWorkspaceName, setNewWorkspaceName] = useState('')
   const [newClientName, setNewClientName] = useState('')
+  const [newWeeklyGoal, setNewWeeklyGoal] = useState('')
   const [creating, setCreating] = useState(false)
 
   // Edit workspace
   const [editing, setEditing] = useState(false)
   const [editName, setEditName] = useState('')
   const [editClientName, setEditClientName] = useState('')
+  const [editWeeklyGoal, setEditWeeklyGoal] = useState('')
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     if (!isBusiness) { setLoading(false); return }
-    if (user.email === import.meta.env.VITE_DEMO_EMAIL) {
-      setWorkspace({ id: 'demo', name: 'Design Team', client_name: 'Acme Corp', owner_id: user.id })
-      setMembers([
-        { id: 'alice', invited_email: 'alice@designteam.co', role: 'admin', accepted_at: '2026-07-01T00:00:00Z' },
-        { id: 'bob',   invited_email: 'bob@designteam.co',   role: 'member', accepted_at: '2026-07-05T00:00:00Z' },
-        { id: 'carol', invited_email: 'carol@designteam.co', role: 'member', accepted_at: null },
-      ])
-      setLoading(false)
-      return
-    }
     fetchWorkspace()
   }, [user, isBusiness])
 
@@ -55,7 +48,7 @@ export default function Team() {
 
     if (owned) {
       setWorkspace(owned)
-      await fetchMembers(owned.id)
+      await Promise.all([fetchMembers(owned.id), fetchTeamHours(owned.id)])
       setLoading(false)
       return
     }
@@ -74,7 +67,7 @@ export default function Team() {
         .maybeSingle()
       setWorkspace(ws)
       if (ws) {
-        await fetchMembers(ws.id)
+        await Promise.all([fetchMembers(ws.id), fetchTeamHours(ws.id)])
         await supabase
           .from('workspace_members')
           .update({ accepted_at: new Date().toISOString(), user_id: user.id })
@@ -94,6 +87,18 @@ export default function Team() {
       .eq('workspace_id', workspaceId)
       .order('invited_email')
     setMembers(data ?? [])
+  }
+
+  async function fetchTeamHours(workspaceId) {
+    const monday = new Date()
+    const day = monday.getDay()
+    monday.setDate(monday.getDate() - (day === 0 ? 6 : day - 1))
+    const startDate = monday.toISOString().split('T')[0]
+    const { data } = await supabase.rpc('get_team_hours', {
+      p_workspace_id: workspaceId,
+      p_start_date: startDate,
+    })
+    if (data) setTeamWeekHours(data.reduce((sum, r) => sum + (r.total_hours ?? 0), 0))
   }
 
   const isDemo = user.email === import.meta.env.VITE_DEMO_EMAIL
@@ -118,7 +123,7 @@ export default function Team() {
     setCreating(true)
     const { data, error: err } = await supabase
       .from('workspaces')
-      .insert({ name: newWorkspaceName.trim(), client_name: newClientName.trim(), owner_id: user.id })
+      .insert({ name: newWorkspaceName.trim(), client_name: newClientName.trim(), owner_id: user.id, weekly_goal: parseFloat(newWeeklyGoal) || 0 })
       .select()
       .single()
     setCreating(false)
@@ -126,6 +131,7 @@ export default function Team() {
     setWorkspace(data)
     setNewWorkspaceName('')
     setNewClientName('')
+    setNewWeeklyGoal('')
   }
 
   async function saveEdit(e) {
@@ -135,11 +141,11 @@ export default function Team() {
     setSaving(true)
     const { error: err } = await supabase
       .from('workspaces')
-      .update({ name: editName.trim(), client_name: editClientName.trim() })
+      .update({ name: editName.trim(), client_name: editClientName.trim(), weekly_goal: parseFloat(editWeeklyGoal) || 0 })
       .eq('id', workspace.id)
     setSaving(false)
     if (err) { setError(err.message); return }
-    setWorkspace(prev => ({ ...prev, name: editName.trim(), client_name: editClientName.trim() }))
+    setWorkspace(prev => ({ ...prev, name: editName.trim(), client_name: editClientName.trim(), weekly_goal: parseFloat(editWeeklyGoal) || 0 }))
     setEditing(false)
     showSuccess('Workspace updated.')
   }
@@ -147,6 +153,7 @@ export default function Team() {
   function startEdit() {
     setEditName(workspace.name)
     setEditClientName(workspace.client_name ?? '')
+    setEditWeeklyGoal(workspace.weekly_goal > 0 ? String(workspace.weekly_goal) : '')
     setEditing(true)
   }
 
@@ -302,6 +309,20 @@ export default function Team() {
                 Team hours are tracked to this client name. Members must log time under this exact name.
               </p>
             </div>
+            <div className="form-group">
+              <label>Weekly Hour Goal <span className="text-muted" style={{ fontWeight: 400 }}>(optional)</span></label>
+              <input
+                type="number"
+                min="0"
+                step="1"
+                value={newWeeklyGoal}
+                onChange={e => setNewWeeklyGoal(e.target.value)}
+                placeholder="e.g. 80"
+              />
+              <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.35rem' }}>
+                Total hours your team aims to log per week for this client.
+              </p>
+            </div>
             <button type="submit" className="btn btn-primary" disabled={creating}>
               {creating ? 'Creating…' : 'Create Workspace'}
             </button>
@@ -334,6 +355,17 @@ export default function Team() {
                     Changing this will affect how team hours are counted — existing sessions won't move.
                   </p>
                 </div>
+                <div className="form-group">
+                  <label>Weekly Hour Goal <span className="text-muted" style={{ fontWeight: 400 }}>(optional)</span></label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={editWeeklyGoal}
+                    onChange={e => setEditWeeklyGoal(e.target.value)}
+                    placeholder="e.g. 80"
+                  />
+                </div>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button type="submit" className="btn btn-primary" disabled={saving}>
                     {saving ? 'Saving…' : 'Save Changes'}
@@ -341,6 +373,28 @@ export default function Team() {
                   <button type="button" className="btn btn-secondary" onClick={() => setEditing(false)}>Cancel</button>
                 </div>
               </form>
+            </div>
+          )}
+
+          {!editing && workspace.weekly_goal > 0 && teamWeekHours !== null && (
+            <div className="card" style={{ marginBottom: '1.5rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+                <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Team Hours This Week</span>
+                <span className="text-muted" style={{ fontSize: '0.85rem' }}>
+                  {teamWeekHours.toFixed(1)}h of {workspace.weekly_goal}h goal
+                </span>
+              </div>
+              <div className="progress-bar">
+                <div
+                  className={`progress-fill${teamWeekHours >= workspace.weekly_goal ? ' complete' : ''}`}
+                  style={{ width: `${Math.min((teamWeekHours / workspace.weekly_goal) * 100, 100)}%` }}
+                />
+              </div>
+              <div className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.3rem' }}>
+                {teamWeekHours >= workspace.weekly_goal
+                  ? 'Goal reached!'
+                  : `${(workspace.weekly_goal - teamWeekHours).toFixed(1)}h remaining`}
+              </div>
             </div>
           )}
 
