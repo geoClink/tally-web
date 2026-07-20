@@ -325,10 +325,15 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 0.75rem 2.5rem 1.5rem;
+  padding: 0.75rem 0 1.5rem;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
-  justify-content: safe center;
+}
+
+.landing-scroll-track::before,
+.landing-scroll-track::after {
+  content: '';
+  flex: 0 0 2rem;
 }
 
 .landing-scroll-track::-webkit-scrollbar { height: 5px; }
