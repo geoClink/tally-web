@@ -15,10 +15,10 @@ const screenshots = [
 ]
 
 const ipadScreenshots = [
-  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.02.54.png', alt: 'Tally iPad timer view', caption: 'Timer — full iPad layout with sidebar navigation and large-format controls.' },
   { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.00.png', alt: 'Tally iPad reports view', caption: 'Reports — Swift Charts with per-client breakdowns and full session history.' },
-  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.17.png', alt: 'Tally iPad activity calendar', caption: 'Activity — split-view calendar with day-by-day client session detail.' },
   { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.26.png', alt: 'Tally iPad team workspace', caption: 'Team — full team workspace with member hours and weekly goal progress.' },
+  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.17.png', alt: 'Tally iPad activity calendar', caption: 'Activity — split-view calendar with day-by-day client session detail.' },
+  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.02.54.png', alt: 'Tally iPad timer view', caption: 'Timer — full iPad layout with sidebar navigation and large-format controls.' },
 ]
 
 const watchScreenshots = [
