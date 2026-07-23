@@ -378,6 +378,7 @@
   gap: 1.5rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
+  scroll-padding-left: 4rem;
   -webkit-overflow-scrolling: touch;
   padding: 0.75rem 4rem 1.5rem;
   scrollbar-width: thin;
@@ -505,6 +506,7 @@
   gap: 1.5rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
+  scroll-padding-left: 4rem;
   -webkit-overflow-scrolling: touch;
   padding: 0.75rem 4rem 1.5rem;
   scrollbar-width: thin;
