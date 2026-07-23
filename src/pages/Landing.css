@@ -517,8 +517,8 @@
   border-radius: 3px;
 }
 
-.landing-ipad-item:first-child { margin-left: 2rem; }
-.landing-ipad-item:last-child  { margin-right: 2rem; }
+.landing-ipad-item:first-child { margin-left: 4rem; }
+.landing-ipad-item:last-child  { margin-right: 4rem; }
 
 .landing-ipad-item {
   flex: 0 0 auto;
