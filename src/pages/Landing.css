@@ -384,8 +384,8 @@
   scrollbar-color: var(--border) transparent;
 }
 
-.landing-scroll-item:first-child { margin-left: 2rem; }
-.landing-scroll-item:last-child  { margin-right: 2rem; }
+.landing-scroll-item:first-child { margin-left: 4rem; }
+.landing-scroll-item:last-child  { margin-right: 4rem; }
 
 .landing-scroll-track::-webkit-scrollbar { height: 5px; }
 .landing-scroll-track::-webkit-scrollbar-thumb {
