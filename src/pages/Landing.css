@@ -18,7 +18,7 @@
 }
 
 .landing-banner .landing-nav-signin {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .landing-banner .landing-nav-signin:hover {
@@ -34,7 +34,7 @@
 }
 
 .landing-banner .landing-hero-note {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .landing-banner .landing-social-proof {
