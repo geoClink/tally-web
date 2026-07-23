@@ -111,6 +111,13 @@
   color: var(--text-muted);
 }
 
+.landing-social-proof {
+  font-size: 0.8rem;
+  color: var(--accent);
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
 /* ── Buttons ── */
 .landing-btn-primary {
   display: inline-block;

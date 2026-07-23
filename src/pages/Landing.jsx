@@ -96,6 +96,7 @@ export default function Landing() {
           </a>
         </div>
         <p className="landing-hero-note">Free to start · No credit card required · Live on App Store</p>
+        <p className="landing-social-proof">30+ downloads in the first week of launch</p>
       </section>
       </header>
 
