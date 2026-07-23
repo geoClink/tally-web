@@ -379,13 +379,13 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 0.75rem 0 1.5rem;
+  padding: 0.75rem 4rem 1.5rem;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
 
-.landing-scroll-item:first-child { margin-left: 4rem; }
-.landing-scroll-item:last-child  { margin-right: 4rem; }
+.landing-scroll-item:first-child { margin-left: 0; }
+.landing-scroll-item:last-child  { margin-right: 0; }
 
 .landing-scroll-track::-webkit-scrollbar { height: 5px; }
 .landing-scroll-track::-webkit-scrollbar-thumb {
@@ -506,7 +506,7 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 0.75rem 0 1.5rem;
+  padding: 0.75rem 4rem 1.5rem;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
@@ -517,8 +517,8 @@
   border-radius: 3px;
 }
 
-.landing-ipad-item:first-child { margin-left: 4rem; }
-.landing-ipad-item:last-child  { margin-right: 4rem; }
+.landing-ipad-item:first-child { margin-left: 0; }
+.landing-ipad-item:last-child  { margin-right: 0; }
 
 .landing-ipad-item {
   flex: 0 0 auto;
@@ -880,8 +880,8 @@
   }
 
   .landing-scroll-track {
-    padding-left: 0;
-    padding-right: 0;
+    padding-left: 2rem;
+    padding-right: 2rem;
   }
 }
 
