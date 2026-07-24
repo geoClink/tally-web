@@ -450,6 +450,7 @@ select:focus {
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   padding: 0.55rem 1.1rem;
   border-radius: var(--radius);
