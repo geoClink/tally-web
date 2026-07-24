@@ -30,3 +30,17 @@ create index if not exists subscriptions_user_id_idx on subscriptions(user_id);
 -- NOTE: In production, subscription writes after Stripe payment should be done
 -- via a Supabase Edge Function triggered by a Stripe webhook — not from the client.
 -- The client-side write on the success page is acceptable for an MVP but not secure.
+
+-- ── Subscribers (landing page email capture) ──────────────────────────────────
+create table if not exists subscribers (
+  id uuid primary key default gen_random_uuid(),
+  email text unique not null,
+  created_at timestamptz default now()
+);
+
+alter table subscribers enable row level security;
+
+-- Allow anonymous visitors to subscribe; no select/update/delete from client
+create policy "Anyone can subscribe"
+  on subscribers for insert
+  with check (true);

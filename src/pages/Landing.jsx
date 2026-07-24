@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { supabase } from '../lib/supabase'
 import BugReportModal from '../components/BugReportModal'
 import './Landing.css'
+
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
 
@@ -131,6 +134,20 @@ const tiers = [
 export default function Landing() {
   const { user, loading, recoveryMode } = useAuth()
   const [bugModalOpen, setBugModalOpen] = useState(false)
+  const [emailInput, setEmailInput] = useState('')
+  const [emailStatus, setEmailStatus] = useState('idle')
+
+  async function handleEmailSubmit(e) {
+    e.preventDefault()
+    setEmailStatus('loading')
+    const { error } = await supabase.from('subscribers').insert({ email: emailInput.trim().toLowerCase() })
+    if (error) {
+      setEmailStatus(error.code === '23505' ? 'already' : 'error')
+    } else {
+      setEmailStatus('success')
+      setEmailInput('')
+    }
+  }
 
   if (!loading && user && !recoveryMode) return <Navigate to="/dashboard" replace />
 
@@ -297,7 +314,16 @@ export default function Landing() {
               <ul className="landing-tier-features">
                 {t.features.map((f) => <li key={f}>{f}</li>)}
               </ul>
-              {t.ctaHref ? (
+              {t.name === 'Business' ? (
+                <a
+                  href={isIOS ? APP_STORE_URL : import.meta.env.VITE_STRIPE_BUSINESS_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="landing-btn-outline"
+                >
+                  {isIOS ? 'Start free trial on iOS' : 'Start free trial →'}
+                </a>
+              ) : t.ctaHref ? (
                 <a href={t.ctaHref} target="_blank" rel="noopener noreferrer" className={t.highlight ? 'landing-btn-primary' : 'landing-btn-outline'}>
                   {t.cta}
                 </a>
@@ -342,6 +368,30 @@ export default function Landing() {
             </span>
           </a>
         </div>
+      </section>
+
+      <section className="landing-email-capture">
+        <h2 className="landing-section-title">Stay in the loop</h2>
+        <p className="landing-email-sub">Get notified when new features ship. No spam — just updates.</p>
+        {emailStatus === 'success' ? (
+          <p className="landing-email-success">You're in. We'll let you know when something ships.</p>
+        ) : (
+          <form className="landing-email-form" onSubmit={handleEmailSubmit}>
+            <input
+              type="email"
+              className="landing-email-input"
+              placeholder="your@email.com"
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              required
+            />
+            <button type="submit" className="landing-btn-primary" disabled={emailStatus === 'loading'}>
+              {emailStatus === 'loading' ? 'Saving…' : 'Notify me'}
+            </button>
+          </form>
+        )}
+        {emailStatus === 'already' && <p className="landing-email-error">That email is already subscribed.</p>}
+        {emailStatus === 'error' && <p className="landing-email-error">Something went wrong — try again.</p>}
       </section>
 
       <footer className="landing-footer">

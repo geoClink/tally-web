@@ -860,6 +860,56 @@
   text-align: center;
 }
 
+/* ── Email capture ── */
+.landing-email-capture {
+  padding: 4rem 1.5rem;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+
+.landing-email-sub {
+  color: var(--text-muted);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.landing-email-form {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.landing-email-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.landing-email-input:focus {
+  border-color: var(--accent);
+}
+
+.landing-email-success {
+  color: var(--success);
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+
+.landing-email-error {
+  color: var(--error, #e53e3e);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
 /* ── Footer ── */
 .landing-footer {
   border-top: 1px solid var(--border);
