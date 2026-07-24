@@ -13,6 +13,7 @@ export default function Team() {
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteRole, setInviteRole] = useState('member')
   const [inviting, setInviting] = useState(false)
+  const [resending, setResending] = useState(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [teamWeekHours, setTeamWeekHours] = useState(null)
@@ -188,9 +189,26 @@ export default function Team() {
     await fetchMembers(workspace.id)
   }
 
-  async function removeMember(id) {
+  async function resendInvite(member) {
     if (demoGuard()) return
-    if (!confirm('Remove this member?')) return
+    setResending(member.id)
+    const { data: { session } } = await supabase.auth.getSession()
+    const { error: fnError } = await supabase.functions.invoke('send-invite-email', {
+      body: {
+        invitedEmail: member.invited_email,
+        workspaceName: workspace.name,
+        inviterEmail: session?.user?.email ?? 'A teammate',
+      },
+      headers: { Authorization: `Bearer ${session?.access_token}` },
+    })
+    setResending(null)
+    if (fnError) { setError('Failed to resend invite.'); return }
+    showSuccess(`Invite resent to ${member.invited_email}.`)
+  }
+
+  async function removeMember(id, email) {
+    if (demoGuard()) return
+    if (!confirm(`Remove ${email} from the workspace?`)) return
     await supabase.from('workspace_members').delete().eq('id', id)
     setMembers(prev => prev.filter(m => m.id !== id))
   }
@@ -280,7 +298,11 @@ export default function Team() {
       {success && <div className="alert alert-success">{success}</div>}
 
       {!workspace ? (
-        <div className="card">
+        <>
+          <div className="alert alert-info" style={{ marginBottom: '1.5rem' }}>
+            Were you invited to a workspace? Make sure you're signed in with the exact email address the invite was sent to. You're currently signed in as <strong>{user.email}</strong>.
+          </div>
+          <div className="card">
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Create a Workspace</h2>
           <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
             The client name links your team's sessions together — all members must log time under this exact name.
@@ -328,6 +350,7 @@ export default function Team() {
             </button>
           </form>
         </div>
+        </>
       ) : (
         <>
           {editing && (
@@ -446,18 +469,37 @@ export default function Team() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {members.map(m => (
                 <div key={m.id} className="card" style={{ padding: '1rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <div style={{ overflow: 'hidden' }}>
-                      <div style={{ fontWeight: 500, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {m.invited_email}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
+                      <div style={{
+                        width: '2.25rem', height: '2.25rem', borderRadius: '50%',
+                        background: 'var(--accent)', color: '#fff',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontWeight: 600, fontSize: '0.875rem', flexShrink: 0,
+                      }}>
+                        {m.invited_email.charAt(0).toUpperCase()}
                       </div>
-                      <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.4rem', alignItems: 'center' }}>
-                        <span className={m.accepted_at ? 'badge-success' : 'badge-pending'}>
-                          {m.accepted_at ? 'Accepted' : 'Pending'}
-                        </span>
+                      <div style={{ overflow: 'hidden' }}>
+                        <div style={{ fontWeight: 500, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {m.invited_email}
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem', alignItems: 'center' }}>
+                          <span className={m.accepted_at ? 'badge-success' : 'badge-pending'}>
+                            {m.accepted_at ? 'Accepted' : 'Pending'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
+                      {isAdmin && !m.accepted_at && m.invited_email !== user.email && (
+                        <button
+                          className="btn btn-secondary btn-sm"
+                          disabled={resending === m.id}
+                          onClick={() => resendInvite(m)}
+                        >
+                          {resending === m.id ? 'Sending…' : 'Resend'}
+                        </button>
+                      )}
                       {isOwner && m.invited_email !== user.email ? (
                         <select
                           value={m.role}
@@ -471,7 +513,7 @@ export default function Team() {
                         <span style={{ textTransform: 'capitalize', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{m.role}</span>
                       )}
                       {isAdmin && m.invited_email !== user.email && (
-                        <button className="btn btn-danger btn-sm" onClick={() => removeMember(m.id)}>Remove</button>
+                        <button className="btn btn-danger btn-sm" onClick={() => removeMember(m.id, m.invited_email)}>Remove</button>
                       )}
                     </div>
                   </div>

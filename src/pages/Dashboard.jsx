@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
+import { usePendingInvite } from '../context/PendingInviteContext'
 import { formatHours, todayString, weekStartString } from '../lib/utils'
 
 export default function Dashboard() {
   const { user } = useAuth()
   const { isPro } = useSubscription()
+  const { pendingInvite, dismiss } = usePendingInvite()
   const [todayHours, setTodayHours] = useState(0)
   const [weekHours, setWeekHours] = useState(0)
   const [weekGoal, setWeekGoal] = useState(40)
@@ -95,6 +97,17 @@ export default function Dashboard() {
         <h1 className="page-title">Dashboard</h1>
         <p className="page-subtitle">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
       </div>
+
+      {pendingInvite && (
+        <div className="alert alert-info" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <span>
+            You've been invited to join <strong>{pendingInvite.workspaces?.name}</strong>.
+          </span>
+          <Link to="/team" onClick={dismiss} className="btn btn-primary btn-sm" style={{ flexShrink: 0 }}>
+            View Invite →
+          </Link>
+        </div>
+      )}
 
       <div className="card-grid">
         <div className="card">

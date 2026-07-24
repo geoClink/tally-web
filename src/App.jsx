@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
 import { AuthProvider } from './context/AuthContext'
 import { SubscriptionProvider } from './context/SubscriptionContext'
+import { PendingInviteProvider } from './context/PendingInviteContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 import Landing from './pages/Landing'
@@ -37,6 +38,7 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <SubscriptionProvider>
+          <PendingInviteProvider>
           <RecoveryRedirect />
           <Routes>
             <Route path="/" element={<Landing />} />
@@ -65,6 +67,7 @@ export default function App() {
               <Route path="/calendar" element={<Calendar />} />
             </Route>
           </Routes>
+          </PendingInviteProvider>
         </SubscriptionProvider>
       </AuthProvider>
     </BrowserRouter>

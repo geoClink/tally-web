@@ -1,6 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
+import { usePendingInvite } from '../context/PendingInviteContext'
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -19,6 +20,7 @@ const navItems = [
 export default function Sidebar({ onClose }) {
   const { user, signOut } = useAuth()
   const { tier, isBusiness } = useSubscription()
+  const { pendingInvite } = usePendingInvite()
   const navigate = useNavigate()
 
   async function handleSignOut() {
@@ -42,6 +44,13 @@ export default function Sidebar({ onClose }) {
               >
                 {item.label}
                 {needsBusiness && <span className="tier-badge">Business</span>}
+                {item.to === '/team' && pendingInvite && (
+                  <span style={{
+                    display: 'inline-block', width: '8px', height: '8px',
+                    borderRadius: '50%', background: 'var(--accent)',
+                    marginLeft: '6px', flexShrink: 0,
+                  }} />
+                )}
               </NavLink>
             </li>
           )
