@@ -269,7 +269,7 @@ export default function Landing() {
           <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">Download on App Store</a>
           <Link to="/login">Sign in</Link>
           <Link to="/privacy">Privacy</Link>
-          <button onClick={() => setBugModalOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', font: 'inherit', padding: 0 }}>Report a bug</button>
+          <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
         </div>
       </footer>
       {bugModalOpen && <BugReportModal onClose={() => setBugModalOpen(false)} />}

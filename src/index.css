@@ -559,13 +559,19 @@ select:focus {
   border-top: 1px solid var(--border);
 }
 
-.auth-links a, .auth-links-dot {
+.auth-links a, .auth-links-dot, .auth-links button {
   font-size: 0.8rem;
   color: var(--text-muted);
   text-decoration: none;
+  font-family: inherit;
+  font-weight: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
-.auth-links a:hover {
+.auth-links a:hover, .auth-links button:hover {
   color: var(--accent);
 }
 

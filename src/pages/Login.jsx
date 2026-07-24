@@ -107,8 +107,8 @@ export default function Login() {
           onClick={signInWithApple}
           disabled={loading}
         >
-          <svg width="14" height="17" viewBox="0 0 814 1000" fill="currentColor" aria-hidden="true">
-            <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-36.8-162.2-105.2C207.3 787.5 183 739.4 183 692c0-165.1 140.4-286.9 271.8-286.9 70.1 0 128.1 46.4 172.3 46.4 42.8 0 109.3-49 187.5-49zm-66.7-235.1c31.8-40.8 53.9-97 53.9-153.1 0-7.7-.6-15.5-1.9-23.2-50.8 1.9-112.1 33.8-150.6 85.1-28.1 35.5-53.9 89.7-53.9 147.4 0 8.4 1.3 16.7 1.9 19.3 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 136.9-77z"/>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/>
           </svg>
           Sign in with Apple
         </button>
@@ -132,7 +132,7 @@ export default function Login() {
           <span className="auth-links-dot">·</span>
           <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">App Store</a>
           <span className="auth-links-dot">·</span>
-          <button onClick={() => setBugModalOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', font: 'inherit', padding: 0 }}>Report a bug</button>
+          <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
         </div>
       </div>
       {bugModalOpen && <BugReportModal onClose={() => setBugModalOpen(false)} />}
