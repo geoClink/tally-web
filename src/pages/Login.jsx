@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useNavigate, Navigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import BugReportModal from '../components/BugReportModal'
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
 
 export default function Login() {
   const [searchParams] = useSearchParams()
   const [mode, setMode] = useState(searchParams.get('mode') === 'signup' ? 'signup' : 'signin')
+  const [bugModalOpen, setBugModalOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -129,8 +131,11 @@ export default function Login() {
           <Link to="/demo">Try demo</Link>
           <span className="auth-links-dot">·</span>
           <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">App Store</a>
+          <span className="auth-links-dot">·</span>
+          <button onClick={() => setBugModalOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', font: 'inherit', padding: 0 }}>Report a bug</button>
         </div>
       </div>
+      {bugModalOpen && <BugReportModal onClose={() => setBugModalOpen(false)} />}
     </div>
   )
 }

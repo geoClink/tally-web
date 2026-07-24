@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import ClientSelect from '../components/ClientSelect'
+import BugReportModal from '../components/BugReportModal'
 
 export default function Settings() {
   const { user, signOut } = useAuth()
@@ -17,6 +18,7 @@ export default function Settings() {
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
   const [deleting, setDeleting] = useState(false)
+  const [bugModalOpen, setBugModalOpen] = useState(false)
 
   useEffect(() => {
     loadAll()
@@ -201,6 +203,16 @@ export default function Settings() {
         </button>
       </form>
 
+      <div className="card" style={{ marginTop: '2rem' }}>
+        <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.4rem' }}>Report a Bug</h2>
+        <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+          Found something broken? Let us know and we'll look into it.
+        </p>
+        <button type="button" className="btn btn-secondary" onClick={() => setBugModalOpen(true)}>
+          Report a Bug
+        </button>
+      </div>
+
       <div className="card" style={{ marginTop: '2rem', borderColor: 'var(--danger)' }}>
         <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.4rem', color: 'var(--danger)' }}>
           Delete Account
@@ -217,6 +229,7 @@ export default function Settings() {
           {deleting ? 'Deleting…' : 'Delete My Account'}
         </button>
       </div>
+      {bugModalOpen && <BugReportModal onClose={() => setBugModalOpen(false)} />}
     </div>
   )
 }
