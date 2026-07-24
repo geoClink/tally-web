@@ -1327,3 +1327,11 @@ select:focus {
   color: var(--text-secondary);
   padding: 1rem 0;
 }
+
+.modal-card textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
