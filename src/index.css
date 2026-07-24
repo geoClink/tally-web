@@ -691,6 +691,28 @@ select:focus {
   opacity: 8%;
 }
 
+.btn-apple-official {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.btn-apple-official img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.btn-apple-official:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-apple {
   display: flex;
   align-items: center;
