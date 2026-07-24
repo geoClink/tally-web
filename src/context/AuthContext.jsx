@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
         setRecoveryMode(true)
-      } else {
+      } else if (event === 'SIGNED_OUT') {
         setRecoveryMode(false)
       }
       setUser(session?.user ?? null)

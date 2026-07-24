@@ -9,6 +9,7 @@ export default function ResetPassword() {
   const [error, setError] = useState('')
   const { recoveryMode } = useAuth()
   const navigate = useNavigate()
+  const isRecoveryUrl = window.location.hash.includes('type=recovery')
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -26,7 +27,7 @@ export default function ResetPassword() {
     }
   }
 
-  if (!recoveryMode) {
+  if (!recoveryMode && !isRecoveryUrl) {
     return (
       <div className="auth-page">
         <div className="auth-card">
