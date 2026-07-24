@@ -39,6 +39,8 @@ const features = [
 ]
 
 const faqs = [
+  { q: 'How do I sign in?', a: 'Email/password, Sign in with Apple, or Sign in with Google — all three work on both iOS and web.' },
+  { q: 'How do I report a bug or get help?', a: 'Use the "Report a bug" link in the footer or inside Settings on the web dashboard. On iOS, use the feedback option in the app. We read every report.' },
   { q: 'Is Pro really a one-time payment?', a: 'Yes. $9.99 once, yours forever. No recurring fees for solo users — ever.' },
   { q: 'What happens when I hit the 3-client limit on Free?', a: "You'll be prompted to upgrade. All your existing data stays intact — upgrading just unlocks more clients and full session history." },
   { q: 'Does the web dashboard work without the iOS app?', a: 'Fully standalone. Create an account on the web and use it on its own. The iOS app syncs to the same account when you add it.' },
