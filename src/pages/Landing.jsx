@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import BugReportModal from '../components/BugReportModal'
 import './Landing.css'
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
@@ -74,6 +76,7 @@ const tiers = [
 
 export default function Landing() {
   const { user, loading } = useAuth()
+  const [bugModalOpen, setBugModalOpen] = useState(false)
 
   if (!loading && user) return <Navigate to="/dashboard" replace />
 
@@ -266,8 +269,10 @@ export default function Landing() {
           <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">Download on App Store</a>
           <Link to="/login">Sign in</Link>
           <Link to="/privacy">Privacy</Link>
+          <button onClick={() => setBugModalOpen(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', font: 'inherit', padding: 0 }}>Report a bug</button>
         </div>
       </footer>
+      {bugModalOpen && <BugReportModal onClose={() => setBugModalOpen(false)} />}
     </div>
   )
 }
