@@ -146,6 +146,7 @@ export default function Landing() {
           <h2 className="landing-section-title">Native on every Apple device</h2>
           <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, and a full web dashboard — one Supabase backend, everything in sync.</p>
         </div>
+        <p className="landing-ipad-row-label">iPhone</p>
         <div className="landing-scroll-track">
           {screenshots.map((s) => (
             <div key={s.src} className="landing-scroll-item">
