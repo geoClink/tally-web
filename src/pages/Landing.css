@@ -482,9 +482,18 @@
   z-index: 15;
 }
 
-/* Dynamic Island hidden — baked into screenshots */
+/* Dynamic Island */
 .landing-phone-mockup::after {
-  display: none;
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32%;
+  height: 26px;
+  background: #111113;
+  border-radius: 99px;
+  z-index: 10;
 }
 
 /* Volume / mute buttons */
