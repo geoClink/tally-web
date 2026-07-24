@@ -95,7 +95,7 @@ export default function Landing() {
       <section className="landing-hero">
         <h1 className="landing-headline">Track every hour.<br />Get paid for all of it.</h1>
         <p className="landing-subhead">
-          Stop losing billable hours to clunky tools. Track time on any Apple device, generate reports, and send invoices — all from one account.
+          Built for freelancers, consultants, and independent contractors. Stop losing billable hours to clunky tools — track time on any Apple device, generate reports, and send invoices from one account.
         </p>
         <div className="landing-hero-ctas">
           <Link to="/login?mode=signup" className="landing-btn-primary">Sign up free →</Link>
@@ -235,6 +235,9 @@ export default function Landing() {
             </div>
           ))}
         </div>
+        <p className="landing-pricing-sub" style={{ marginTop: '1.25rem', fontSize: '0.85rem' }}>
+          Free plan never expires · No credit card required · Your data is never sold or shared
+        </p>
       </section>
 
       <section className="landing-faq">
