@@ -23,14 +23,14 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Tally <onboarding@resend.dev>',
+        from: 'Tally <noreply@georgeclinkscalesdev.com>',
         to: invitedEmail,
         subject: `You've been invited to ${workspaceName} on Tally`,
         html: `
           <p>Hi,</p>
           <p><strong>${inviterEmail}</strong> has invited you to join the <strong>${workspaceName}</strong> workspace on Tally.</p>
           <p>To accept the invite, sign up or sign in at:</p>
-          <p><a href="https://tally-web-nu.vercel.app">https://tally-web-nu.vercel.app</a></p>
+          <p><a href="https://tallytimetracker.com">https://tallytimetracker.com</a></p>
           <p>Use the email address this was sent to when creating your account.</p>
           <br>
           <p>— The Tally Team</p>
