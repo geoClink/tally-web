@@ -5,26 +5,26 @@ import './Landing.css'
 const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
 
 const screenshots = [
-  { src: '/images/tallyios/IMG_1217.PNG', alt: 'Tally iOS client earnings detail', caption: 'Client detail — total hours and earnings with one-tap invoice generation.' },
-  { src: '/images/tallyios/IMG_1216_reports.PNG', alt: 'Tally iOS reports view', caption: 'Reports — hours and earnings by client with progress toward your weekly goal.' },
-  { src: '/images/tallyios/IMG_1219.PNG', alt: 'Tally iOS team workspace', caption: 'Team — shared workspace with per-member hours and weekly goal progress.' },
-  { src: '/images/tallyios/IMG_1218.PNG', alt: 'Tally iOS activity calendar', caption: 'Activity — visual calendar showing every day you logged time.' },
-  { src: '/images/tallyios/IMG_1215.PNG', alt: 'Tally iOS timer view', caption: 'Timer — one-tap tracking with your weekly goal always in view.' },
-  { src: '/images/tallyios/IMG_1220.PNG', alt: 'Tally iOS account view', caption: 'Account — subscription status and cross-platform sync.' },
-  { src: '/images/tallyios/IMG_1221_paywall.PNG', alt: 'Tally iOS subscription upgrade', caption: 'Business — unlock team workspaces and client invoicing with a 7-day free trial.' },
+  { src: '/images/tallyios/IMG_1217.PNG', alt: 'Tally time tracker iOS app client detail screen showing total hours tracked, total earnings, and one-tap invoice generation', caption: 'Client detail — total hours and earnings with one-tap invoice generation.' },
+  { src: '/images/tallyios/IMG_1216_reports.PNG', alt: 'Tally iOS reports screen showing billable hours and earnings broken down by client with weekly goal progress bar', caption: 'Reports — hours and earnings by client with progress toward your weekly goal.' },
+  { src: '/images/tallyios/IMG_1219.PNG', alt: 'Tally iOS team workspace screen showing shared client list with per-member billable hours and weekly goal progress', caption: 'Team — shared workspace with per-member hours and weekly goal progress.' },
+  { src: '/images/tallyios/IMG_1218.PNG', alt: 'Tally iOS activity calendar screen showing color-coded days with logged freelance time tracking sessions', caption: 'Activity — visual calendar showing every day you logged time.' },
+  { src: '/images/tallyios/IMG_1215.PNG', alt: 'Tally iOS timer screen showing one-tap time tracking with active client name and weekly billable hours goal progress', caption: 'Timer — one-tap tracking with your weekly goal always in view.' },
+  { src: '/images/tallyios/IMG_1220.PNG', alt: 'Tally iOS account screen showing subscription plan status and cross-platform sync across iPhone, Mac, and web', caption: 'Account — subscription status and cross-platform sync.' },
+  { src: '/images/tallyios/IMG_1221_paywall.PNG', alt: 'Tally iOS Business subscription upgrade screen offering team workspaces and client invoicing with a 7-day free trial', caption: 'Business — unlock team workspaces and client invoicing with a 7-day free trial.' },
 ]
 
 const ipadScreenshots = [
-  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.00.png', alt: 'Tally iPad reports view', caption: 'Reports — Swift Charts with per-client breakdowns and full session history.' },
-  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.26.png', alt: 'Tally iPad team workspace', caption: 'Team — full team workspace with member hours and weekly goal progress.' },
-  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.17.png', alt: 'Tally iPad activity calendar', caption: 'Activity — split-view calendar with day-by-day client session detail.' },
-  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.02.54.png', alt: 'Tally iPad timer view', caption: 'Timer — full iPad layout with sidebar navigation and large-format controls.' },
+  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.00.png', alt: 'Tally time tracker iPad app reports screen with Swift Charts showing per-client billable hour breakdowns and full session history', caption: 'Reports — Swift Charts with per-client breakdowns and full session history.' },
+  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.26.png', alt: 'Tally iPad team workspace screen showing team member list with individual tracked hours and weekly goal progress', caption: 'Team — full team workspace with member hours and weekly goal progress.' },
+  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.17.png', alt: 'Tally iPad split-view activity calendar showing day-by-day client session detail for freelance time tracking', caption: 'Activity — split-view calendar with day-by-day client session detail.' },
+  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.02.54.png', alt: 'Tally iPad timer screen with full-screen layout, sidebar navigation, and large-format one-tap time tracking controls', caption: 'Timer — full iPad layout with sidebar navigation and large-format controls.' },
 ]
 
 const watchScreenshots = [
-  { src: '/images/tallyios/watch-start.PNG', alt: 'Tally Apple Watch client select', caption: 'Select a client and start tracking from your wrist.' },
-  { src: '/images/tallyios/watch-running.PNG', alt: 'Tally Apple Watch timer running', caption: 'Live timer with pause and stop — no phone needed.' },
-  { src: '/images/tallyios/watch-paused.PNG', alt: 'Tally Apple Watch timer paused', caption: 'Resume or stop a session without reaching for your phone.' },
+  { src: '/images/tallyios/watch-start.PNG', alt: 'Tally Apple Watch app showing client selection screen to start a freelance time tracking session from your wrist', caption: 'Select a client and start tracking from your wrist.' },
+  { src: '/images/tallyios/watch-running.PNG', alt: 'Tally Apple Watch app showing live running timer with pause and stop controls — track time without reaching for your iPhone', caption: 'Live timer with pause and stop — no phone needed.' },
+  { src: '/images/tallyios/watch-paused.PNG', alt: 'Tally Apple Watch app showing paused timer with resume and stop options for hands-free freelance time tracking', caption: 'Resume or stop a session without reaching for your phone.' },
 ]
 
 const features = [
