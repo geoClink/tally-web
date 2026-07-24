@@ -1,27 +1,14 @@
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../context/AuthContext'
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [ready, setReady] = useState(false)
+  const { recoveryMode } = useAuth()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    // Check if a recovery session is already active (token processed before component mounted)
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) setReady(true)
-    })
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY') {
-        setReady(true)
-      }
-    })
-    return () => subscription.unsubscribe()
-  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -39,13 +26,16 @@ export default function ResetPassword() {
     }
   }
 
-  if (!ready) {
+  if (!recoveryMode) {
     return (
       <div className="auth-page">
         <div className="auth-card">
-          <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>
-            Verifying reset link…
+          <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+            This link is invalid or has expired.
           </p>
+          <div className="auth-links">
+            <Link to="/forgot-password">Request a new one</Link>
+          </div>
         </div>
       </div>
     )

@@ -8,16 +8,20 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [recoveryMode, setRecoveryMode] = useState(false)
 
   useEffect(() => {
-    // Get the current session on first load — like .task { } in SwiftUI
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
 
-    // Subscribe to auth changes (sign in, sign out, token refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setRecoveryMode(true)
+      } else {
+        setRecoveryMode(false)
+      }
       setUser(session?.user ?? null)
     })
 
@@ -45,7 +49,7 @@ export function AuthProvider({ children }) {
     })
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, signInWithApple, signInWithGoogle }}>
+    <AuthContext.Provider value={{ user, loading, recoveryMode, signIn, signUp, signOut, signInWithApple, signInWithGoogle }}>
       {children}
     </AuthContext.Provider>
   )
