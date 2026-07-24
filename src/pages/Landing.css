@@ -56,8 +56,37 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+}
+
+.landing-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.landing-nav-cta {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.45rem 0.9rem;
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.landing-nav-cta:hover {
+  background: var(--accent-hover);
+  text-decoration: none;
+  color: #fff;
 }
 
 .landing-logo {
@@ -338,6 +367,22 @@
   padding: 0.75rem 1.75rem;
   border-radius: var(--radius);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile-only demo link — hidden on desktop where hover overlay works */
+.landing-demo-mobile-btn {
+  display: none;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.landing-demo-mobile-btn:hover {
+  text-decoration: underline;
+  color: var(--accent-hover);
 }
 
 /* ── iOS Screenshots ── */
@@ -1035,6 +1080,14 @@
 
   .landing-scroll-item {
     width: 200px;
+  }
+
+  .landing-nav-signin {
+    display: none;
+  }
+
+  .landing-demo-mobile-btn {
+    display: block;
   }
 
   .landing-scroll-track {

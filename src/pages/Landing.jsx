@@ -79,12 +79,14 @@ export default function Landing() {
 
   return (
     <div className="landing">
-      <header className="landing-banner">
       <nav className="landing-nav">
         <span className="landing-logo">Tally</span>
-        <Link to="/login" className="landing-nav-signin">Sign in →</Link>
+        <div className="landing-nav-actions">
+          <Link to="/login" className="landing-nav-signin">Sign in</Link>
+          <Link to="/login" className="landing-nav-cta">Sign up free →</Link>
+        </div>
       </nav>
-
+      <header className="landing-banner">
       <section className="landing-hero">
         <h1 className="landing-headline">Track every hour.<br />Get paid for all of it.</h1>
         <p className="landing-subhead">
@@ -103,7 +105,6 @@ export default function Landing() {
           </a>
         </div>
         <p className="landing-hero-note">Free to start · No credit card required · Live on App Store</p>
-        <p className="landing-social-proof">30+ downloads in the first week of launch</p>
       </section>
       </header>
 
@@ -137,6 +138,9 @@ export default function Landing() {
               <span className="landing-demo-cta">Try live demo →</span>
             </div>
           </div>
+        </a>
+        <a href="/demo" target="_blank" rel="noopener noreferrer" className="landing-demo-mobile-btn">
+          Try the live demo →
         </a>
       </section>
 
