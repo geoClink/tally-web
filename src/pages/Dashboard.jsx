@@ -188,7 +188,7 @@ export default function Dashboard() {
                 return (
                   <tr key={s.id}>
                     <td style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
-                    <td>{s.client}</td>
+                    <td style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.client}</td>
                     <td style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
                     <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
                     <td>

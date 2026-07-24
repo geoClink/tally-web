@@ -10,8 +10,11 @@ export default function ResetPassword() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Supabase puts the recovery token in the URL hash after the email link is clicked.
-    // onAuthStateChange fires with event 'PASSWORD_RECOVERY' when the token is valid.
+    // Check if a recovery session is already active (token processed before component mounted)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) setReady(true)
+    })
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
         setReady(true)
