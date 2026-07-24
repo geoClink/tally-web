@@ -102,7 +102,7 @@ const tiers = [
     name: 'Free',
     price: '$0',
     period: 'forever',
-    features: ['Up to 3 clients', '7-day session history', 'iOS, Watch, Mac & Web'],
+    features: ['Up to 3 clients', 'Last 7 days of history', 'iOS, Watch, Mac & Web'],
     cta: 'Sign up free',
     highlight: false,
   },
@@ -113,6 +113,7 @@ const tiers = [
     badge: 'Most popular',
     features: ['Unlimited clients', 'Full session history', 'CSV export', 'All Free features'],
     cta: 'Buy once — yours forever',
+    note: 'Secure checkout via Stripe · Cards & Apple Pay accepted',
     highlight: true,
   },
   {
@@ -121,6 +122,7 @@ const tiers = [
     period: 'per month',
     features: ['Team workspaces', 'Client invoicing via email', '7-day free trial (iOS)', 'All Pro features'],
     cta: 'Start free trial on iOS',
+    note: 'Secure checkout via Stripe · Cards & Apple Pay accepted',
     ctaHref: APP_STORE_URL,
     highlight: false,
   },
@@ -304,6 +306,7 @@ export default function Landing() {
                   {t.cta}
                 </Link>
               )}
+              {t.note && <p className="landing-tier-note">{t.note}</p>}
             </div>
           ))}
         </div>
