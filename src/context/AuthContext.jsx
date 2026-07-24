@@ -38,8 +38,14 @@ export function AuthProvider({ children }) {
       options: { redirectTo: `${window.location.origin}/dashboard` },
     })
 
+  const signInWithGoogle = () =>
+    supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/dashboard` },
+    })
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, signInWithApple }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, signInWithApple, signInWithGoogle }}>
       {children}
     </AuthContext.Provider>
   )
