@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import { AuthProvider } from './context/AuthContext'
 import { SubscriptionProvider } from './context/SubscriptionContext'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -21,11 +22,22 @@ import Privacy from './pages/Privacy'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 
+function RecoveryRedirect() {
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (window.location.hash.includes('type=recovery')) {
+      navigate('/reset-password' + window.location.hash, { replace: true })
+    }
+  }, [navigate])
+  return null
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <SubscriptionProvider>
+          <RecoveryRedirect />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
