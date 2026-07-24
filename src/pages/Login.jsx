@@ -104,11 +104,17 @@ export default function Login() {
           onClick={signInWithApple}
           disabled={loading}
         >
-          <svg width="16" height="16" viewBox="0 0 814 1000" fill="currentColor" aria-hidden="true">
+          <svg width="14" height="17" viewBox="0 0 814 1000" fill="currentColor" aria-hidden="true">
             <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-36.8-162.2-105.2C207.3 787.5 183 739.4 183 692c0-165.1 140.4-286.9 271.8-286.9 70.1 0 128.1 46.4 172.3 46.4 42.8 0 109.3-49 187.5-49zm-66.7-235.1c31.8-40.8 53.9-97 53.9-153.1 0-7.7-.6-15.5-1.9-23.2-50.8 1.9-112.1 33.8-150.6 85.1-28.1 35.5-53.9 89.7-53.9 147.4 0 8.4 1.3 16.7 1.9 19.3 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 136.9-77z"/>
           </svg>
           Sign in with Apple
         </button>
+
+        {mode === 'signin' && (
+          <div className="auth-links" style={{ marginTop: '0.75rem' }}>
+            <Link to="/forgot-password">Forgot password?</Link>
+          </div>
+        )}
 
         <div className="auth-toggle">
           {mode === 'signin' ? "Don't have an account?" : 'Already have an account?'}
