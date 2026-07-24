@@ -119,7 +119,7 @@ export default function Landing() {
             <div className="landing-browser-dots">
               <span /><span /><span />
             </div>
-            <div className="landing-browser-url">tally-web-nu.vercel.app/demo</div>
+            <div className="landing-browser-url">tallytimetracker.com/demo</div>
           </div>
           <div className="landing-demo-preview">
             <img
