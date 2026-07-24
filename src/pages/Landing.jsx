@@ -140,9 +140,10 @@ export default function Landing() {
   async function handleEmailSubmit(e) {
     e.preventDefault()
     setEmailStatus('loading')
-    const { error } = await supabase.from('subscribers').insert({ email: emailInput.trim().toLowerCase() })
-    if (error) {
-      setEmailStatus(error.code === '23505' ? 'already' : 'error')
+    const { error, data } = await supabase.functions.invoke('subscribe', { body: { email: emailInput } })
+    if (error || data?.error) {
+      const msg = data?.error ?? error?.message
+      setEmailStatus(msg === 'already' ? 'already' : 'error')
     } else {
       setEmailStatus('success')
       setEmailInput('')
