@@ -108,16 +108,7 @@ export default function Landing() {
       </section>
       </header>
 
-      <section className="landing-founder-section">
-        <div className="landing-founder-inner">
-          <blockquote className="landing-founder-quote">
-            "I built Tally because every time tracker I tried buried the billing workflow three screens deep. This is the one I actually wanted — fast to start, native on every Apple device, and connected to a real invoicing flow."
-          </blockquote>
-          <p className="landing-founder-attr">— George, Tally developer · Live on the App Store</p>
-        </div>
-      </section>
-
-      <section className="landing-demo">
+<section className="landing-demo">
         <h2 className="landing-section-title">See it in action</h2>
         <p className="landing-demo-sub">No sign-up required — try the full web dashboard.</p>
         <a href="/demo" target="_blank" rel="noopener noreferrer" className="landing-browser-mockup landing-browser-mockup--link">
