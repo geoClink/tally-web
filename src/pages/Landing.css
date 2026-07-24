@@ -976,16 +976,9 @@
 }
 
 .landing-changelog-label {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--accent);
-  background: var(--accent-light);
-  padding: 0.15rem 0.5rem;
-  border-radius: 99px;
-  width: fit-content;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 400;
 }
 
 .landing-changelog-bullets {

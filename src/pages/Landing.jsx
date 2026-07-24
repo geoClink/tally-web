@@ -78,7 +78,6 @@ const versions = [
   },
   {
     version: '1.0',
-    label: 'Initial release',
     items: [
       'One-tap timer with client selection',
       'Weekly hours summary',
