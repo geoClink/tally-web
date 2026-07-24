@@ -932,6 +932,93 @@
   margin-bottom: 0.25rem;
 }
 
+/* ── What's New / Changelog ── */
+.landing-changelog {
+  padding: 3rem 1.5rem;
+  max-width: 720px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-changelog-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.landing-changelog-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-changelog-item {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 1rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.landing-changelog-item:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.landing-changelog-version {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-top: 0.15rem;
+}
+
+.landing-changelog-num {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.landing-changelog-label {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 0.15rem 0.5rem;
+  border-radius: 99px;
+  width: fit-content;
+}
+
+.landing-changelog-bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.landing-changelog-bullets li {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.landing-changelog-bullets li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+  color: var(--border);
+}
+
+@media (max-width: 480px) {
+  .landing-changelog-item {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}
+
 /* ── FAQ ── */
 .landing-faq {
   padding: 3rem 1.5rem;

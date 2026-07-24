@@ -32,9 +32,8 @@ export default function Team() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    if (!isBusiness) { setLoading(false); return }
     fetchWorkspace()
-  }, [user, isBusiness])
+  }, [user])
 
   async function fetchWorkspace() {
     setLoading(true)
@@ -246,7 +245,10 @@ export default function Team() {
     setMembers([])
   }
 
-  if (!isBusiness) {
+  if (loading) return <div className="loading">Loading…</div>
+
+  // Never had Business and not an invited member of any workspace
+  if (!isBusiness && !workspace) {
     return (
       <div>
         <div className="page-header">
@@ -261,7 +263,50 @@ export default function Team() {
     )
   }
 
-  if (loading) return <div className="loading">Loading…</div>
+  // Owner whose Business subscription has lapsed — show read-only view with upgrade prompt
+  if (!isBusiness && workspace?.owner_id === user.id) {
+    return (
+      <div>
+        <div className="page-header">
+          <h1 className="page-title">Team</h1>
+          <p className="page-subtitle">{workspace.name}</p>
+        </div>
+        <div className="alert alert-warning" style={{ marginBottom: '1.5rem' }}>
+          Your Business subscription has expired. Your workspace and member data are safe —{' '}
+          <Link to="/billing" style={{ fontWeight: 600, color: 'inherit' }}>renew to manage your team →</Link>
+        </div>
+        {members.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {members.map(m => (
+              <div key={m.id} className="card" style={{ padding: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{
+                    width: '2.25rem', height: '2.25rem', borderRadius: '50%',
+                    background: 'var(--accent)', color: '#fff',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontWeight: 600, fontSize: '0.875rem', flexShrink: 0,
+                  }}>
+                    {m.invited_email.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 500, fontSize: '0.875rem' }}>{m.invited_email}</div>
+                    <div style={{ marginTop: '0.25rem' }}>
+                      <span className={m.accepted_at ? 'badge-success' : 'badge-pending'}>
+                        {m.accepted_at ? 'Accepted' : 'Pending'}
+                      </span>
+                    </div>
+                  </div>
+                  <span style={{ marginLeft: 'auto', textTransform: 'capitalize', fontSize: '0.85rem', color: 'var(--text-muted)', flexShrink: 0 }}>
+                    {m.role}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -513,7 +558,9 @@ export default function Team() {
                         <span style={{ textTransform: 'capitalize', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{m.role}</span>
                       )}
                       {isAdmin && m.invited_email !== user.email && (
-                        <button className="btn btn-danger btn-sm" onClick={() => removeMember(m.id, m.invited_email)}>Remove</button>
+                        <button className="btn btn-danger btn-sm" onClick={() => removeMember(m.id, m.invited_email)}>
+                          {m.accepted_at ? 'Remove' : 'Cancel invite'}
+                        </button>
                       )}
                     </div>
                   </div>

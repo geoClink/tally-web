@@ -38,6 +38,57 @@ const features = [
   { title: 'Team workspaces', body: 'Invite members, assign clients, and roll up hours across your whole team. Business tier adds Stripe invoicing.' },
 ]
 
+const versions = [
+  {
+    version: '1.4.4',
+    label: 'Latest',
+    items: [
+      'Live Activity & Dynamic Island — running timer stays on the lock screen the entire session',
+      'Lock screen widgets — instant access to today\'s hours without opening the app',
+      'Widgets refresh instantly when you stop a timer',
+      'Google Sign-In via the native iOS account picker',
+      'Forgot password link on the sign-in screen',
+      'Invite team members by email — automatically added to your workspace when they sign in',
+      'Report a Problem — contact support directly from the app',
+      'Workspaces stay visible and readable when a Business subscription lapses',
+    ],
+  },
+  {
+    version: '1.4.3',
+    items: [
+      'Apple Watch companion app',
+      'Siri shortcuts — start and stop timers with your voice',
+      'PDF invoice generation',
+    ],
+  },
+  {
+    version: '1.4',
+    items: [
+      'Team workspaces — invite collaborators, track shared client hours, see everyone\'s progress in one place',
+      'Business subscription with 7-day free trial',
+    ],
+  },
+  {
+    version: '1.3',
+    items: [
+      'Weekly goal tracking per workspace',
+      'Edit and delete logged sessions',
+      'Budget hours per client',
+    ],
+  },
+  {
+    version: '1.0',
+    label: 'Initial release',
+    items: [
+      'One-tap timer with client selection',
+      'Weekly hours summary',
+      'CSV export',
+      'Home screen widget',
+      'Free tier with unlimited basic tracking',
+    ],
+  },
+]
+
 const faqs = [
   { q: 'How do I sign in?', a: 'Email/password, Sign in with Apple, or Sign in with Google — all three work on both iOS and web.' },
   { q: 'How do I report a bug or get help?', a: 'Use the "Report a bug" link in the footer or inside Settings on the web dashboard. On iOS, use the feedback option in the app. We read every report.' },
@@ -204,6 +255,28 @@ export default function Landing() {
             <div key={f.title} className="landing-feature-card">
               <h3>{f.title}</h3>
               <p>{f.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="landing-changelog">
+        <div className="landing-changelog-header">
+          <h2 className="landing-section-title">What's New</h2>
+          <p className="landing-features-sub">Updated regularly across iOS and web.</p>
+        </div>
+        <div className="landing-changelog-list">
+          {versions.map((v) => (
+            <div key={v.version} className="landing-changelog-item">
+              <div className="landing-changelog-version">
+                <span className="landing-changelog-num">v{v.version}</span>
+                {v.label && <span className="landing-changelog-label">{v.label}</span>}
+              </div>
+              <ul className="landing-changelog-bullets">
+                {v.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>

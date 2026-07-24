@@ -14,13 +14,22 @@ export function PendingInviteProvider({ children }) {
   }, [user])
 
   async function checkForInvite() {
-    const { data } = await supabase
+    const { data: member } = await supabase
       .from('workspace_members')
-      .select('workspace_id, workspaces(name)')
+      .select('workspace_id')
       .eq('invited_email', user.email)
       .is('accepted_at', null)
       .maybeSingle()
-    setPendingInvite(data ?? null)
+
+    if (!member) { setPendingInvite(null); return }
+
+    const { data: ws } = await supabase
+      .from('workspaces')
+      .select('name')
+      .eq('id', member.workspace_id)
+      .maybeSingle()
+
+    setPendingInvite(ws ? { workspace_id: member.workspace_id, workspaces: { name: ws.name } } : null)
   }
 
   function dismiss() {
