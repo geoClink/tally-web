@@ -681,7 +681,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1rem;
-  padding: 3rem 1.5rem;
+  padding: 0 1.5rem 3rem;
   max-width: 960px;
   margin: 0 auto;
   width: 100%;
@@ -819,6 +819,134 @@
 }
 
 .landing-footer-inner a:hover { color: var(--accent); }
+
+/* ── Founder / social proof ── */
+.landing-founder-section {
+  padding: 2.5rem 1.5rem;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.landing-founder-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.landing-founder-quote {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--text);
+  font-style: italic;
+  margin: 0 0 1rem;
+  quotes: none;
+}
+
+.landing-founder-attr {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ── Features section with header ── */
+.landing-features-section {
+  padding-top: 3rem;
+}
+
+.landing-features-header {
+  text-align: center;
+  padding: 0 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.landing-features-sub {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* ── Tier badge ── */
+.landing-tier-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  background: var(--accent-light);
+  padding: 0.2rem 0.6rem;
+  border-radius: 99px;
+  margin-bottom: 0.25rem;
+}
+
+/* ── FAQ ── */
+.landing-faq {
+  padding: 3rem 1.5rem;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-faq-list {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.landing-faq-item {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.landing-faq-item:first-child {
+  border-top: 1px solid var(--border);
+}
+
+.landing-faq-q {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--text);
+}
+
+.landing-faq-a {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ── Closing CTA ── */
+.landing-closing-cta {
+  text-align: center;
+  padding: 4rem 1.5rem;
+  background: linear-gradient(150deg, #1e3a8a 0%, #2563eb 100%);
+}
+
+.landing-closing-headline {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.landing-closing-sub {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1.75rem;
+}
+
+.landing-closing-cta .landing-btn-primary {
+  background: #fff;
+  color: #2563eb;
+}
+
+.landing-closing-cta .landing-btn-primary:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1d4ed8;
+}
 
 /* ── Privacy page ── */
 .privacy-page {
