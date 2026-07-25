@@ -279,28 +279,6 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-changelog">
-        <div className="landing-changelog-header">
-          <h2 className="landing-section-title">What's New</h2>
-          <p className="landing-features-sub">Updated regularly across iOS and web.</p>
-        </div>
-        <div className="landing-changelog-list">
-          {versions.map((v) => (
-            <div key={v.version} className="landing-changelog-item">
-              <div className="landing-changelog-version">
-                <span className="landing-changelog-num">v{v.version}</span>
-                {v.label && <span className="landing-changelog-label">{v.label}</span>}
-              </div>
-              <ul className="landing-changelog-bullets">
-                {v.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </section>
-
       <section className="landing-pricing">
         <h2 className="landing-section-title">Pricing</h2>
         <p className="landing-pricing-sub">No subscriptions for solo users. Pay once, own it forever.</p>
@@ -340,6 +318,28 @@ export default function Landing() {
         <p className="landing-pricing-sub" style={{ marginTop: '1.25rem', fontSize: '0.85rem' }}>
           Free plan never expires · No credit card required · Your data is never sold or shared
         </p>
+      </section>
+
+      <section className="landing-changelog">
+        <div className="landing-changelog-header">
+          <h2 className="landing-section-title">What's New</h2>
+          <p className="landing-features-sub">Updated regularly across iOS and web.</p>
+        </div>
+        <div className="landing-changelog-list">
+          {versions.map((v) => (
+            <div key={v.version} className="landing-changelog-item">
+              <div className="landing-changelog-version">
+                <span className="landing-changelog-num">v{v.version}</span>
+                {v.label && <span className="landing-changelog-label">{v.label}</span>}
+              </div>
+              <ul className="landing-changelog-bullets">
+                {v.items.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="landing-faq">
