@@ -29,9 +29,9 @@ const ipadScreenshots = [
 ]
 
 const watchScreenshots = [
-  { src: '/images/tallyios/watch-start.PNG', alt: 'Tally Apple Watch app showing client selection screen to start a freelance time tracking session from your wrist', caption: 'Select a client and start tracking from your wrist.' },
-  { src: '/images/tallyios/watch-running.PNG', alt: 'Tally Apple Watch app showing live running timer with pause and stop controls — track time without reaching for your iPhone', caption: 'Live timer with pause and stop — no phone needed.' },
-  { src: '/images/tallyios/watch-paused.PNG', alt: 'Tally Apple Watch app showing paused timer with resume and stop options for hands-free freelance time tracking', caption: 'Resume or stop a session without reaching for your phone.' },
+  { src: '/images/tallyios/watch-frame-16.png', alt: 'Track from your wrist — tap play and your timer starts right from Apple Watch' },
+  { src: '/images/tallyios/watch-frame-17.png', alt: 'Always tracking — your timer runs on Apple Watch so you never have to take your phone out' },
+  { src: '/images/tallyios/watch-frame-18.png', alt: 'Pause and resume anytime — step away and pick back up, your time is saved automatically' },
 ]
 
 const features = [
@@ -212,9 +212,13 @@ export default function Landing() {
         </a>
       </section>
 
-      <section className="landing-feature-slides">
-        <h2 className="landing-section-title">Everything you need to get paid</h2>
-        <p className="landing-feature-slides-sub">Seven features. One app. Built for freelancers.</p>
+      <section className="landing-screenshots">
+        <div className="landing-screenshots-header">
+          <span className="landing-platform-badge">iPhone · iPad · Apple Watch · Web</span>
+          <h2 className="landing-section-title">Native on every Apple device</h2>
+          <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, and a full web dashboard — one Supabase backend, everything in sync.</p>
+        </div>
+        <p className="landing-ipad-row-label">iPhone</p>
         <div className="landing-feature-slides-track">
           {productSlides.map((s) => (
             <img
@@ -225,14 +229,6 @@ export default function Landing() {
               loading="lazy"
             />
           ))}
-        </div>
-      </section>
-
-      <section className="landing-screenshots">
-        <div className="landing-screenshots-header">
-          <span className="landing-platform-badge">iPhone · iPad · Apple Watch · Web</span>
-          <h2 className="landing-section-title">Native on every Apple device</h2>
-          <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, and a full web dashboard — one Supabase backend, everything in sync.</p>
         </div>
         <div className="landing-ipad-row">
           <p className="landing-ipad-row-label">iPad</p>
@@ -253,14 +249,13 @@ export default function Landing() {
           <p className="landing-watch-row-label">Apple Watch</p>
           <div className="landing-watch-track">
             {watchScreenshots.map((s) => (
-              <div key={s.src} className="landing-watch-item">
-                <div className="landing-watch-mockup">
-                  <div className="landing-watch-screen">
-                    <img src={s.src} alt={s.alt} loading="lazy" />
-                  </div>
-                </div>
-                <p>{s.caption}</p>
-              </div>
+              <img
+                key={s.src}
+                src={s.src}
+                alt={s.alt}
+                className="landing-watch-slide"
+                loading="lazy"
+              />
             ))}
           </div>
         </div>
