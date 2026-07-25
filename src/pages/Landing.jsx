@@ -10,21 +10,22 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
 const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
 
 const productSlides = [
-  { src: '/images/tallyios/tallyiosproductpage1.png', alt: 'Start tracking in one tap — simple timer running in the background so you never lose a billable minute' },
-  { src: '/images/tallyios/tallyiosproductpage2.png', alt: 'See exactly where your time goes — weekly and all-time breakdowns by client at a glance' },
-  { src: '/images/tallyios/tallyiosproductpage3.png', alt: 'Never lose a day — every day you log time gets a dot, watch your consistency grow month by month' },
-  { src: '/images/tallyios/tallyiosproductpage4.png', alt: 'Track your whole team — see everyone\'s hours, weekly goals, and team totals all in one place' },
-  { src: '/images/tallyios/tallyiosproductpage5.png', alt: 'Know what you\'ve earned — hours and earnings per client tracked automatically as you work' },
-  { src: '/images/tallyios/tallyiosproductpage6.png', alt: 'Always on your home screen — check your hours and weekly goal without ever opening the app' },
-  { src: '/images/tallyios/tallyiosproductpage7.png', alt: 'Track from your lock screen — Live Activity shows your timer running, no need to open the app' },
-  { src: '/images/tallyios/tallyiosproductpage8.png', alt: 'Send invoices from your phone — generate a PDF invoice and collect payment in seconds' },
+  { src: '/images/tallyios/iphone-frame-1.png', alt: 'Start tracking in one tap — simple timer running in the background so you never lose a billable minute' },
+  { src: '/images/tallyios/iphone-frame-2.png', alt: 'See exactly where your time goes — weekly and all-time breakdowns by client at a glance' },
+  { src: '/images/tallyios/iphone-frame-3.png', alt: 'Never lose a day — every day you log time gets a dot, watch your consistency grow month by month' },
+  { src: '/images/tallyios/iphone-frame-4.png', alt: 'Track your whole team — see everyone\'s hours, weekly goals, and team totals all in one place' },
+  { src: '/images/tallyios/iphone-frame-5.png', alt: 'Know what you\'ve earned — hours and earnings per client tracked automatically as you work' },
+  { src: '/images/tallyios/iphone-frame-6.png', alt: 'Always on your home screen — check your hours and weekly goal without ever opening the app' },
+  { src: '/images/tallyios/iphone-frame-7.png', alt: 'Track from your lock screen — Live Activity shows your timer running, no need to open the app' },
+  { src: '/images/tallyios/iphone-frame-14.png', alt: 'Send invoices from your phone — generate a PDF invoice and collect payment in seconds' },
 ]
 
 const ipadScreenshots = [
-  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.00.png', alt: 'Tally time tracker iPad app reports screen with Swift Charts showing per-client billable hour breakdowns and full session history', caption: 'Reports — Swift Charts with per-client breakdowns and full session history.' },
-  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.26.png', alt: 'Tally iPad team workspace screen showing team member list with individual tracked hours and weekly goal progress', caption: 'Team — full team workspace with member hours and weekly goal progress.' },
-  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.03.17.png', alt: 'Tally iPad split-view activity calendar showing day-by-day client session detail for freelance time tracking', caption: 'Activity — split-view calendar with day-by-day client session detail.' },
-  { src: '/images/tallyios/Simulator Screenshot - iPad Pro 13-inch (M5) - 2026-07-20 at 01.02.54.png', alt: 'Tally iPad timer screen with full-screen layout, sidebar navigation, and large-format one-tap time tracking controls', caption: 'Timer — full iPad layout with sidebar navigation and large-format controls.' },
+  { src: '/images/tallyios/ipad-frame-9.png', alt: 'Your full picture, on iPad — all your clients, hours, and session history beautifully laid out on the big screen' },
+  { src: '/images/tallyios/ipad-frame-10.png', alt: 'Track your whole team — see everyone\'s hours, weekly goals, and team totals beautifully laid out on iPad' },
+  { src: '/images/tallyios/ipad-frame-11.png', alt: 'Never lose a day — tap any day to see exactly what you worked on and for how long' },
+  { src: '/images/tallyios/ipad-frame-12.png', alt: 'Know what you\'ve earned — hours and earnings per client, every session logged, all on your iPad' },
+  { src: '/images/tallyios/ipad-frame-13.png', alt: 'Send invoices from your iPad — generate a PDF invoice and collect payment in seconds' },
 ]
 
 const watchScreenshots = [
@@ -237,14 +238,13 @@ export default function Landing() {
           <p className="landing-ipad-row-label">iPad</p>
           <div className="landing-ipad-track">
             {ipadScreenshots.map((s) => (
-              <div key={s.src} className="landing-ipad-item">
-                <div className="landing-ipad-mockup">
-                  <div className="landing-ipad-screen">
-                    <img src={s.src} alt={s.alt} loading="lazy" />
-                  </div>
-                </div>
-                <p>{s.caption}</p>
-              </div>
+              <img
+                key={s.src}
+                src={s.src}
+                alt={s.alt}
+                className="landing-ipad-slide"
+                loading="lazy"
+              />
             ))}
           </div>
         </div>

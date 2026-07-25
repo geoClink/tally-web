@@ -400,6 +400,7 @@
 
 .landing-feature-slides-track {
   display: flex;
+  flex-wrap: nowrap;
   gap: 0.5rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -596,12 +597,12 @@
 
 .landing-ipad-track {
   display: flex;
-  gap: 1.5rem;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scroll-padding-left: 4rem;
   -webkit-overflow-scrolling: touch;
-  padding: 0.75rem 4rem 1.5rem;
+  padding: 0.5rem 1.5rem 1.25rem;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
@@ -612,22 +613,13 @@
   border-radius: 3px;
 }
 
-.landing-ipad-item:first-child { margin-left: 0; }
-.landing-ipad-item:last-child  { margin-right: 0; }
-
-.landing-ipad-item {
+.landing-ipad-slide {
   flex: 0 0 auto;
-  width: 480px;
+  width: 380px;
+  border-radius: 16px;
   scroll-snap-align: start;
-}
-
-.landing-ipad-item p {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 0.65rem;
-  text-align: center;
-  line-height: 1.4;
-  font-style: italic;
+  display: block;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* iPad bezel — landscape */
