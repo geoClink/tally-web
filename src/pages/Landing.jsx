@@ -17,6 +17,7 @@ const productSlides = [
   { src: '/images/tallyios/tallyiosproductpage5.png', alt: 'Know what you\'ve earned — hours and earnings per client tracked automatically as you work' },
   { src: '/images/tallyios/tallyiosproductpage6.png', alt: 'Always on your home screen — check your hours and weekly goal without ever opening the app' },
   { src: '/images/tallyios/tallyiosproductpage7.png', alt: 'Track from your lock screen — Live Activity shows your timer running, no need to open the app' },
+  { src: '/images/tallyios/tallyiosproductpage8.png', alt: 'Send invoices from your phone — generate a PDF invoice and collect payment in seconds' },
 ]
 
 const ipadScreenshots = [
