@@ -386,6 +386,45 @@
 }
 
 /* ── iOS Screenshots ── */
+/* ── Feature Slides ── */
+.landing-feature-slides {
+  padding: 3.5rem 0 2rem;
+  text-align: center;
+}
+
+.landing-feature-slides-sub {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0.25rem 0 2rem;
+}
+
+.landing-feature-slides-track {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.5rem 1.5rem 1.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.landing-feature-slides-track::-webkit-scrollbar { height: 5px; }
+.landing-feature-slides-track::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.landing-feature-slide {
+  flex: 0 0 auto;
+  width: 220px;
+  border-radius: 16px;
+  scroll-snap-align: start;
+  display: block;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Screenshots ── */
 .landing-screenshots {
   padding: 3rem 0 2rem;
 }

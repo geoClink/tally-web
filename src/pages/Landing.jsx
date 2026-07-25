@@ -9,14 +9,14 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
 
-const screenshots = [
-  { src: '/images/tallyios/IMG_1217.PNG', alt: 'Tally time tracker iOS app client detail screen showing total hours tracked, total earnings, and one-tap invoice generation', caption: 'Client detail — total hours and earnings with one-tap invoice generation.' },
-  { src: '/images/tallyios/IMG_1216_reports.PNG', alt: 'Tally iOS reports screen showing billable hours and earnings broken down by client with weekly goal progress bar', caption: 'Reports — hours and earnings by client with progress toward your weekly goal.' },
-  { src: '/images/tallyios/IMG_1219.PNG', alt: 'Tally iOS team workspace screen showing shared client list with per-member billable hours and weekly goal progress', caption: 'Team — shared workspace with per-member hours and weekly goal progress.' },
-  { src: '/images/tallyios/IMG_1218.PNG', alt: 'Tally iOS activity calendar screen showing color-coded days with logged freelance time tracking sessions', caption: 'Activity — visual calendar showing every day you logged time.' },
-  { src: '/images/tallyios/IMG_1215.PNG', alt: 'Tally iOS timer screen showing one-tap time tracking with active client name and weekly billable hours goal progress', caption: 'Timer — one-tap tracking with your weekly goal always in view.' },
-  { src: '/images/tallyios/IMG_1220.PNG', alt: 'Tally iOS account screen showing subscription plan status and cross-platform sync across iPhone, Mac, and web', caption: 'Account — subscription status and cross-platform sync.' },
-  { src: '/images/tallyios/IMG_1221_paywall.PNG', alt: 'Tally iOS Business subscription upgrade screen offering team workspaces and client invoicing with a 7-day free trial', caption: 'Business — unlock team workspaces and client invoicing with a 7-day free trial.' },
+const productSlides = [
+  { src: '/images/tallyios/tallyiosproductpage1.png', alt: 'Start tracking in one tap — simple timer running in the background so you never lose a billable minute' },
+  { src: '/images/tallyios/tallyiosproductpage2.png', alt: 'See exactly where your time goes — weekly and all-time breakdowns by client at a glance' },
+  { src: '/images/tallyios/tallyiosproductpage3.png', alt: 'Never lose a day — every day you log time gets a dot, watch your consistency grow month by month' },
+  { src: '/images/tallyios/tallyiosproductpage4.png', alt: 'Track your whole team — see everyone\'s hours, weekly goals, and team totals all in one place' },
+  { src: '/images/tallyios/tallyiosproductpage5.png', alt: 'Know what you\'ve earned — hours and earnings per client tracked automatically as you work' },
+  { src: '/images/tallyios/tallyiosproductpage6.png', alt: 'Always on your home screen — check your hours and weekly goal without ever opening the app' },
+  { src: '/images/tallyios/tallyiosproductpage7.png', alt: 'Track from your lock screen — Live Activity shows your timer running, no need to open the app' },
 ]
 
 const ipadScreenshots = [
@@ -210,27 +210,28 @@ export default function Landing() {
         </a>
       </section>
 
+      <section className="landing-feature-slides">
+        <h2 className="landing-section-title">Everything you need to get paid</h2>
+        <p className="landing-feature-slides-sub">Seven features. One app. Built for freelancers.</p>
+        <div className="landing-feature-slides-track">
+          {productSlides.map((s) => (
+            <img
+              key={s.src}
+              src={s.src}
+              alt={s.alt}
+              className="landing-feature-slide"
+              loading="lazy"
+            />
+          ))}
+        </div>
+      </section>
+
       <section className="landing-screenshots">
         <div className="landing-screenshots-header">
           <span className="landing-platform-badge">iPhone · iPad · Apple Watch · Web</span>
           <h2 className="landing-section-title">Native on every Apple device</h2>
           <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, and a full web dashboard — one Supabase backend, everything in sync.</p>
         </div>
-        <p className="landing-ipad-row-label">iPhone</p>
-        <div className="landing-scroll-track">
-          {screenshots.map((s) => (
-            <div key={s.src} className="landing-scroll-item">
-              <div className="landing-phone-mockup">
-                <div className="landing-phone-btns-left" />
-                <div className="landing-phone-screen-static">
-                  <img src={s.src} alt={s.alt} loading="lazy" />
-                </div>
-              </div>
-              <p>{s.caption}</p>
-            </div>
-          ))}
-        </div>
-
         <div className="landing-ipad-row">
           <p className="landing-ipad-row-label">iPad</p>
           <div className="landing-ipad-track">
