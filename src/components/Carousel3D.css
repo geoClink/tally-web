@@ -15,10 +15,10 @@
   margin: 0;
 }
 
-/* Clips cards that go past the viewport edges without breaking 3D */
+/* overflow-x: clip hides side cards past the edges but does NOT clip top/bottom */
 .c3d-clip {
   width: 100%;
-  overflow: hidden;
+  overflow-x: clip;
 }
 
 .c3d-scene {
