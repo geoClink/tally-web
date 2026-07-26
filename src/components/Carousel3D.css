@@ -63,25 +63,30 @@
   width: var(--card-w, 220px);
   transform: translate(-50%, -50%) scale(0.88);
   backface-visibility: hidden;
-  filter: brightness(0.5);
-  box-shadow:
-    0 10px 24px -4px rgba(37, 99, 235, 0.18),
-    0 4px 10px rgba(0, 0, 0, 0.18);
-  transition: box-shadow 0.45s ease, filter 0.45s ease, transform 0.45s ease;
+  transition: transform 0.45s ease;
 }
 
 .c3d-card--active .c3d-card-inner {
   transform: translate(-50%, -50%) scale(1);
-  filter: brightness(1);
-  box-shadow:
-    0 24px 60px -4px rgba(37, 99, 235, 0.55),
-    0 10px 28px rgba(0, 0, 0, 0.3);
 }
 
 .c3d-card-inner img {
   width: 100%;
   display: block;
   pointer-events: none;
+  /* drop-shadow follows the PNG's actual shape, not a bounding rectangle */
+  filter:
+    brightness(0.5)
+    drop-shadow(0 10px 20px rgba(37, 99, 235, 0.2))
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.18));
+  transition: filter 0.45s ease;
+}
+
+.c3d-card--active .c3d-card-inner img {
+  filter:
+    brightness(1)
+    drop-shadow(0 22px 40px rgba(37, 99, 235, 0.5))
+    drop-shadow(0 8px 20px rgba(0, 0, 0, 0.28));
 }
 
 /* Controls row */
