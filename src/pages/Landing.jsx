@@ -221,7 +221,20 @@ export default function Landing() {
         </div>
         <Carousel3D items={productSlides} cardWidth={220} sceneHeight={520} label="iPhone" />
         <Carousel3D items={ipadScreenshots} cardWidth={380} sceneHeight={330} label="iPad" />
-        <Carousel3D items={watchScreenshots} cardWidth={200} sceneHeight={290} label="Apple Watch" />
+        <div className="landing-watch-row">
+          <p className="landing-watch-row-label">Apple Watch</p>
+          <div className="landing-watch-track">
+            {watchScreenshots.map((s) => (
+              <img
+                key={s.src}
+                src={s.src}
+                alt={s.alt}
+                className="landing-watch-slide"
+                loading="lazy"
+              />
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="landing-features-section">
