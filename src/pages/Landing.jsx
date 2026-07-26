@@ -218,10 +218,10 @@ export default function Landing() {
           <h2 className="landing-section-title">Native on every Apple device</h2>
           <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, and a full web dashboard — one Supabase backend, everything in sync.</p>
         </div>
+        <div className="landing-iphone-row">
         <p className="landing-ipad-row-label">iPhone</p>
         <div className="landing-feature-slides-track">
-          <div className="landing-scroll-spacer" />
-          {productSlides.map((s) => (
+                    {productSlides.map((s) => (
             <img
               key={s.src}
               src={s.src}
@@ -231,11 +231,11 @@ export default function Landing() {
             />
           ))}
         </div>
+        </div>
         <div className="landing-ipad-row">
           <p className="landing-ipad-row-label">iPad</p>
           <div className="landing-ipad-track">
-            <div className="landing-scroll-spacer" />
-            {ipadScreenshots.map((s) => (
+                        {ipadScreenshots.map((s) => (
               <img
                 key={s.src}
                 src={s.src}

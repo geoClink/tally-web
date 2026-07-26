@@ -411,8 +411,10 @@
 }
 
 .landing-scroll-spacer {
-  flex: 0 0 2rem;
-  min-width: 2rem;
+  flex-shrink: 0;
+  width: 4vw;
+  min-width: 1.5rem;
+  max-width: 4rem;
 }
 
 .landing-feature-slides-track::-webkit-scrollbar { height: 5px; }
@@ -586,8 +588,13 @@
 }
 
 /* iPad row */
+.landing-iphone-row {
+  padding-left: 3rem;
+  padding-bottom: 0.5rem;
+}
+
 .landing-ipad-row {
-  padding: 2rem 0 0.5rem;
+  padding: 2rem 0 0.5rem 3rem;
 }
 
 .landing-ipad-row-label {
