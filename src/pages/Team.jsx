@@ -247,22 +247,6 @@ export default function Team() {
 
   if (loading) return <div className="loading">Loading…</div>
 
-  // Never had Business and not an invited member of any workspace
-  if (!isBusiness && !workspace) {
-    return (
-      <div>
-        <div className="page-header">
-          <h1 className="page-title">Team</h1>
-        </div>
-        <div className="paywall">
-          <div className="paywall-title">Team workspaces require Business tier</div>
-          <p className="paywall-desc">Collaborate with your team, invite members, and manage workspace access.</p>
-          <Link to="/billing" className="btn btn-primary">Upgrade to Business</Link>
-        </div>
-      </div>
-    )
-  }
-
   // Owner whose Business subscription has lapsed — show read-only view with upgrade prompt
   if (!isBusiness && workspace?.owner_id === user.id) {
     return (
@@ -304,6 +288,22 @@ export default function Team() {
             ))}
           </div>
         )}
+      </div>
+    )
+  }
+
+  // Member without Business — requires their own subscription
+  if (!isBusiness) {
+    return (
+      <div>
+        <div className="page-header">
+          <h1 className="page-title">Team</h1>
+        </div>
+        <div className="paywall">
+          <div className="paywall-title">Team workspaces require Business tier</div>
+          <p className="paywall-desc">Collaborate with your team, invite members, and manage workspace access.</p>
+          <Link to="/billing" className="btn btn-primary">Upgrade to Business</Link>
+        </div>
       </div>
     )
   }

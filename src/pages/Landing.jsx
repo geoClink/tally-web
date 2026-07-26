@@ -100,7 +100,7 @@ const faqs = [
   { q: 'Is Pro really a one-time payment?', a: 'Yes. $9.99 once, yours forever. No recurring fees for solo users — ever.' },
   { q: 'What happens when I hit the 3-client limit on Free?', a: "You'll be prompted to upgrade. All your existing data stays intact — upgrading just unlocks more clients and full session history." },
   { q: 'Does the web dashboard work without the iOS app?', a: 'Fully standalone. Create an account on the web and use it on its own. The iOS app syncs to the same account when you add it.' },
-  { q: 'What does Business add over Pro?', a: 'Team workspaces let you invite members, assign clients, and roll up hours across your team, plus client invoicing via email. Business is $4.99/month with a 7-day free trial on iOS.' },
+  { q: 'What does Business add over Pro?', a: 'Team workspaces let you invite members, assign clients, and roll up hours across your team, plus client invoicing via email. Business is $4.99/user/month — each team member needs their own subscription. 7-day free trial on iOS.' },
 ]
 
 const tiers = [
@@ -125,7 +125,7 @@ const tiers = [
   {
     name: 'Business',
     price: '$4.99',
-    period: 'per month',
+    period: 'per user / month',
     features: ['Team workspaces', 'Client invoicing via email', '7-day free trial (iOS)', 'All Pro features'],
     cta: 'Start free trial on iOS',
     note: 'Secure checkout via Stripe · Cards & Apple Pay accepted',
