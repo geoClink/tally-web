@@ -1,0 +1,135 @@
+.c3d-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 0 2.5rem;
+}
+
+.c3d-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Clips cards that go past the viewport edges without breaking 3D */
+.c3d-clip {
+  width: 100%;
+  overflow: hidden;
+}
+
+.c3d-scene {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: var(--scene-h, 520px);
+  cursor: grab;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+.c3d-scene:active {
+  cursor: grabbing;
+}
+
+/* Zero-size pivot point — cards are positioned outward from here */
+.c3d-stage {
+  position: relative;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform;
+}
+
+/* Each card is rotated to its position on the circle, then pushed forward */
+.c3d-card {
+  position: absolute;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+/* The visual card — centered on the pivot point via translate(-50%, -50%) */
+.c3d-card-inner {
+  position: absolute;
+  width: var(--card-w, 220px);
+  transform: translate(-50%, -50%);
+  border-radius: 16px;
+  overflow: hidden;
+  backface-visibility: hidden;
+  box-shadow:
+    0 14px 36px -6px rgba(37, 99, 235, 0.28),
+    0 5px 14px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.35s ease;
+}
+
+.c3d-card--active .c3d-card-inner {
+  box-shadow:
+    0 22px 52px -4px rgba(37, 99, 235, 0.52),
+    0 8px 22px rgba(0, 0, 0, 0.28);
+}
+
+.c3d-card-inner img {
+  width: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+/* Controls row */
+.c3d-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.c3d-btn {
+  background: none;
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.c3d-btn:hover {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.c3d-dots {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.c3d-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: none;
+  background: var(--border);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.c3d-dot--active {
+  background: var(--accent);
+  transform: scale(1.5);
+}

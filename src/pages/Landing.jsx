@@ -3,6 +3,7 @@ import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import BugReportModal from '../components/BugReportModal'
+import Carousel3D from '../components/Carousel3D'
 import './Landing.css'
 
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
@@ -218,49 +219,9 @@ export default function Landing() {
           <h2 className="landing-section-title">Native on every Apple device</h2>
           <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, and a full web dashboard — one Supabase backend, everything in sync.</p>
         </div>
-        <div className="landing-iphone-row">
-        <p className="landing-ipad-row-label">iPhone</p>
-        <div className="landing-feature-slides-track">
-                    {productSlides.map((s) => (
-            <img
-              key={s.src}
-              src={s.src}
-              alt={s.alt}
-              className="landing-feature-slide"
-              loading="lazy"
-            />
-          ))}
-        </div>
-        </div>
-        <div className="landing-ipad-row">
-          <p className="landing-ipad-row-label">iPad</p>
-          <div className="landing-ipad-track">
-                        {ipadScreenshots.map((s) => (
-              <img
-                key={s.src}
-                src={s.src}
-                alt={s.alt}
-                className="landing-ipad-slide"
-                loading="lazy"
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="landing-watch-row">
-          <p className="landing-watch-row-label">Apple Watch</p>
-          <div className="landing-watch-track">
-            {watchScreenshots.map((s) => (
-              <img
-                key={s.src}
-                src={s.src}
-                alt={s.alt}
-                className="landing-watch-slide"
-                loading="lazy"
-              />
-            ))}
-          </div>
-        </div>
+        <Carousel3D items={productSlides} cardWidth={220} sceneHeight={520} label="iPhone" />
+        <Carousel3D items={ipadScreenshots} cardWidth={380} sceneHeight={330} label="iPad" />
+        <Carousel3D items={watchScreenshots} cardWidth={200} sceneHeight={290} label="Apple Watch" />
       </section>
 
       <section className="landing-features-section">

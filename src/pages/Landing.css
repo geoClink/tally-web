@@ -405,7 +405,7 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 0.5rem 1.5rem 3.5rem 0;
+  padding: 0.5rem 1.5rem 1.25rem 0;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
@@ -429,19 +429,7 @@
   border-radius: 16px;
   scroll-snap-align: start;
   display: block;
-  transform: perspective(900px) rotateY(-7deg) rotateX(2deg);
-  transition: transform 0.35s ease, filter 0.35s ease;
-  will-change: transform;
-  filter:
-    drop-shadow(0 20px 32px rgba(37, 99, 235, 0.42))
-    drop-shadow(0 5px 12px rgba(0, 0, 0, 0.28));
-}
-
-.landing-feature-slide:hover {
-  transform: perspective(900px) rotateY(0deg) rotateX(0deg) scale(1.04);
-  filter:
-    drop-shadow(0 26px 40px rgba(37, 99, 235, 0.58))
-    drop-shadow(0 8px 18px rgba(0, 0, 0, 0.35));
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* ── Screenshots ── */
@@ -626,7 +614,7 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  padding: 0.5rem 1.5rem 3.5rem 0;
+  padding: 0.5rem 1.5rem 1.25rem 0;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
@@ -643,19 +631,7 @@
   border-radius: 16px;
   scroll-snap-align: start;
   display: block;
-  transform: perspective(1100px) rotateY(-6deg) rotateX(2deg);
-  transition: transform 0.35s ease, filter 0.35s ease;
-  will-change: transform;
-  filter:
-    drop-shadow(0 22px 36px rgba(37, 99, 235, 0.4))
-    drop-shadow(0 5px 14px rgba(0, 0, 0, 0.28));
-}
-
-.landing-ipad-slide:hover {
-  transform: perspective(1100px) rotateY(0deg) rotateX(0deg) scale(1.03);
-  filter:
-    drop-shadow(0 28px 44px rgba(37, 99, 235, 0.55))
-    drop-shadow(0 8px 18px rgba(0, 0, 0, 0.33));
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* iPad bezel — landscape */
@@ -729,7 +705,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.75rem;
-  padding: 0.5rem 1.5rem 3.5rem;
+  padding: 0.5rem 1.5rem 1.25rem;
 }
 
 .landing-watch-slide {
@@ -738,19 +714,7 @@
   border-radius: 16px;
   scroll-snap-align: start;
   display: block;
-  transform: perspective(700px) rotateY(-6deg) rotateX(2deg);
-  transition: transform 0.35s ease, filter 0.35s ease;
-  will-change: transform;
-  filter:
-    drop-shadow(0 18px 28px rgba(37, 99, 235, 0.4))
-    drop-shadow(0 4px 10px rgba(0, 0, 0, 0.26));
-}
-
-.landing-watch-slide:hover {
-  transform: perspective(700px) rotateY(0deg) rotateX(0deg) scale(1.05);
-  filter:
-    drop-shadow(0 24px 36px rgba(37, 99, 235, 0.56))
-    drop-shadow(0 6px 14px rgba(0, 0, 0, 0.32));
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .landing-watch-item {
