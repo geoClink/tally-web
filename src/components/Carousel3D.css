@@ -62,8 +62,6 @@
   position: absolute;
   width: var(--card-w, 220px);
   transform: translate(-50%, -50%) scale(0.88);
-  border-radius: 16px;
-  overflow: hidden;
   backface-visibility: hidden;
   filter: brightness(0.5);
   box-shadow:
