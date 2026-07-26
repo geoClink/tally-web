@@ -220,6 +220,7 @@ export default function Landing() {
         </div>
         <p className="landing-ipad-row-label">iPhone</p>
         <div className="landing-feature-slides-track">
+          <div className="landing-scroll-spacer" />
           {productSlides.map((s) => (
             <img
               key={s.src}
@@ -233,6 +234,7 @@ export default function Landing() {
         <div className="landing-ipad-row">
           <p className="landing-ipad-row-label">iPad</p>
           <div className="landing-ipad-track">
+            <div className="landing-scroll-spacer" />
             {ipadScreenshots.map((s) => (
               <img
                 key={s.src}
