@@ -4,6 +4,7 @@ import './Carousel3D.css';
 export default function Carousel3D({ items, cardWidth = 220, sceneHeight = 520, label }) {
   const [active, setActive] = useState(0);
   const dragX = useRef(null);
+  const didDrag = useRef(false);
   const n = items.length;
   const angleStep = 360 / n;
   // radius so cards don't overlap: derived from card width + gap
@@ -13,7 +14,13 @@ export default function Carousel3D({ items, cardWidth = 220, sceneHeight = 520, 
 
   const handlePointerDown = (e) => {
     dragX.current = e.clientX;
+    didDrag.current = false;
     e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e) => {
+    if (dragX.current === null) return;
+    if (Math.abs(e.clientX - dragX.current) > 8) didDrag.current = true;
   };
 
   const handlePointerUp = (e) => {
@@ -34,6 +41,7 @@ export default function Carousel3D({ items, cardWidth = 220, sceneHeight = 520, 
         <div
           className="c3d-scene"
           onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
         >
           <div
@@ -48,7 +56,7 @@ export default function Carousel3D({ items, cardWidth = 220, sceneHeight = 520, 
                   key={item.src}
                   className={`c3d-card${i === active ? ' c3d-card--active' : ''}`}
                   style={{ transform: `rotateY(${i * angleStep}deg) translateZ(${radius}px)` }}
-                  onClick={() => go(shortest)}
+                  onClick={() => { if (!didDrag.current) go(shortest); }}
                 >
                   <div className="c3d-card-inner">
                     <img src={item.src} alt={item.alt} draggable={false} loading="lazy" />
