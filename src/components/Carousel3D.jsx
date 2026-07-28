@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import './Carousel3D.css';
 
-export default function Carousel3D({ items, cardWidth = 220, sceneHeight = 520, label }) {
+export default function Carousel3D({ items, cardWidth = 220, sceneHeight = 520, label, className }) {
   const [active, setActive] = useState(0);
   const dragX = useRef(null);
   const didDrag = useRef(false);
@@ -32,7 +32,7 @@ export default function Carousel3D({ items, cardWidth = 220, sceneHeight = 520, 
 
   return (
     <div
-      className="c3d-wrapper"
+      className={`c3d-wrapper${className ? ` ${className}` : ''}`}
       style={{ '--card-w': `${cardWidth}px`, '--scene-h': `${sceneHeight}px` }}
     >
       {label && <p className="c3d-label">{label}</p>}

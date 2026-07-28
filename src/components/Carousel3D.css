@@ -11,6 +11,14 @@
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
+
+  .c3d-ipad {
+    --card-w: 200px;
+  }
+
+  .c3d-ipad .c3d-card-inner img {
+    border-radius: 10px;
+  }
 }
 
 .c3d-label {
