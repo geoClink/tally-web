@@ -12,14 +12,14 @@
     padding-right: 1.5rem;
   }
 
-  .c3d-ipad {
-    --card-w: 160px;
-    --scene-h: 240px;
-  }
-
   .c3d-ipad .c3d-card-inner {
+    max-width: 160px;
     border-radius: 10px;
     overflow: hidden;
+  }
+
+  .c3d-ipad .c3d-scene {
+    height: 260px !important;
   }
 }
 
