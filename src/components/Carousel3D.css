@@ -13,11 +13,13 @@
   }
 
   .c3d-ipad {
-    --card-w: 200px;
+    --card-w: 160px;
+    --scene-h: 240px;
   }
 
-  .c3d-ipad .c3d-card-inner img {
+  .c3d-ipad .c3d-card-inner {
     border-radius: 10px;
+    overflow: hidden;
   }
 }
 
