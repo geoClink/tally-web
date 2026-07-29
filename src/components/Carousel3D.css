@@ -13,13 +13,13 @@
   }
 
   .c3d-ipad .c3d-card-inner {
-    max-width: 160px;
+    max-width: 220px;
     border-radius: 10px;
     overflow: hidden;
   }
 
   .c3d-ipad .c3d-scene {
-    height: 260px !important;
+    height: 320px !important;
   }
 }
 
