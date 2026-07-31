@@ -119,7 +119,7 @@ const tiers = [
     period: 'one-time',
     badge: 'Most popular',
     features: ['Unlimited clients', 'Full session history', 'CSV export', 'All Free features'],
-    cta: 'Buy once — yours forever',
+    cta: 'Get Pro',
     note: 'Secure checkout via Stripe · Cards & Apple Pay accepted',
     highlight: true,
   },
@@ -221,7 +221,7 @@ export default function Landing() {
           <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, and a full web dashboard — one Supabase backend, everything in sync.</p>
         </div>
         <Carousel3D items={productSlides} cardWidth={185} sceneHeight={600} label="iPhone" />
-        <Carousel3D items={ipadScreenshots} cardWidth={320} sceneHeight={380} label="iPad" className="c3d-ipad" />
+        <Carousel3D items={ipadScreenshots} cardWidth={480} sceneHeight={360} label="iPad" className="c3d-ipad" flat />
         <div className="landing-watch-row">
           <p className="landing-watch-row-label">Apple Watch</p>
           <div className="landing-watch-track">
