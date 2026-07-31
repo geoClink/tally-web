@@ -222,20 +222,7 @@ export default function Landing() {
         </div>
         <Carousel3D items={productSlides} cardWidth={185} sceneHeight={600} label="iPhone" />
         <Carousel3D items={ipadScreenshots} cardWidth={480} sceneHeight={360} label="iPad" className="c3d-ipad" flat />
-        <div className="landing-watch-row">
-          <p className="landing-watch-row-label">Apple Watch</p>
-          <div className="landing-watch-track">
-            {watchScreenshots.map((s) => (
-              <img
-                key={s.src}
-                src={s.src}
-                alt={s.alt}
-                className="landing-watch-slide"
-                loading="lazy"
-              />
-            ))}
-          </div>
-        </div>
+        <Carousel3D items={watchScreenshots} cardWidth={280} sceneHeight={334} label="Apple Watch" flat />
       </section>
 
       <section className="landing-features-section">
@@ -267,25 +254,30 @@ export default function Landing() {
               <ul className="landing-tier-features">
                 {t.features.map((f) => <li key={f}>{f}</li>)}
               </ul>
-              {t.name === 'Business' ? (
-                <a
-                  href={isIOS ? APP_STORE_URL : import.meta.env.VITE_STRIPE_BUSINESS_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="landing-btn-outline"
-                >
-                  {isIOS ? 'Start free trial on iOS' : 'Start free trial →'}
-                </a>
-              ) : t.ctaHref ? (
-                <a href={t.ctaHref} target="_blank" rel="noopener noreferrer" className={t.highlight ? 'landing-btn-primary' : 'landing-btn-outline'}>
-                  {t.cta}
-                </a>
-              ) : (
-                <Link to={`/login?mode=signup`} className={t.highlight ? 'landing-btn-primary' : 'landing-btn-outline'}>
-                  {t.cta}
-                </Link>
-              )}
-              {t.note && <p className="landing-tier-note">{t.note}</p>}
+              <div className="landing-tier-cta-group">
+                {t.name === 'Business' ? (
+                  <a
+                    href={isIOS ? APP_STORE_URL : import.meta.env.VITE_STRIPE_BUSINESS_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="landing-btn-outline"
+                  >
+                    {isIOS ? 'Start free trial on iOS' : 'Start free trial →'}
+                  </a>
+                ) : t.ctaHref ? (
+                  <a href={t.ctaHref} target="_blank" rel="noopener noreferrer" className={t.highlight ? 'landing-btn-primary' : 'landing-btn-outline'}>
+                    {t.cta}
+                  </a>
+                ) : (
+                  <Link to={`/login?mode=signup`} className={t.highlight ? 'landing-btn-primary' : 'landing-btn-outline'}>
+                    {t.cta}
+                  </Link>
+                )}
+                {t.note
+                  ? <p className="landing-tier-note">{t.note}</p>
+                  : <p className="landing-tier-note landing-tier-note--spacer" aria-hidden="true" />
+                }
+              </div>
             </div>
           ))}
         </div>

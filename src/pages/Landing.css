@@ -929,6 +929,11 @@
   text-align: center;
   margin-top: 0.5rem;
   opacity: 0.8;
+  min-height: 2.5em;
+}
+
+.landing-tier-note--spacer {
+  visibility: hidden;
 }
 
 .landing-tier .landing-btn-primary {
