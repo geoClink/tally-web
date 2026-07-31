@@ -12,13 +12,14 @@ const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id677527
 
 const productSlides = [
   { src: '/images/tallyios/iphone-frame-1.png', alt: 'Start tracking in one tap — simple timer running in the background so you never lose a billable minute' },
-  { src: '/images/tallyios/iphone-frame-2.png', alt: 'See exactly where your time goes — weekly and all-time breakdowns by client at a glance' },
-  { src: '/images/tallyios/iphone-frame-3.png', alt: 'Never lose a day — every day you log time gets a dot, watch your consistency grow month by month' },
-  { src: '/images/tallyios/iphone-frame-4.png', alt: 'Track your whole team — see everyone\'s hours, weekly goals, and team totals all in one place' },
-  { src: '/images/tallyios/iphone-frame-5.png', alt: 'Know what you\'ve earned — hours and earnings per client tracked automatically as you work' },
-  { src: '/images/tallyios/iphone-frame-6.png', alt: 'Always on your home screen — check your hours and weekly goal without ever opening the app' },
-  { src: '/images/tallyios/iphone-frame-7.png', alt: 'Track from your lock screen — Live Activity shows your timer running, no need to open the app' },
-  { src: '/images/tallyios/iphone-frame-14.png', alt: 'Send invoices from your phone — generate a PDF invoice and collect payment in seconds' },
+  { src: '/images/tallyios/iphone-frame-25.png', alt: 'See where your time goes — weekly and all-time breakdowns by client at a glance' },
+  { src: '/images/tallyios/iphone-frame-26.png', alt: 'Never lose a day — every day you log time gets a dot, watch your consistency grow month by month' },
+  { src: '/images/tallyios/iphone-frame-27.png', alt: 'Track your whole team — see everyone\'s hours, weekly goals, and team totals all in one place' },
+  { src: '/images/tallyios/iphone-frame-28.png', alt: 'Know what you\'ve earned — hours and earnings per client tracked automatically as you work' },
+  { src: '/images/tallyios/iphone-frame-29.png', alt: 'Send invoices from your phone — generate a PDF invoice and collect payment in seconds' },
+  { src: '/images/tallyios/iphone-frame-30.png', alt: 'Always on your home screen — check your hours and weekly goal without ever opening the app' },
+  { src: '/images/tallyios/iphone-frame-31.png', alt: 'Track from your lock screen — Live Activity shows your timer running, no need to open the app' },
+  { src: '/images/tallyios/iphone-frame-32.png', alt: 'Customize your experience — set time rounding, notifications, currency, and more' },
 ]
 
 const ipadScreenshots = [
