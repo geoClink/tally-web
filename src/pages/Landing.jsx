@@ -109,7 +109,7 @@ const tiers = [
     name: 'Free',
     price: '$0',
     period: 'forever',
-    features: ['Up to 3 clients', 'Last 7 days of history', 'iOS, Watch, Mac & Web'],
+    features: ['Up to 3 clients', 'Last 7 days of history', 'iOS & Web'],
     cta: 'Sign up free',
     highlight: false,
   },
@@ -118,7 +118,7 @@ const tiers = [
     price: '$9.99',
     period: 'one-time',
     badge: 'Most popular',
-    features: ['Unlimited clients', 'Full session history', 'CSV export', 'All Free features'],
+    features: ['Unlimited clients', 'Full session history', 'CSV export', 'Apple Watch & widgets', 'All Free features'],
     cta: 'Get Pro',
     note: 'Secure checkout via Stripe · Cards & Apple Pay accepted',
     highlight: true,
@@ -169,7 +169,7 @@ export default function Landing() {
       <section className="landing-hero">
         <h1 className="landing-headline">Track every hour.<br />Get paid for all of it.</h1>
         <p className="landing-subhead">
-          Built for freelancers, consultants, and independent contractors. Stop losing billable hours to clunky tools — track time on any Apple device, generate reports, and send invoices from one account.
+          Stop losing billable hours. Track time and send invoices from your iPhone, iPad, or browser.
         </p>
         <div className="landing-hero-ctas">
           <Link to="/login?mode=signup" className="landing-btn-primary">Sign up free →</Link>
@@ -188,8 +188,8 @@ export default function Landing() {
       </header>
 
 <section className="landing-demo">
-        <h2 className="landing-section-title">See it in action</h2>
-        <p className="landing-demo-sub">No sign-up required — try the full web dashboard.</p>
+        <h2 className="landing-section-title">Try it live</h2>
+        <p className="landing-demo-sub">No sign-up needed — the full dashboard, right here.</p>
         <a href="/demo" target="_blank" rel="noopener noreferrer" className="landing-browser-mockup landing-browser-mockup--link">
           <div className="landing-browser-bar">
             <div className="landing-browser-dots">
