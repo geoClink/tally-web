@@ -221,8 +221,8 @@ export default function Landing() {
           <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, and a full web dashboard — one Supabase backend, everything in sync.</p>
         </div>
         <Carousel3D items={productSlides} cardWidth={185} sceneHeight={600} label="iPhone" />
-        <Carousel3D items={ipadScreenshots} cardWidth={480} sceneHeight={360} label="iPad" className="c3d-ipad" flat />
-        <Carousel3D items={watchScreenshots} cardWidth={280} sceneHeight={334} label="Apple Watch" flat />
+        <Carousel3D items={ipadScreenshots} cardWidth={360} sceneHeight={340} label="iPad" className="c3d-ipad" />
+        <Carousel3D items={watchScreenshots} cardWidth={220} sceneHeight={340} label="Apple Watch" />
       </section>
 
       <section className="landing-features-section">
