@@ -11,29 +11,29 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
 const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
 
 const productSlides = [
-  { src: '/images/tallyios/iphone-frame-1.png', alt: 'Start tracking in one tap — simple timer running in the background so you never lose a billable minute' },
-  { src: '/images/tallyios/iphone-frame-25.png', alt: 'See where your time goes — weekly and all-time breakdowns by client at a glance' },
-  { src: '/images/tallyios/iphone-frame-26.png', alt: 'Never lose a day — every day you log time gets a dot, watch your consistency grow month by month' },
-  { src: '/images/tallyios/iphone-frame-27.png', alt: 'Track your whole team — see everyone\'s hours, weekly goals, and team totals all in one place' },
-  { src: '/images/tallyios/iphone-frame-28.png', alt: 'Know what you\'ve earned — hours and earnings per client tracked automatically as you work' },
-  { src: '/images/tallyios/iphone-frame-29.png', alt: 'Send invoices from your phone — generate a PDF invoice and collect payment in seconds' },
-  { src: '/images/tallyios/iphone-frame-30.png', alt: 'Always on your home screen — check your hours and weekly goal without ever opening the app' },
-  { src: '/images/tallyios/iphone-frame-31.png', alt: 'Track from your lock screen — Live Activity shows your timer running, no need to open the app' },
-  { src: '/images/tallyios/iphone-frame-32.png', alt: 'Customize your experience — set time rounding, notifications, currency, and more' },
+  { src: '/images/tallyios/iphone-frame-1.webp', alt: 'Start tracking in one tap — simple timer running in the background so you never lose a billable minute' },
+  { src: '/images/tallyios/iphone-frame-25.webp', alt: 'See where your time goes — weekly and all-time breakdowns by client at a glance' },
+  { src: '/images/tallyios/iphone-frame-26.webp', alt: 'Never lose a day — every day you log time gets a dot, watch your consistency grow month by month' },
+  { src: '/images/tallyios/iphone-frame-27.webp', alt: 'Track your whole team — see everyone\'s hours, weekly goals, and team totals all in one place' },
+  { src: '/images/tallyios/iphone-frame-28.webp', alt: 'Know what you\'ve earned — hours and earnings per client tracked automatically as you work' },
+  { src: '/images/tallyios/iphone-frame-29.webp', alt: 'Send invoices from your phone — generate a PDF invoice and collect payment in seconds' },
+  { src: '/images/tallyios/iphone-frame-30.webp', alt: 'Always on your home screen — check your hours and weekly goal without ever opening the app' },
+  { src: '/images/tallyios/iphone-frame-31.webp', alt: 'Track from your lock screen — Live Activity shows your timer running, no need to open the app' },
+  { src: '/images/tallyios/iphone-frame-32.webp', alt: 'Customize your experience — set time rounding, notifications, currency, and more' },
 ]
 
 const ipadScreenshots = [
-  { src: '/images/tallyios/ipad-frame-9.png', alt: 'Your full picture, on iPad — all your clients, hours, and session history beautifully laid out on the big screen' },
-  { src: '/images/tallyios/ipad-frame-10.png', alt: 'Track your whole team — see everyone\'s hours, weekly goals, and team totals beautifully laid out on iPad' },
-  { src: '/images/tallyios/ipad-frame-11.png', alt: 'Never lose a day — tap any day to see exactly what you worked on and for how long' },
-  { src: '/images/tallyios/ipad-frame-12.png', alt: 'Know what you\'ve earned — hours and earnings per client, every session logged, all on your iPad' },
-  { src: '/images/tallyios/ipad-frame-13.png', alt: 'Send invoices from your iPad — generate a PDF invoice and collect payment in seconds' },
+  { src: '/images/tallyios/ipad-frame-9.webp', alt: 'Your full picture, on iPad — all your clients, hours, and session history beautifully laid out on the big screen' },
+  { src: '/images/tallyios/ipad-frame-10.webp', alt: 'Track your whole team — see everyone\'s hours, weekly goals, and team totals beautifully laid out on iPad' },
+  { src: '/images/tallyios/ipad-frame-11.webp', alt: 'Never lose a day — tap any day to see exactly what you worked on and for how long' },
+  { src: '/images/tallyios/ipad-frame-12.webp', alt: 'Know what you\'ve earned — hours and earnings per client, every session logged, all on your iPad' },
+  { src: '/images/tallyios/ipad-frame-13.webp', alt: 'Send invoices from your iPad — generate a PDF invoice and collect payment in seconds' },
 ]
 
 const watchScreenshots = [
-  { src: '/images/tallyios/watch-frame-16.png', alt: 'Track from your wrist — tap play and your timer starts right from Apple Watch' },
-  { src: '/images/tallyios/watch-frame-17.png', alt: 'Always tracking — your timer runs on Apple Watch so you never have to take your phone out' },
-  { src: '/images/tallyios/watch-frame-18.png', alt: 'Pause and resume anytime — step away and pick back up, your time is saved automatically' },
+  { src: '/images/tallyios/watch-frame-16.webp', alt: 'Track from your wrist — tap play and your timer starts right from Apple Watch' },
+  { src: '/images/tallyios/watch-frame-17.webp', alt: 'Always tracking — your timer runs on Apple Watch so you never have to take your phone out' },
+  { src: '/images/tallyios/watch-frame-18.webp', alt: 'Pause and resume anytime — step away and pick back up, your time is saved automatically' },
 ]
 
 const features = [
