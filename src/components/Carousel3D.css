@@ -68,7 +68,7 @@
 .c3d-card-inner {
   position: absolute;
   width: var(--card-w, 220px);
-  transform: translate(-50%, -50%) scale(0.88);
+  transform: translate(-50%, -50%) scale(0.88) translateZ(0);
   backface-visibility: hidden;
   transition: transform 0.45s ease;
   border-radius: 16px;
@@ -76,7 +76,7 @@
 }
 
 .c3d-card--active .c3d-card-inner {
-  transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, -50%) scale(1) translateZ(0);
 }
 
 .c3d-card-inner img {
@@ -107,6 +107,7 @@
   touch-action: pan-y;
   border-radius: 16px;
   overflow: hidden;
+  transform: translateZ(0);
   background: #2535d9;
   box-shadow:
     0 22px 40px rgba(37, 99, 235, 0.3),
