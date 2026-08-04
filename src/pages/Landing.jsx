@@ -222,7 +222,7 @@ export default function Landing() {
         </div>
         <Carousel3D items={productSlides} cardWidth={185} sceneHeight={600} label="iPhone" />
         <Carousel3D items={ipadScreenshots} cardWidth={360} sceneHeight={340} label="iPad" className="c3d-ipad" />
-        <Carousel3D items={watchScreenshots} cardWidth={220} sceneHeight={340} label="Apple Watch" />
+        <Carousel3D items={watchScreenshots} cardWidth={220} sceneHeight={340} label="Apple Watch" flat />
       </section>
 
       <section className="landing-features-section">
