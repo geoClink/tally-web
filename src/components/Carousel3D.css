@@ -19,7 +19,7 @@
   text-transform: uppercase;
   letter-spacing: 0.07em;
   color: var(--text-muted);
-  margin: 0 0 0.5rem;
+  margin: 0 0 1.5rem;
 }
 
 /* overflow-x: clip hides side cards past the edges but does NOT clip top/bottom */
@@ -73,6 +73,7 @@
   transition: transform 0.45s ease;
   border-radius: 16px;
   overflow: hidden;
+  clip-path: inset(0 round 16px);
 }
 
 .c3d-card--active .c3d-card-inner {
@@ -108,6 +109,7 @@
   border-radius: 16px;
   overflow: hidden;
   transform: translateZ(0);
+  clip-path: inset(0 round 16px);
   background: #2535d9;
   box-shadow:
     0 22px 40px rgba(37, 99, 235, 0.3),
