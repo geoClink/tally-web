@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
 
@@ -30,36 +29,15 @@ export default function Billing() {
   const [searchParams] = useSearchParams()
   const [upgraded, setUpgraded] = useState(false)
 
-  // Stripe redirects back here with ?upgraded=pro or ?upgraded=business after payment
+  // Stripe redirects back here with ?upgraded=pro or ?upgraded=business after webhook activates subscription
   useEffect(() => {
     if (!user) return
     const upgradedTier = searchParams.get('upgraded')
     if (upgradedTier === 'pro' || upgradedTier === 'business') {
-      handleStripeSuccess(upgradedTier)
+      // Webhook writes the subscription server-side — just refresh and show confirmation
+      refetch().then(() => setUpgraded(true))
     }
   }, [user])
-
-  async function handleStripeSuccess(upgradedTier) {
-    const expiresAt = upgradedTier === 'business'
-      ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      : null
-
-    const { error } = await supabase.from('subscriptions').insert({
-      user_id: user.id,
-      tier: upgradedTier,
-      source: 'stripe',
-      expires_at: expiresAt,
-    })
-
-    if (error) {
-      console.error('Subscription insert error:', error)
-      alert(`Failed to activate subscription: ${error.message}`)
-      return
-    }
-
-    await refetch()
-    setUpgraded(true)
-  }
 
   function handleUpgrade(plan) {
     if (user?.email === import.meta.env.VITE_DEMO_EMAIL) {
