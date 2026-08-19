@@ -30,7 +30,7 @@ export default function BugReportModal({ onClose }) {
     setLoading(false)
 
     if (!res.ok) {
-      setError('Something went wrong. Try again or email us directly.')
+      setError('Something went wrong. Try again or email help@tallytimetracker.com directly.')
     } else {
       setSent(true)
     }

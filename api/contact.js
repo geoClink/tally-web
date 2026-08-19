@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
   const { error } = await resend.emails.send({
     from: 'Tally Bug Report <noreply@georgeclinkscalesdev.com>',
-    to: 'georgeclinkscalesdev@proton.me',
+    to: 'help@tallytimetracker.com',
     replyTo: email,
     subject: `Bug Report from ${name}`,
     text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
