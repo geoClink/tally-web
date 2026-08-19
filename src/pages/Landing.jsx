@@ -367,6 +367,7 @@ export default function Landing() {
           <Link to="/login">Sign in</Link>
           <Link to="/privacy">Privacy</Link>
           <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
+          <a href="https://squishybutter.app" target="_blank" rel="noopener noreferrer">Squishybutter — exclusive gacha-style digital squishy toy game by George</a>
         </div>
       </footer>
       {bugModalOpen && <BugReportModal onClose={() => setBugModalOpen(false)} />}
