@@ -15,6 +15,7 @@ const navItems = [
   { to: '/invoices', label: 'Invoices', tier: 'business' },
   { to: '/billing', label: 'Billing' },
   { to: '/settings', label: 'Settings' },
+  { to: '/help', label: 'Help' },
 ]
 
 export default function Sidebar({ onClose }) {

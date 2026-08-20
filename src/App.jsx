@@ -22,6 +22,7 @@ import Demo from './pages/Demo'
 import Privacy from './pages/Privacy'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
+import Help from './pages/Help'
 
 function RecoveryRedirect() {
   const navigate = useNavigate()
@@ -65,6 +66,7 @@ export default function App() {
               <Route path="/settings" element={<Settings />} />
               <Route path="/team-dashboard" element={<TeamDashboard />} />
               <Route path="/calendar" element={<Calendar />} />
+              <Route path="/help" element={<Help />} />
             </Route>
           </Routes>
           </PendingInviteProvider>
