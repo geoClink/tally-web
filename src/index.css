@@ -42,6 +42,14 @@
   padding: 0;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg);
@@ -792,6 +800,12 @@ select:focus {
   border-radius: var(--radius);
   font-size: 0.875rem;
   margin-bottom: 1rem;
+  animation: alertSlide 0.2s ease-out;
+}
+
+@keyframes alertSlide {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .alert-info {
@@ -1219,8 +1233,13 @@ select:focus {
   align-items: center;
   justify-content: center;
   cursor: default;
-  transition: background 0.1s;
+  transition: background 0.1s, transform 0.15s;
   min-width: 0;
+}
+
+.cal-cell:not(.cal-cell-0):not(.cal-empty):hover {
+  transform: scale(1.18);
+  z-index: 1;
 }
 
 .cal-empty {

@@ -1,0 +1,5 @@
+{
+  "appId": "com.yourname.tally",
+  "appName": "Tally - Time Tracker",
+  "webDir": "dist"
+}

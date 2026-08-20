@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
 import { usePendingInvite } from '../context/PendingInviteContext'
 import { formatHours, todayString, weekStartString } from '../lib/utils'
+import { useCountUp } from '../hooks/useCountUp'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -89,6 +90,10 @@ export default function Dashboard() {
 
   const weekProgress = weekGoal > 0 ? Math.min((weekHours / weekGoal) * 100, 100) : 0
 
+  const animatedToday = useCountUp(todayHours, 700, !loading)
+  const animatedWeek = useCountUp(weekHours, 700, !loading)
+  const animatedProgress = useCountUp(weekProgress, 700, !loading)
+
   if (loading) return <div className="loading">Loading…</div>
 
   return (
@@ -112,13 +117,13 @@ export default function Dashboard() {
       <div className="card-grid">
         <div className="card">
           <div className="card-title">Today</div>
-          <div className="card-value">{formatHours(todayHours)}</div>
+          <div className="card-value">{formatHours(animatedToday)}</div>
           <div className="card-subtitle">tracked today</div>
         </div>
 
         <div className="card">
           <div className="card-title">This Week</div>
-          <div className="card-value">{formatHours(weekHours)}</div>
+          <div className="card-value">{formatHours(animatedWeek)}</div>
           <div className="card-subtitle">of {formatHours(weekGoal)} goal</div>
           <div className="progress-bar">
             <div
@@ -130,7 +135,7 @@ export default function Dashboard() {
 
         <div className="card">
           <div className="card-title">Weekly Goal</div>
-          <div className="card-value">{Math.round(weekProgress)}%</div>
+          <div className="card-value">{Math.round(animatedProgress)}%</div>
           <div className="card-subtitle">{weekProgress >= 100 ? 'Goal reached!' : `${formatHours(Math.max(weekGoal - weekHours, 0))} remaining`}</div>
         </div>
       </div>
