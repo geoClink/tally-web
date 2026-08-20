@@ -22,6 +22,20 @@ const productSlides = [
 ]
 
 
+const ipadScreenshots = [
+  { src: '/images/tallyios/ipad-frame-9.webp', alt: 'Your full picture, on iPad — all your clients, hours, and session history beautifully laid out on the big screen' },
+  { src: '/images/tallyios/ipad-frame-10.webp', alt: 'Track your whole team — see everyone\'s hours, weekly goals, and team totals beautifully laid out on iPad' },
+  { src: '/images/tallyios/ipad-frame-11.webp', alt: 'Never lose a day — tap any day to see exactly what you worked on and for how long' },
+  { src: '/images/tallyios/ipad-frame-12.webp', alt: 'Know what you\'ve earned — hours and earnings per client, every session logged, all on your iPad' },
+  { src: '/images/tallyios/ipad-frame-13.webp', alt: 'Send invoices from your iPad — generate a PDF invoice and collect payment in seconds' },
+]
+
+const watchScreenshots = [
+  { src: '/images/tallyios/watch-frame-16.webp', alt: 'Track from your wrist — tap play and your timer starts right from Apple Watch' },
+  { src: '/images/tallyios/watch-frame-17.webp', alt: 'Always tracking — your timer runs on Apple Watch so you never have to take your phone out' },
+  { src: '/images/tallyios/watch-frame-18.webp', alt: 'Pause and resume anytime — step away and pick back up, your time is saved automatically' },
+]
+
 const features = [
   { title: 'Live Activity & Dynamic Island', body: 'Your running timer stays on the lock screen and Dynamic Island the entire time — no need to open the app.' },
   { title: 'Widgets & Siri', body: 'Small and medium home screen widgets show your active session. Start and stop timers by voice via App Intents and Siri Shortcuts.' },
@@ -206,9 +220,28 @@ export default function Landing() {
           <h2 className="landing-section-title">Native on every Apple device</h2>
           <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, and a full web dashboard — one Supabase backend, everything in sync.</p>
         </div>
+        <p className="landing-device-row-label">iPhone</p>
         <div className="landing-scroll-track">
           {productSlides.map(item => (
             <div key={item.src} className="landing-scroll-item">
+              <img src={item.src} alt={item.alt} loading="lazy" style={{ width: '100%', borderRadius: '12px', display: 'block' }} />
+            </div>
+          ))}
+        </div>
+
+        <p className="landing-device-row-label">iPad</p>
+        <div className="landing-scroll-track">
+          {ipadScreenshots.map(item => (
+            <div key={item.src} className="landing-scroll-item landing-scroll-item--ipad">
+              <img src={item.src} alt={item.alt} loading="lazy" style={{ width: '100%', borderRadius: '12px', display: 'block' }} />
+            </div>
+          ))}
+        </div>
+
+        <p className="landing-device-row-label">Apple Watch</p>
+        <div className="landing-scroll-track landing-scroll-track--watch">
+          {watchScreenshots.map(item => (
+            <div key={item.src} className="landing-scroll-item landing-scroll-item--watch">
               <img src={item.src} alt={item.alt} loading="lazy" style={{ width: '100%', borderRadius: '12px', display: 'block' }} />
             </div>
           ))}
