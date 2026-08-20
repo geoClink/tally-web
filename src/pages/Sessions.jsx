@@ -4,6 +4,9 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
 import { formatHours } from '../lib/utils'
+import { Capacitor } from '@capacitor/core'
+import { Filesystem, Directory } from '@capacitor/filesystem'
+import { Share } from '@capacitor/share'
 
 export default function Sessions() {
   const { user } = useAuth()
@@ -44,7 +47,7 @@ export default function Sessions() {
     if (!error) setSessions(prev => prev.filter(s => s.id !== id))
   }
 
-  function exportCSV() {
+  async function exportCSV() {
     const header = 'Date,Client,Hours,Minutes,Task Note'
     const rows = sessions.map(s => {
       const mins = Math.round((s.hours ?? 0) * 60)
@@ -54,13 +57,22 @@ export default function Sessions() {
       return `${s.date},${s.client},${h},${m},${note}`
     })
     const csv = [header, ...rows].join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `tally-sessions-${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
+    const fileName = `tally-sessions-${new Date().toISOString().split('T')[0]}.csv`
+
+    if (Capacitor.isNativePlatform()) {
+      const base64 = btoa(unescape(encodeURIComponent(csv)))
+      await Filesystem.writeFile({ path: fileName, data: base64, directory: Directory.Cache })
+      const { uri } = await Filesystem.getUri({ path: fileName, directory: Directory.Cache })
+      await Share.share({ title: 'Tally Sessions', url: uri })
+    } else {
+      const blob = new Blob([csv], { type: 'text/csv' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = fileName
+      a.click()
+      URL.revokeObjectURL(url)
+    }
   }
 
   if (loading) return <div className="loading">Loading…</div>
@@ -91,7 +103,7 @@ export default function Sessions() {
       )}
 
       {sessions.length === 0 ? (
-        <div className="empty-state">No sessions found. Track time in the Tally iOS app.</div>
+        <div className="empty-state">No sessions found. Track time in the Tally app.</div>
       ) : (
         <div className="table-wrapper">
           <table>

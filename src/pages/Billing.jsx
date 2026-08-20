@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
+import { Capacitor } from '@capacitor/core'
+
+const isNative = Capacitor.isNativePlatform()
 
 const PLANS = [
   {
@@ -91,54 +94,70 @@ export default function Billing() {
             Your subscription was purchased through the iOS app. Manage it via the App Store.
           </p>
         )}
+        {subscription?.source === 'android' && (
+          <p className="text-muted" style={{ fontSize: '0.85rem', marginTop: '0.75rem' }}>
+            Your subscription was purchased through the Android app. Manage it via Google Play.
+          </p>
+        )}
       </div>
 
-      {tier === 'free' && (
-        <>
-          <div style={{ marginBottom: '1rem' }}>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Upgrade your plan</h2>
-            <p className="text-muted" style={{ fontSize: '0.9rem', marginTop: '0.25rem' }}>
-              Subscriptions work across iOS and web — buy once, use everywhere.
-            </p>
-          </div>
-          <div className="plan-grid">
-            {PLANS.map(plan => (
-              <div key={plan.id} className={`plan-card${plan.featured ? ' featured' : ''}`}>
-                <div className="plan-name">{plan.name}</div>
-                <div className="plan-price">{plan.price}</div>
-                <div className="plan-period">{plan.period}</div>
-                <ul className="plan-features">
-                  {plan.features.map(f => <li key={f}>{f}</li>)}
-                </ul>
-                <button
-                  className="btn btn-primary"
-                  style={{ width: '100%' }}
-                  onClick={() => handleUpgrade(plan)}
-                >
-                  Upgrade to {plan.name}
-                </button>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-
-      {tier === 'pro' && (
-        <div className="plan-card featured" style={{ maxWidth: '320px' }}>
-          <div className="plan-name">Business</div>
-          <div className="plan-price">$4.99</div>
-          <div className="plan-period">/month</div>
-          <ul className="plan-features">
-            {PLANS[1].features.map(f => <li key={f}>{f}</li>)}
-          </ul>
-          <button
-            className="btn btn-primary"
-            style={{ width: '100%' }}
-            onClick={() => handleUpgrade(PLANS[1])}
-          >
-            Upgrade to Business
-          </button>
+      {isNative ? (
+        <div className="card">
+          <div className="card-title">Upgrade your plan</div>
+          <p className="text-muted" style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
+            To upgrade to Pro or Business, purchase through Google Play. Your subscription will activate automatically once payment is confirmed.
+          </p>
         </div>
+      ) : (
+        <>
+          {tier === 'free' && (
+            <>
+              <div style={{ marginBottom: '1rem' }}>
+                <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Upgrade your plan</h2>
+                <p className="text-muted" style={{ fontSize: '0.9rem', marginTop: '0.25rem' }}>
+                  Subscriptions work across iOS and web — buy once, use everywhere.
+                </p>
+              </div>
+              <div className="plan-grid">
+                {PLANS.map(plan => (
+                  <div key={plan.id} className={`plan-card${plan.featured ? ' featured' : ''}`}>
+                    <div className="plan-name">{plan.name}</div>
+                    <div className="plan-price">{plan.price}</div>
+                    <div className="plan-period">{plan.period}</div>
+                    <ul className="plan-features">
+                      {plan.features.map(f => <li key={f}>{f}</li>)}
+                    </ul>
+                    <button
+                      className="btn btn-primary"
+                      style={{ width: '100%' }}
+                      onClick={() => handleUpgrade(plan)}
+                    >
+                      Upgrade to {plan.name}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {tier === 'pro' && (
+            <div className="plan-card featured" style={{ maxWidth: '320px' }}>
+              <div className="plan-name">Business</div>
+              <div className="plan-price">$4.99</div>
+              <div className="plan-period">/month</div>
+              <ul className="plan-features">
+                {PLANS[1].features.map(f => <li key={f}>{f}</li>)}
+              </ul>
+              <button
+                className="btn btn-primary"
+                style={{ width: '100%' }}
+                onClick={() => handleUpgrade(PLANS[1])}
+              >
+                Upgrade to Business
+              </button>
+            </div>
+          )}
+        </>
       )}
 
     </div>

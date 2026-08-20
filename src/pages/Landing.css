@@ -267,6 +267,63 @@
   color: #fff;
 }
 
+.landing-appstore-badge--android {
+  background: #1a1a2e;
+  border-color: rgba(255, 255, 255, 0.12);
+  cursor: pointer;
+  font: inherit;
+  position: relative;
+}
+
+.landing-appstore-badge--android::after {
+  content: 'Soon';
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #3ddc84;
+  color: #000;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
 .landing-appstore-text {
   display: flex;
   flex-direction: column;

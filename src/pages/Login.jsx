@@ -2,8 +2,10 @@ import { useState } from 'react'
 import { useNavigate, Navigate, Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import BugReportModal from '../components/BugReportModal'
+import { Capacitor } from '@capacitor/core'
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
+const isNative = Capacitor.isNativePlatform()
 
 export default function Login() {
   const [searchParams] = useSearchParams()
@@ -101,15 +103,17 @@ export default function Login() {
           </div>
         </button>
 
-        <button
-          type="button"
-          className="btn-apple-official"
-          onClick={signInWithApple}
-          disabled={loading}
-          aria-label="Sign in with Apple"
-        >
-          <img src="/sign-in-with-apple.png" alt="Sign in with Apple" style={{ height: '44px', display: 'block' }} />
-        </button>
+        {!isNative && (
+          <button
+            type="button"
+            className="btn-apple-official"
+            onClick={signInWithApple}
+            disabled={loading}
+            aria-label="Sign in with Apple"
+          >
+            <img src="/sign-in-with-apple.png" alt="Sign in with Apple" style={{ height: '44px', display: 'block' }} />
+          </button>
+        )}
 
         {mode === 'signin' && (
           <div className="auth-links" style={{ marginTop: '0.75rem' }}>
@@ -127,8 +131,12 @@ export default function Login() {
 
         <div className="auth-links">
           <Link to="/demo">Try demo</Link>
-          <span className="auth-links-dot">·</span>
-          <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">App Store</a>
+          {!isNative && (
+            <>
+              <span className="auth-links-dot">·</span>
+              <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">App Store</a>
+            </>
+          )}
           <span className="auth-links-dot">·</span>
           <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
         </div>

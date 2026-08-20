@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { Capacitor } from '@capacitor/core'
 import { useEffect } from 'react'
 import { AuthProvider } from './context/AuthContext'
 import { SubscriptionProvider } from './context/SubscriptionContext'
@@ -42,7 +43,7 @@ export default function App() {
           <PendingInviteProvider>
           <RecoveryRedirect />
           <Routes>
-            <Route path="/" element={<Landing />} />
+            <Route path="/" element={Capacitor.isNativePlatform() ? <Navigate to="/login" replace /> : <Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/demo" element={<Demo />} />
             <Route path="/privacy" element={<Privacy />} />

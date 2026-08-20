@@ -138,6 +138,7 @@ const tiers = [
 export default function Landing() {
   const { user, loading, recoveryMode } = useAuth()
   const [bugModalOpen, setBugModalOpen] = useState(false)
+  const [androidModalOpen, setAndroidModalOpen] = useState(false)
   const [emailInput, setEmailInput] = useState('')
   const [emailStatus, setEmailStatus] = useState('idle')
 
@@ -183,6 +184,15 @@ export default function Landing() {
                 <span className="landing-appstore-main">App Store</span>
               </span>
             </a>
+            <button onClick={() => setAndroidModalOpen(true)} className="landing-appstore-badge landing-appstore-badge--android" aria-label="Android app coming soon">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+                <path d="M17.523 15.341a5.172 5.172 0 0 1-5.172-5.172 5.172 5.172 0 0 1 5.172-5.172 5.172 5.172 0 0 1 5.172 5.172 5.172 5.172 0 0 1-5.172 5.172m-11.046 0a5.172 5.172 0 0 1-5.172-5.172 5.172 5.172 0 0 1 5.172-5.172 5.172 5.172 0 0 1 5.172 5.172 5.172 5.172 0 0 1-5.172 5.172M17.584.809l1.937-3.355a.403.403 0 0 0-.148-.551.403.403 0 0 0-.551.148L16.87.465a12.245 12.245 0 0 0-4.87-1.006c-1.748 0-3.402.37-4.87 1.006L5.178-2.949a.403.403 0 0 0-.551-.148.403.403 0 0 0-.148.551L6.416.809C2.9 2.688.477 6.365.477 10.613h23.046c0-4.248-2.423-7.925-5.939-9.804"/>
+              </svg>
+              <span className="landing-appstore-text">
+                <span className="landing-appstore-sub">Coming soon to</span>
+                <span className="landing-appstore-main">Google Play</span>
+              </span>
+            </button>
           </div>
           <p className="landing-hero-note">Free to start · No credit card required · <a href="/demo" target="_blank" rel="noopener noreferrer" className="landing-hero-demo-link">Try the live demo →</a></p>
         </div>
@@ -370,6 +380,15 @@ export default function Landing() {
               <span className="landing-appstore-main">App Store</span>
             </span>
           </a>
+          <button onClick={() => setAndroidModalOpen(true)} className="landing-appstore-badge landing-appstore-badge--android" aria-label="Android app coming soon">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+              <path d="M17.523 15.341a5.172 5.172 0 0 1-5.172-5.172 5.172 5.172 0 0 1 5.172-5.172 5.172 5.172 0 0 1 5.172 5.172 5.172 5.172 0 0 1-5.172 5.172m-11.046 0a5.172 5.172 0 0 1-5.172-5.172 5.172 5.172 0 0 1 5.172-5.172 5.172 5.172 0 0 1 5.172 5.172 5.172 5.172 0 0 1-5.172 5.172M17.584.809l1.937-3.355a.403.403 0 0 0-.148-.551.403.403 0 0 0-.551.148L16.87.465a12.245 12.245 0 0 0-4.87-1.006c-1.748 0-3.402.37-4.87 1.006L5.178-2.949a.403.403 0 0 0-.551-.148.403.403 0 0 0-.148.551L6.416.809C2.9 2.688.477 6.365.477 10.613h23.046c0-4.248-2.423-7.925-5.939-9.804"/>
+            </svg>
+            <span className="landing-appstore-text">
+              <span className="landing-appstore-sub">Coming soon to</span>
+              <span className="landing-appstore-main">Google Play</span>
+            </span>
+          </button>
         </div>
       </section>
 
@@ -406,6 +425,27 @@ export default function Landing() {
         </div>
       </footer>
       {bugModalOpen && <BugReportModal onClose={() => setBugModalOpen(false)} />}
+
+      {androidModalOpen && (
+        <div className="modal-overlay" onClick={() => setAndroidModalOpen(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setAndroidModalOpen(false)} aria-label="Close">✕</button>
+            <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🤖</div>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem' }}>Android app in development</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6 }}>
+              The Tally Android app is currently in development and will be available on Google Play soon. In the meantime, the web app works great on any Android browser.
+            </p>
+            <Link
+              to="/login?mode=signup"
+              className="landing-btn-primary"
+              style={{ display: 'inline-block', marginTop: '1.25rem' }}
+              onClick={() => setAndroidModalOpen(false)}
+            >
+              Use the web app →
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

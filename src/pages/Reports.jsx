@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Capacitor } from '@capacitor/core'
+import { Filesystem, Directory } from '@capacitor/filesystem'
+import { Share } from '@capacitor/share'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -167,15 +170,26 @@ export default function Reports() {
     scales: { y: { beginAtZero: true, ticks: { callback: v => `${v}h` } } },
   }
 
-  function exportCSV() {
+  async function exportCSV() {
     const header = 'Client,Hours'
     const rows = clients.map(c => `${c},${byClient[c].toFixed(2)}`)
     const csv = [header, ...rows, `Total,${totalHours.toFixed(2)}`].join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a'); a.href = url
-    a.download = `tally-report-${filter}-${new Date().toISOString().split('T')[0]}.csv`
-    a.click(); URL.revokeObjectURL(url)
+    const fileName = `tally-report-${filter}-${new Date().toISOString().split('T')[0]}.csv`
+
+    if (Capacitor.isNativePlatform()) {
+      const base64 = btoa(unescape(encodeURIComponent(csv)))
+      await Filesystem.writeFile({ path: fileName, data: base64, directory: Directory.Cache })
+      const { uri } = await Filesystem.getUri({ path: fileName, directory: Directory.Cache })
+      await Share.share({ title: 'Tally Report', url: uri })
+    } else {
+      const blob = new Blob([csv], { type: 'text/csv' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = fileName
+      a.click()
+      URL.revokeObjectURL(url)
+    }
   }
 
   const activeFilter = FILTERS.find(f => f.value === filter)

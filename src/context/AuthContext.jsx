@@ -2,6 +2,8 @@
 // Any component in the tree can call useAuth() to get the user and auth functions.
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
+import { Capacitor } from '@capacitor/core'
+import { App } from '@capacitor/app'
 
 const AuthContext = createContext(null)
 
@@ -25,7 +27,26 @@ export function AuthProvider({ children }) {
       setUser(session?.user ?? null)
     })
 
-    return () => subscription.unsubscribe()
+    // On Android, after Google OAuth the browser redirects back to the app via
+    // the custom URL scheme. Extract the tokens from the URL hash and set the session.
+    let appUrlListener
+    if (Capacitor.isNativePlatform()) {
+      App.addListener('appUrlOpen', async ({ url }) => {
+        const hash = url.split('#')[1]
+        if (!hash) return
+        const params = new URLSearchParams(hash)
+        const access_token = params.get('access_token')
+        const refresh_token = params.get('refresh_token')
+        if (access_token && refresh_token) {
+          await supabase.auth.setSession({ access_token, refresh_token })
+        }
+      }).then(listener => { appUrlListener = listener })
+    }
+
+    return () => {
+      subscription.unsubscribe()
+      appUrlListener?.remove()
+    }
   }, [])
 
   const signIn = (email, password) =>
@@ -42,11 +63,15 @@ export function AuthProvider({ children }) {
       options: { redirectTo: `${window.location.origin}/dashboard` },
     })
 
-  const signInWithGoogle = () =>
-    supabase.auth.signInWithOAuth({
+  const signInWithGoogle = () => {
+    const redirectTo = Capacitor.isNativePlatform()
+      ? 'name.georgeclinkscales.tally://login-callback'
+      : `${window.location.origin}/dashboard`
+    return supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/dashboard` },
+      options: { redirectTo },
     })
+  }
 
   return (
     <AuthContext.Provider value={{ user, loading, recoveryMode, signIn, signUp, signOut, signInWithApple, signInWithGoogle }}>

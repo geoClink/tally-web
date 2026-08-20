@@ -1,5 +1,17 @@
 {
-  "appId": "com.yourname.tally",
+  "appId": "name.GeorgeClinkscales.Tally",
   "appName": "Tally - Time Tracker",
-  "webDir": "dist"
+  "webDir": "dist",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1500,
+      "launchAutoHide": true,
+      "fadeOutDuration": 300,
+      "backgroundColor": "#ffffff",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false,
+      "splashFullScreen": true,
+      "splashImmersive": true
+    }
+  }
 }

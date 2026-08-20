@@ -68,7 +68,10 @@ export default function Help() {
         <div className="card">
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Upgrading your plan</h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
-            Go to <strong>Billing</strong> and click the plan you want. You'll be taken to a Stripe checkout page. After payment, Stripe redirects you back and your plan activates automatically.
+            On the web or iOS: go to <strong>Billing</strong> and select your plan — you'll be taken to a Stripe checkout page and your plan activates automatically after payment.
+          </p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
+            On Android: purchase through Google Play from the <strong>Billing</strong> page in the app.
           </p>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
             If your plan doesn't update right away, try refreshing the page.
@@ -105,7 +108,7 @@ export default function Help() {
             </div>
             <div>
               <p style={{ fontWeight: 500, marginBottom: '0.2rem' }}>Can I use Tally on my phone?</p>
-              <p style={{ color: 'var(--text-muted)' }}>Yes — the iOS app is the primary mobile experience. The web app is mobile-responsive and works in a browser, but the native iOS app has more features.</p>
+              <p style={{ color: 'var(--text-muted)' }}>Yes — native apps are available for iOS and Android. The web app is also mobile-responsive and works in any browser.</p>
             </div>
             <div>
               <p style={{ fontWeight: 500, marginBottom: '0.2rem' }}>How do I delete a session?</p>
