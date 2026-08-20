@@ -167,9 +167,9 @@ export default function Landing() {
       </nav>
       <header className="landing-banner">
       <section className="landing-hero">
-        <h1 className="landing-headline">Track every hour.<br />Get paid for all of it.</h1>
+        <h1 className="landing-headline">Freelance time tracking<br />for iPhone and web.</h1>
         <p className="landing-subhead">
-          Stop losing billable hours. Track time and send invoices from your iPhone, iPad, or browser.
+          Log billable hours with one tap. Send invoices from your phone. Track your whole team when you're ready to grow.
         </p>
         <div className="landing-hero-ctas">
           <Link to="/login?mode=signup" className="landing-btn-primary">Sign up free →</Link>
@@ -183,7 +183,7 @@ export default function Landing() {
             </span>
           </a>
         </div>
-        <p className="landing-hero-note">Free to start · No credit card required · Live on App Store</p>
+        <p className="landing-hero-note">Free to start · No credit card required · <a href="/demo" target="_blank" rel="noopener noreferrer" className="landing-hero-demo-link">Try the live demo →</a></p>
       </section>
       </header>
 
@@ -390,7 +390,6 @@ export default function Landing() {
           <Link to="/login">Sign in</Link>
           <Link to="/privacy">Privacy</Link>
           <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
-          <a href="https://squishybutter.app" target="_blank" rel="noopener noreferrer">Squishybutter — exclusive gacha-style digital squishy toy game by George</a>
         </div>
       </footer>
       {bugModalOpen && <BugReportModal onClose={() => setBugModalOpen(false)} />}
