@@ -119,13 +119,13 @@ export default function Track() {
     setClients([...wsClientNames, ...otherClients])
   }
 
-  // Returns an error string if the free-tier 3-client limit would be exceeded, or null if OK
+  // Returns an error string if the free-tier 5-client limit would be exceeded, or null if OK
   async function checkClientLimit(newClient) {
     if (isPro) return null
     const { data } = await supabase.from('sessions').select('client').eq('user_id', user.id)
     const existing = [...new Set(data?.map(s => s.client) ?? [])]
-    if (existing.length >= 3 && !existing.includes(newClient.trim())) {
-      return 'Free tier is limited to 3 clients. Upgrade to Pro for unlimited clients.'
+    if (existing.length >= 5 && !existing.includes(newClient.trim())) {
+      return 'Free tier is limited to 5 clients. Upgrade to Pro for unlimited clients.'
     }
     return null
   }
@@ -343,7 +343,7 @@ export default function Track() {
 
       {!isPro && (
         <div className="alert alert-info" style={{ marginBottom: '1rem' }}>
-          Free tier: up to 3 clients. <Link to="/billing" className="alert-link">Upgrade to Pro</Link> for unlimited.
+          Free tier: up to 5 clients. <Link to="/billing" className="alert-link">Upgrade to Pro</Link> for unlimited.
         </div>
       )}
 

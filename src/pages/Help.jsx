@@ -18,7 +18,7 @@ export default function Help() {
             <li><strong>Manual entry</strong> — enter a start time, end time, and client name to log past work.</li>
           </ul>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: '0.75rem' }}>
-            Free accounts are limited to 3 clients and can only view the last 7 days of history.
+            Free accounts are limited to 5 clients and can only view the last 7 days of history.
           </p>
         </div>
 
@@ -28,7 +28,7 @@ export default function Help() {
             <div>
               <span className="current-tier tier-free" style={{ marginBottom: '0.35rem', display: 'inline-flex' }}>Free</span>
               <ul style={{ paddingLeft: '1.25rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.3rem' }}>
-                <li>Up to 3 clients</li>
+                <li>Up to 5 clients</li>
                 <li>Last 7 days of session history</li>
                 <li>Dashboard, reports, and activity calendar</li>
               </ul>
