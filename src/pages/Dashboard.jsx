@@ -122,8 +122,8 @@ export default function Dashboard() {
           <div className="card-subtitle">of {formatHours(weekGoal)} goal</div>
           <div className="progress-bar">
             <div
-              className={`progress-fill${weekProgress >= 100 ? ' complete' : ''}`}
-              style={{ width: `${weekProgress}%` }}
+              className={`progress-fill progress-fill--anim${weekProgress >= 100 ? ' complete' : ''}`}
+              style={{ '--fill': `${weekProgress}%` }}
             />
           </div>
         </div>
@@ -161,8 +161,8 @@ export default function Dashboard() {
                   </div>
                   <div className="progress-bar">
                     <div
-                      className={`progress-fill${progress >= 100 ? ' complete' : ''}`}
-                      style={{ width: `${progress}%` }}
+                      className={`progress-fill progress-fill--anim${progress >= 100 ? ' complete' : ''}`}
+                      style={{ '--fill': `${progress}%` }}
                     />
                   </div>
                   <div className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.3rem' }}>

@@ -1,11 +1,12 @@
 // Like a SwiftUI NavigationSplitView — sidebar on the left, content on the right.
 // <Outlet /> is where the current page renders (like the detail view in a split view).
 import { useState } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const location = useLocation()
 
   return (
     <div className="app-layout">
@@ -24,7 +25,9 @@ export default function Layout() {
         >
           ☰
         </button>
-        <Outlet />
+        <div key={location.pathname} className="page-fade">
+          <Outlet />
+        </div>
       </div>
     </div>
   )

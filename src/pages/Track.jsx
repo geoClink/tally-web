@@ -352,7 +352,10 @@ export default function Track() {
 
       {tab === 'timer' && (
         <div className="card">
-          <div className={`timer-display${running && !paused ? ' timer-running' : ''}`}>{timerDisplay}</div>
+          <div className={`timer-display${running && !paused ? ' timer-running' : ''}`}>
+            {running && !paused && <span className="timer-dot" aria-hidden="true" />}
+            {timerDisplay}
+          </div>
           {running && (
             <p style={{ textAlign: 'center', fontSize: '0.8rem', color: paused ? 'var(--warning, #d97706)' : 'var(--success, #16a34a)', marginTop: '0.25rem' }}>
               {paused ? 'Paused' : 'Running'}
