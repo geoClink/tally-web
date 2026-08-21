@@ -126,7 +126,7 @@ const tiers = [
     price: '$9.99',
     period: 'one-time',
     badge: 'Most popular',
-    features: ['Unlimited clients', 'Full session history', 'CSV export', 'Apple Watch & widgets', 'All Free features'],
+    features: ['Unlimited clients', 'Full session history', 'CSV export', 'Apple Watch & widgets', 'Siri shortcuts', 'All Free features'],
     cta: 'Get Pro',
     note: 'Secure checkout via Stripe · Cards & Apple Pay accepted',
     highlight: true,
@@ -149,6 +149,7 @@ export default function Landing() {
   const [androidModalOpen, setAndroidModalOpen] = useState(false)
   const [emailInput, setEmailInput] = useState('')
   const [emailStatus, setEmailStatus] = useState('idle')
+  const [openFaq, setOpenFaq] = useState(null)
 
   async function handleEmailSubmit(e) {
     e.preventDefault()
@@ -283,7 +284,7 @@ export default function Landing() {
       <section className="landing-features-section">
         <div className="landing-features-header">
           <h2 className="landing-section-title">Built for how freelancers actually work</h2>
-          <p className="landing-features-sub">Not just a timer — a complete billing workflow for iPhone, Mac, and web.</p>
+          <p className="landing-features-sub">Not just a timer — a complete billing workflow for iPhone, iPad, Apple Watch, and web.</p>
         </div>
         <div className="landing-features">
           {features.map((f) => (
@@ -366,10 +367,17 @@ export default function Landing() {
       <section className="landing-faq">
         <h2 className="landing-section-title">Common questions</h2>
         <div className="landing-faq-list">
-          {faqs.map((item) => (
+          {faqs.map((item, i) => (
             <div key={item.q} className="landing-faq-item">
-              <p className="landing-faq-q">{item.q}</p>
-              <p className="landing-faq-a">{item.a}</p>
+              <button
+                className="landing-faq-q"
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                aria-expanded={openFaq === i}
+              >
+                {item.q}
+                <span className="landing-faq-chevron" aria-hidden="true">{openFaq === i ? '−' : '+'}</span>
+              </button>
+              {openFaq === i && <p className="landing-faq-a">{item.a}</p>}
             </div>
           ))}
         </div>
@@ -427,7 +435,7 @@ export default function Landing() {
 
       <section className="landing-review">
         <p className="landing-review-text">Love Tally? Leave a review on the App Store — it helps more than you know.</p>
-        <a href={`${APP_STORE_URL}&action=write-review`} target="_blank" rel="noopener noreferrer" className="landing-review-link">⭐ Write a review →</a>
+        <a href={`${APP_STORE_URL}?action=write-review`} target="_blank" rel="noopener noreferrer" className="landing-review-link">⭐ Write a review →</a>
       </section>
 
       <footer className="landing-footer">

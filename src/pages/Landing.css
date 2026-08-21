@@ -518,53 +518,6 @@
   color: var(--accent-hover);
 }
 
-/* ── iOS Screenshots ── */
-/* ── Feature Slides ── */
-.landing-feature-slides {
-  padding: 3.5rem 0 2rem;
-  text-align: center;
-}
-
-.landing-feature-slides-sub {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  margin: 0.25rem 0 2rem;
-}
-
-.landing-feature-slides-track {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.5rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  padding: 0.5rem 1.5rem 1.25rem 0;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
-
-.landing-scroll-spacer {
-  flex-shrink: 0;
-  width: 4vw;
-  min-width: 1.5rem;
-  max-width: 4rem;
-}
-
-.landing-feature-slides-track::-webkit-scrollbar { height: 5px; }
-.landing-feature-slides-track::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
-}
-
-.landing-feature-slide {
-  flex: 0 0 auto;
-  width: 220px;
-  border-radius: 16px;
-  scroll-snap-align: start;
-  display: block;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
 /* ── Screenshots ── */
 .landing-screenshots {
   padding: 3rem 0 2rem;
@@ -746,225 +699,6 @@
 }
 
 .landing-phone-screen-static img {
-  width: 100%;
-  display: block;
-}
-
-/* iPad row */
-.landing-iphone-row {
-  padding-left: 3rem;
-  padding-bottom: 0.5rem;
-}
-
-.landing-ipad-row {
-  padding: 2rem 0 0.5rem 3rem;
-}
-
-.landing-ipad-row-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--text-muted);
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.landing-ipad-track {
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.5rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  padding: 0.5rem 1.5rem 1.25rem 0;
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
-
-.landing-ipad-track::-webkit-scrollbar { height: 5px; }
-.landing-ipad-track::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
-}
-
-.landing-ipad-slide {
-  flex: 0 0 auto;
-  width: 380px;
-  border-radius: 16px;
-  scroll-snap-align: start;
-  display: block;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* iPad bezel — landscape */
-.landing-ipad-mockup {
-  width: 100%;
-  background: #111113;
-  border-radius: 18px;
-  padding: 5px;
-  position: relative;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
-    0 0 0 1.5px #5c5c61,
-    0 0 0 3.5px #111113,
-    0 0 0 5px #3e3e43,
-    0 8px 24px rgba(0, 0, 0, 0.22);
-}
-
-/* Power button on top edge */
-.landing-ipad-mockup::before {
-  content: '';
-  position: absolute;
-  top: -7px;
-  right: 56px;
-  width: 28px;
-  height: 5px;
-  background: #4a4a50;
-  border-radius: 3px 3px 0 0;
-  z-index: 15;
-}
-
-/* Volume buttons on top edge */
-.landing-ipad-mockup::after {
-  content: '';
-  position: absolute;
-  top: -7px;
-  right: 100px;
-  width: 44px;
-  height: 5px;
-  background: #4a4a50;
-  border-radius: 3px 3px 0 0;
-  z-index: 15;
-}
-
-.landing-ipad-screen {
-  border-radius: 13px;
-  overflow: hidden;
-}
-
-.landing-ipad-screen img {
-  width: 100%;
-  display: block;
-}
-
-/* Apple Watch row */
-.landing-watch-row {
-  padding: 2rem 0 0.5rem;
-}
-
-.landing-watch-row-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--text-muted);
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.landing-watch-track {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  gap: 0.75rem;
-  padding: 0.5rem 1.5rem 1.25rem;
-}
-
-@media (max-width: 640px) {
-  .landing-watch-track {
-    justify-content: flex-start;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding: 0.5rem 2rem 1.25rem 0;
-    scroll-padding-left: 2rem;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border) transparent;
-  }
-
-  .landing-watch-slide {
-    scroll-snap-align: start;
-  }
-
-  .landing-watch-slide:first-child {
-    margin-left: 2rem;
-  }
-
-  .landing-watch-slide:last-child {
-    margin-right: 2rem;
-  }
-}
-
-.landing-watch-slide {
-  flex: 0 0 auto;
-  width: 220px;
-  scroll-snap-align: start;
-  display: block;
-  filter: drop-shadow(0 6px 16px rgba(37, 99, 235, 0.22)) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
-}
-
-.landing-watch-item {
-  width: 150px;
-  flex: 0 0 auto;
-}
-
-.landing-watch-item p {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 0.65rem;
-  text-align: center;
-  line-height: 1.4;
-  font-style: italic;
-}
-
-/* Apple Watch bezel */
-.landing-watch-mockup {
-  width: 100%;
-  background: #111113;
-  border-radius: 30px;
-  padding: 6px;
-  position: relative;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
-    0 0 0 1.5px #5c5c61,
-    0 0 0 3.5px #111113,
-    0 0 0 5px #3e3e43,
-    0 8px 24px rgba(0, 0, 0, 0.22);
-}
-
-/* Digital Crown */
-.landing-watch-mockup::before {
-  content: '';
-  position: absolute;
-  right: -7px;
-  top: 28%;
-  width: 5px;
-  height: 26px;
-  background: #4a4a50;
-  border-radius: 0 3px 3px 0;
-  z-index: 15;
-}
-
-/* Side button */
-.landing-watch-mockup::after {
-  content: '';
-  position: absolute;
-  right: -7px;
-  top: calc(28% + 38px);
-  width: 5px;
-  height: 14px;
-  background: #4a4a50;
-  border-radius: 0 3px 3px 0;
-  z-index: 15;
-}
-
-.landing-watch-screen {
-  border-radius: 24px;
-  overflow: hidden;
-}
-
-.landing-watch-screen img {
   width: 100%;
   display: block;
 }
@@ -1230,35 +964,6 @@
 .landing-footer-links a:hover,
 .landing-footer-links button:hover { color: var(--accent); }
 
-/* ── Founder / social proof ── */
-.landing-founder-section {
-  padding: 2.5rem 1.5rem;
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-}
-
-.landing-founder-inner {
-  max-width: 640px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.landing-founder-quote {
-  font-size: 1.05rem;
-  line-height: 1.65;
-  color: var(--text);
-  font-style: italic;
-  margin: 0 0 1rem;
-  quotes: none;
-}
-
-.landing-founder-attr {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
 /* ── Features section with header ── */
 .landing-features-section {
   padding-top: 3rem;
@@ -1395,16 +1100,39 @@
 }
 
 .landing-faq-q {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
   font-size: 0.95rem;
   font-weight: 600;
-  margin-bottom: 0.4rem;
   color: var(--text);
+}
+
+.landing-faq-q:hover {
+  color: var(--accent);
+}
+
+.landing-faq-chevron {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  font-weight: 400;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
 .landing-faq-a {
   font-size: 0.875rem;
   color: var(--text-muted);
   line-height: 1.6;
+  margin-top: 0.4rem;
 }
 
 /* ── Closing CTA ── */
@@ -1569,10 +1297,6 @@
 
   .landing-demo {
     padding: 2rem 1.25rem;
-  }
-
-  .landing-demo-iframe {
-    height: 380px;
   }
 
   .landing-section-title {

@@ -1759,12 +1759,11 @@ select:focus {
    DASHBOARD — mobile
    ============================================= */
 
-/* 3 stat cards: stack to 2-col grid then full-width on tiny screens */
-@media (max-width: 480px) {
+/* 3 stat cards: 2-col top row + Weekly Goal spanning full bottom row on tablet and below */
+@media (max-width: 900px) {
   .card-grid {
     grid-template-columns: 1fr 1fr;
   }
-  /* Third card (Weekly Goal %) spans full width, centered */
   .card-grid .card:nth-child(3) {
     grid-column: 1 / -1;
     text-align: center;

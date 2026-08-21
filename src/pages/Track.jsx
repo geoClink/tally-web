@@ -40,6 +40,12 @@ export default function Track() {
   const startTimeRef = useRef(null)
   const pausedRef = useRef(false)
 
+  // Voice control
+  const recognitionRef = useRef(null)
+  const voiceCommandRef = useRef(null)
+  const [listening, setListening] = useState(false)
+  const [voiceStatus, setVoiceStatus] = useState('')
+
   // --- Timer state ---
   const [timerClient, setTimerClient] = useState('')
   const [timerNote, setTimerNote] = useState('')
@@ -195,6 +201,52 @@ export default function Track() {
   useEffect(() => { elapsedRef.current = elapsed }, [elapsed])
   useEffect(() => { startTimeRef.current = startTime }, [startTime])
   useEffect(() => { pausedRef.current = paused }, [paused])
+
+  // Keep voice command handler fresh so it always sees current state
+  useEffect(() => {
+    voiceCommandRef.current = (transcript) => {
+      if (transcript.includes('start') && !running && elapsed === 0) startTimer()
+      else if (transcript.includes('pause') && running && !paused) pauseTimer()
+      else if (transcript.includes('resume') && paused) resumeFromPause()
+      else if (transcript.includes('resume') && !running && elapsed > 0) resumeTimer()
+      else if (transcript.includes('save') && !running && elapsed > 0) saveTimer()
+      else if (transcript.includes('stop') && running) stopTimer()
+      else if (transcript.includes('discard')) discardTimer()
+    }
+  }, [running, paused, elapsed, timerClient])
+
+  useEffect(() => {
+    return () => recognitionRef.current?.stop()
+  }, [])
+
+  function toggleVoice() {
+    if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+      setError('Voice control is not supported in this browser. Try Chrome or Edge.')
+      return
+    }
+    if (listening) {
+      recognitionRef.current?.stop()
+      setListening(false)
+      setVoiceStatus('')
+      return
+    }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+    const recognition = new SR()
+    recognition.continuous = true
+    recognition.interimResults = false
+    recognition.lang = 'en-US'
+    recognition.onresult = (e) => {
+      const transcript = e.results[e.results.length - 1][0].transcript.trim().toLowerCase()
+      setVoiceStatus(`"${transcript}"`)
+      voiceCommandRef.current?.(transcript)
+    }
+    recognition.onerror = () => { setListening(false); setVoiceStatus('') }
+    recognition.onend = () => { setListening(false); setVoiceStatus('') }
+    recognitionRef.current = recognition
+    recognition.start()
+    setListening(true)
+    setVoiceStatus('Listening…')
+  }
 
   async function saveTimer() {
     setError('')
@@ -390,6 +442,33 @@ export default function Track() {
               Timer keeps running if you navigate away.
             </p>
           )}
+
+          <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+            <button
+              className={`btn ${listening ? 'btn-danger' : 'btn-secondary'}`}
+              onClick={toggleVoice}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
+              title="Say: start, pause, resume, save, stop, discard"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                <line x1="12" y1="19" x2="12" y2="23"/>
+                <line x1="8" y1="23" x2="16" y2="23"/>
+              </svg>
+              {listening ? 'Stop Listening' : 'Voice Control'}
+            </button>
+            {voiceStatus && (
+              <p className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>
+                {voiceStatus}
+              </p>
+            )}
+            {!listening && (
+              <p className="text-muted" style={{ fontSize: '0.75rem', marginTop: '0.4rem' }}>
+                Say: "start", "pause", "resume", "save", "stop", or "discard"
+              </p>
+            )}
+          </div>
         </div>
       )}
 
