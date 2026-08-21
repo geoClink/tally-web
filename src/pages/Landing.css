@@ -29,6 +29,11 @@
   color: #fff;
 }
 
+.landing-banner .landing-platforms {
+  color: rgba(255, 255, 255, 0.85);
+  opacity: 1;
+}
+
 .landing-banner .landing-subhead {
   color: rgba(255, 255, 255, 0.8);
 }
