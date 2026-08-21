@@ -1755,6 +1755,10 @@ select:focus {
     display: block;
   }
 
+  .dashboard-sessions td {
+    border-bottom: none;
+  }
+
   .dashboard-sessions thead {
     display: none;
   }
