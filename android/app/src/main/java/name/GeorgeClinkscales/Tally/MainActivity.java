@@ -1,4 +1,4 @@
-package name.GeorgeClinkscales.Tally;
+package name.georgeclinkscales.tally;
 
 import com.getcapacitor.BridgeActivity;
 

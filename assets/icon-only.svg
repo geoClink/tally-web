@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="#2563eb"/>
+
+  <!-- Clock ring: outer circle minus inner circle using two circles + mask -->
+  <circle cx="512" cy="512" r="330" fill="white"/>
+  <circle cx="512" cy="512" r="278" fill="#2563eb"/>
+
+  <!-- Hour hand at 10 o'clock — use a rotated rectangle -->
+  <!-- 10 o'clock = -60° from top. Rotate a vertical rectangle by -60°. -->
+  <!-- Hand: width 54, height 200, pivoted at center (512,512), tip at top -->
+  <rect x="485" y="312" width="54" height="220" rx="27" fill="white" transform="rotate(-60 512 512)"/>
+
+  <!-- Minute hand at 2 o'clock — +60° from top, longer -->
+  <rect x="485" y="256" width="42" height="276" rx="21" fill="white" transform="rotate(60 512 512)"/>
+
+  <!-- Center dot over hands -->
+  <circle cx="512" cy="512" r="46" fill="white"/>
+  <circle cx="512" cy="512" r="22" fill="#2563eb"/>
+</svg>

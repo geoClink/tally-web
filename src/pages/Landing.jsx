@@ -421,6 +421,7 @@ export default function Landing() {
           <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">Download on App Store</a>
           <Link to="/login">Sign in</Link>
           <Link to="/privacy">Privacy</Link>
+          <Link to="/delete-account">Delete Account</Link>
           <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
         </div>
       </footer>

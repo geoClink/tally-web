@@ -21,6 +21,7 @@ import TeamDashboard from './pages/TeamDashboard'
 import Calendar from './pages/Calendar'
 import Demo from './pages/Demo'
 import Privacy from './pages/Privacy'
+import DeleteAccount from './pages/DeleteAccount'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import Help from './pages/Help'
@@ -47,6 +48,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/demo" element={<Demo />} />
             <Route path="/privacy" element={<Privacy />} />
+            <Route path="/delete-account" element={<DeleteAccount />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route
