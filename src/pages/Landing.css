@@ -1158,14 +1158,27 @@
 
 .landing-footer-inner {
   display: flex;
-  gap: 1.5rem;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
   flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.landing-footer-inner a,
-.landing-footer-inner button {
-  font-size: 0.875rem;
+.landing-footer-byline {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.landing-footer-links {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.landing-footer-links a,
+.landing-footer-links button {
+  font-size: 0.8rem;
   color: var(--text-muted);
   text-decoration: none;
   background: none;
@@ -1175,8 +1188,8 @@
   font-family: inherit;
 }
 
-.landing-footer-inner a:hover,
-.landing-footer-inner button:hover { color: var(--accent); }
+.landing-footer-links a:hover,
+.landing-footer-links button:hover { color: var(--accent); }
 
 /* ── Founder / social proof ── */
 .landing-founder-section {

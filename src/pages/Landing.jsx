@@ -427,11 +427,14 @@ export default function Landing() {
 
       <footer className="landing-footer">
         <div className="landing-footer-inner">
-          <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">Download on App Store</a>
-          <Link to="/login">Sign in</Link>
-          <Link to="/privacy">Privacy</Link>
-          <Link to="/delete-account">Delete Account</Link>
-          <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
+          <span className="landing-footer-byline">© 2026 Tally · Made by George Clinkscales</span>
+          <div className="landing-footer-links">
+            <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">App Store</a>
+            <Link to="/login">Sign in</Link>
+            <Link to="/privacy">Privacy</Link>
+            <Link to="/delete-account">Delete Account</Link>
+            <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
+          </div>
         </div>
       </footer>
       {bugModalOpen && <BugReportModal onClose={() => setBugModalOpen(false)} />}
