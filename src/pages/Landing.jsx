@@ -3,6 +3,7 @@ import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import BugReportModal from '../components/BugReportModal'
+import AndroidModal from '../components/AndroidModal'
 import './Landing.css'
 
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
@@ -176,7 +177,8 @@ export default function Landing() {
       <header className="landing-banner">
       <section className="landing-hero">
         <div className="landing-hero-text">
-          <h1 className="landing-headline">Freelance time tracking<br />for iPhone and web.</h1>
+          <h1 className="landing-headline">Freelance time tracking,<br />wherever you work.</h1>
+          <p className="landing-platforms">iPhone · iPad · Apple Watch · Web · <span className="landing-platforms-soon">Android coming soon</span></p>
           <p className="landing-subhead">
             Log billable hours with one tap. Send invoices from your phone. Track your whole team when you're ready to grow.
           </p>
@@ -434,38 +436,7 @@ export default function Landing() {
       </footer>
       {bugModalOpen && <BugReportModal onClose={() => setBugModalOpen(false)} />}
 
-      {androidModalOpen && (
-        <div className="modal-overlay" onClick={() => setAndroidModalOpen(false)}>
-          <div className="modal-card" onClick={e => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setAndroidModalOpen(false)} aria-label="Close">✕</button>
-            <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🤖</div>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem' }}>Join the Android Beta</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-              Tally is in closed testing on Google Play. Follow these three steps to get early access:
-            </p>
-            <ol style={{ paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <li style={{ fontSize: '0.875rem', lineHeight: 1.5 }}>
-                <strong>Join the tester group</strong><br />
-                <a href="https://groups.google.com/g/tally-time-tracker" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>
-                  groups.google.com/g/tally-time-tracker
-                </a>
-              </li>
-              <li style={{ fontSize: '0.875rem', lineHeight: 1.5 }}>
-                <strong>Opt into testing</strong><br />
-                <a href="https://play.google.com/apps/testing/name.georgeclinkscales.tally" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>
-                  play.google.com/apps/testing/…
-                </a>
-              </li>
-              <li style={{ fontSize: '0.875rem', lineHeight: 1.5 }}>
-                <strong>Download on Google Play</strong><br />
-                <a href="https://play.google.com/store/apps/details?id=name.georgeclinkscales.tally" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>
-                  play.google.com/store/apps/…
-                </a>
-              </li>
-            </ol>
-          </div>
-        </div>
-      )}
+      {androidModalOpen && <AndroidModal onClose={() => setAndroidModalOpen(false)} />}
     </div>
   )
 }

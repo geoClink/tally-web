@@ -254,6 +254,33 @@ button:focus-visible {
   color: var(--danger);
 }
 
+.sidebar-download-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sidebar-download-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.4rem 0.5rem;
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+}
+
+.sidebar-download-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text);
+}
+
 /* =============================================
    PAGE STRUCTURE
    ============================================= */
