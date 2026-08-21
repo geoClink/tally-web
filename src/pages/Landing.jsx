@@ -195,8 +195,11 @@ export default function Landing() {
               </span>
             </a>
             <button onClick={() => setAndroidModalOpen(true)} className="landing-appstore-badge landing-appstore-badge--android" aria-label="Android app coming soon">
-              <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
-                <path d="M17.523 15.341a5.172 5.172 0 0 1-5.172-5.172 5.172 5.172 0 0 1 5.172-5.172 5.172 5.172 0 0 1 5.172 5.172 5.172 5.172 0 0 1-5.172 5.172m-11.046 0a5.172 5.172 0 0 1-5.172-5.172 5.172 5.172 0 0 1 5.172-5.172 5.172 5.172 0 0 1 5.172 5.172 5.172 5.172 0 0 1-5.172 5.172M17.584.809l1.937-3.355a.403.403 0 0 0-.148-.551.403.403 0 0 0-.551.148L16.87.465a12.245 12.245 0 0 0-4.87-1.006c-1.748 0-3.402.37-4.87 1.006L5.178-2.949a.403.403 0 0 0-.551-.148.403.403 0 0 0-.148.551L6.416.809C2.9 2.688.477 6.365.477 10.613h23.046c0-4.248-2.423-7.925-5.939-9.804"/>
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 1.8L3 12L12 12Z" fill="#4285F4"/>
+                <path d="M3 12L3 22.2L12 12Z" fill="#34A853"/>
+                <path d="M3 1.8L12 12L21.5 12Z" fill="#FBBC04"/>
+                <path d="M3 22.2L21.5 12L12 12Z" fill="#EA4335"/>
               </svg>
               <span className="landing-appstore-text">
                 <span className="landing-appstore-sub">Coming soon to</span>
@@ -398,8 +401,11 @@ export default function Landing() {
             </span>
           </a>
           <button onClick={() => setAndroidModalOpen(true)} className="landing-appstore-badge landing-appstore-badge--android" aria-label="Android app coming soon">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
-              <path d="M17.523 15.341a5.172 5.172 0 0 1-5.172-5.172 5.172 5.172 0 0 1 5.172-5.172 5.172 5.172 0 0 1 5.172 5.172 5.172 5.172 0 0 1-5.172 5.172m-11.046 0a5.172 5.172 0 0 1-5.172-5.172 5.172 5.172 0 0 1 5.172-5.172 5.172 5.172 0 0 1 5.172 5.172 5.172 5.172 0 0 1-5.172 5.172M17.584.809l1.937-3.355a.403.403 0 0 0-.148-.551.403.403 0 0 0-.551.148L16.87.465a12.245 12.245 0 0 0-4.87-1.006c-1.748 0-3.402.37-4.87 1.006L5.178-2.949a.403.403 0 0 0-.551-.148.403.403 0 0 0-.148.551L6.416.809C2.9 2.688.477 6.365.477 10.613h23.046c0-4.248-2.423-7.925-5.939-9.804"/>
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 1.8L3 12L12 12Z" fill="#4285F4"/>
+              <path d="M3 12L3 22.2L12 12Z" fill="#34A853"/>
+              <path d="M3 1.8L12 12L21.5 12Z" fill="#FBBC04"/>
+              <path d="M3 22.2L21.5 12L12 12Z" fill="#EA4335"/>
             </svg>
             <span className="landing-appstore-text">
               <span className="landing-appstore-sub">Coming soon to</span>
@@ -442,7 +448,8 @@ export default function Landing() {
         <div className="landing-footer-inner">
           <span className="landing-footer-byline">© 2026 Tally · Made by <a href="https://georgeclinkscalesdev.com" target="_blank" rel="noopener noreferrer">George Clinkscales</a></span>
           <div className="landing-footer-links">
-            <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">App Store</a>
+            <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">iOS App</a>
+            <button onClick={() => setAndroidModalOpen(true)}>Android Beta</button>
             <Link to="/login">Sign in</Link>
             <Link to="/privacy">Privacy</Link>
             <Link to="/delete-account">Delete Account</Link>
