@@ -300,7 +300,7 @@ export default function Reports() {
                   <th>Client</th>
                   <th>Hours</th>
                   {hasRates && <th>Earnings</th>}
-                  <th>% of Total</th>
+                  <th className="hide-mobile">% of Total</th>
                 </tr>
               </thead>
               <tbody>
@@ -311,7 +311,7 @@ export default function Reports() {
                     {hasRates && (
                       <td>{rateMap[client] ? formatCurrency(byClient[client] * rateMap[client]) : '—'}</td>
                     )}
-                    <td className="text-muted">
+                    <td className="text-muted hide-mobile">
                       {totalHours > 0 ? `${Math.round((byClient[client] / totalHours) * 100)}%` : '—'}
                     </td>
                   </tr>
@@ -320,7 +320,7 @@ export default function Reports() {
                   <td>Total</td>
                   <td>{formatHours(totalHours)}</td>
                   {hasRates && <td>{earnings > 0 ? formatCurrency(earnings) : '—'}</td>}
-                  <td></td>
+                  <td className="hide-mobile"></td>
                 </tr>
               </tbody>
             </table>

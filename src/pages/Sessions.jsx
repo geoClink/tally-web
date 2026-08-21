@@ -105,7 +105,7 @@ export default function Sessions() {
       {sessions.length === 0 ? (
         <div className="empty-state">No sessions found. Track time in the Tally app.</div>
       ) : (
-        <div className="table-wrapper">
+        <div className="table-wrapper dashboard-sessions">
           <table>
             <thead>
               <tr>
@@ -120,12 +120,12 @@ export default function Sessions() {
             <tbody>
               {sessions.map(s => (
                 <tr key={s.id}>
-                  <td style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
-                  <td>{s.client}</td>
-                  <td style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
+                  <td data-label="Date" style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
+                  <td data-label="Client">{s.client}</td>
+                  <td data-label="Hours" style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
                   <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
                   <td className="text-muted hide-mobile">{s.is_manual ? 'Manual' : 'Timer'}</td>
-                  <td>
+                  <td className="session-action-cell">
                     <button
                       className="btn btn-danger btn-sm"
                       onClick={() => deleteSession(s.id)}

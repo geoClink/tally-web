@@ -945,6 +945,7 @@ select:focus {
   font-size: 0.82rem;
   font-family: inherit;
   transition: all 0.12s;
+  min-height: 40px;
 }
 
 .filter-btn.active {
@@ -1503,6 +1504,231 @@ select:focus {
 }
 
 /* =============================================
+   SESSIONS LIST — row polish
+   ============================================= */
+@media (max-width: 640px) {
+  /* Left accent line gives rows visual rhythm */
+  .dashboard-sessions tr {
+    border-left: 3px solid var(--border);
+    padding-left: 0.85rem;
+  }
+
+  /* Ghost delete — less visually aggressive in a long list */
+  .dashboard-sessions .session-action-cell .btn-danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+    font-size: 0.72rem;
+    padding: 0.25rem 0.65rem;
+  }
+
+  .dashboard-sessions .session-action-cell .btn-danger:active {
+    background: var(--danger);
+    color: #fff;
+  }
+}
+
+/* =============================================
+   REPORTS — mobile
+   ============================================= */
+@media (max-width: 640px) {
+  .chart-card {
+    height: 220px;
+    padding: 1rem;
+  }
+}
+
+/* =============================================
+   INVOICES — mobile
+   ============================================= */
+@media (max-width: 640px) {
+  .invoice-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .invoice-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .invoice-form-actions {
+    flex-direction: column;
+  }
+  .invoice-form-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* =============================================
+   TRACK — mobile
+   ============================================= */
+@media (max-width: 640px) {
+  .timer-actions {
+    flex-direction: column;
+  }
+  .timer-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* =============================================
+   CALENDAR — tap support + day detail
+   ============================================= */
+.cal-has-hours {
+  cursor: pointer;
+}
+
+.cal-selected {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  z-index: 1;
+}
+
+.cal-day-detail {
+  margin-top: 1rem;
+  animation: heroFadeUp 0.18s ease-out both;
+}
+
+.cal-day-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.cal-day-detail-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.15rem;
+}
+
+.cal-day-detail-total {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+
+.cal-day-detail-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.cal-day-detail-close:hover {
+  color: var(--text);
+}
+
+.cal-day-detail-sessions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cal-day-detail-session {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.85rem;
+  background: var(--bg-secondary);
+  border-radius: var(--radius);
+  gap: 0.75rem;
+}
+
+.cal-day-detail-left {
+  min-width: 0;
+}
+
+.cal-day-detail-client {
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cal-day-detail-note {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cal-day-detail-hours {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* =============================================
+   CLIENT RATES — Add Client card
+   ============================================= */
+.add-client-card {
+  border-top: 3px solid var(--accent);
+}
+
+.add-client-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.add-client-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent-light);
+  color: var(--accent);
+  font-size: 1.2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.add-client-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.1rem;
+}
+
+.add-client-sub {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.add-client-optional {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 0.25rem;
+}
+
+.add-client-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.add-client-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* =============================================
    DASHBOARD — mobile
    ============================================= */
 
@@ -1511,9 +1737,10 @@ select:focus {
   .card-grid {
     grid-template-columns: 1fr 1fr;
   }
-  /* Third card (Weekly Goal %) spans full width */
+  /* Third card (Weekly Goal %) spans full width, centered */
   .card-grid .card:nth-child(3) {
     grid-column: 1 / -1;
+    text-align: center;
   }
 }
 

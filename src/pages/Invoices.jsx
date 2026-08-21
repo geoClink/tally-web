@@ -267,7 +267,7 @@ export default function Invoices() {
                         {inv.start_date} — {inv.end_date} · {formatHours(inv.total_hours)} · {formatCurrency(inv.total_amount)}
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', flexShrink: 0 }}>
+                    <div className="invoice-actions" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', flexShrink: 0 }}>
                       {statusBadge(inv.status)}
                       {inv.status !== 'paid' && (
                         <button
@@ -352,7 +352,7 @@ export default function Invoices() {
               />
             </div>
           </div>
-          <div style={{ marginTop: '1rem' }}>
+          <div className="invoice-form-actions" style={{ marginTop: '1rem' }}>
             <button type="submit" className="btn btn-primary" disabled={loading || !selectedClient}>
               {loading ? 'Loading…' : 'Generate Invoice'}
             </button>
@@ -393,7 +393,7 @@ export default function Invoices() {
                     <tr>
                       <th>Date</th>
                       <th>Hours</th>
-                      <th>Description</th>
+                      <th className="hide-mobile">Description</th>
                       <th style={{ textAlign: 'right' }}>Amount</th>
                     </tr>
                   </thead>
@@ -402,7 +402,7 @@ export default function Invoices() {
                       <tr key={i}>
                         <td>{s.date}</td>
                         <td>{formatHours(s.hours)}</td>
-                        <td className="text-muted">{s.task_note || '—'}</td>
+                        <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
                         <td style={{ textAlign: 'right' }}>{formatCurrency((s.hours ?? 0) * previewRate)}</td>
                       </tr>
                     ))}
@@ -421,7 +421,7 @@ export default function Invoices() {
       )}
 
       {generated && sessions.length > 0 && (
-        <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem' }} className="no-print">
+        <div className="invoice-form-actions no-print" style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem' }}>
           <button className="btn btn-primary" onClick={saveInvoice} disabled={saving}>
             {saving ? 'Saving…' : 'Save Invoice'}
           </button>
@@ -430,7 +430,7 @@ export default function Invoices() {
       )}
 
       {viewingInvoice && (
-        <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem' }} className="no-print">
+        <div className="invoice-form-actions no-print" style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem' }}>
           <button className="btn btn-secondary" onClick={() => window.print()}>Print / Save as PDF</button>
           <button className="btn btn-secondary" onClick={() => setViewingInvoice(null)}>Close</button>
         </div>

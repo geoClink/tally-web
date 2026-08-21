@@ -47,8 +47,15 @@ const features = [
 
 const versions = [
   {
-    version: '1.4.4',
+    version: '1.4.5',
     label: 'Latest',
+    items: [
+      'Change Password — update your password directly from Settings',
+      'Activity calendar — tap any day to see a breakdown of hours by client',
+    ],
+  },
+  {
+    version: '1.4.4',
     items: [
       'Live Activity & Dynamic Island — running timer stays on the lock screen the entire session',
       'Lock screen widgets — instant access to today\'s hours without opening the app',
@@ -432,18 +439,30 @@ export default function Landing() {
           <div className="modal-card" onClick={e => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setAndroidModalOpen(false)} aria-label="Close">✕</button>
             <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🤖</div>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem' }}>Android app in development</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: 1.6 }}>
-              The Tally Android app is currently in development and will be available on Google Play soon. In the meantime, the web app works great on any Android browser.
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem' }}>Join the Android Beta</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1.25rem' }}>
+              Tally is in closed testing on Google Play. Follow these three steps to get early access:
             </p>
-            <Link
-              to="/login?mode=signup"
-              className="landing-btn-primary"
-              style={{ display: 'inline-block', marginTop: '1.25rem' }}
-              onClick={() => setAndroidModalOpen(false)}
-            >
-              Use the web app →
-            </Link>
+            <ol style={{ paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <li style={{ fontSize: '0.875rem', lineHeight: 1.5 }}>
+                <strong>Join the tester group</strong><br />
+                <a href="https://groups.google.com/g/tally-time-tracker" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>
+                  groups.google.com/g/tally-time-tracker
+                </a>
+              </li>
+              <li style={{ fontSize: '0.875rem', lineHeight: 1.5 }}>
+                <strong>Opt into testing</strong><br />
+                <a href="https://play.google.com/apps/testing/name.georgeclinkscales.tally" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>
+                  play.google.com/apps/testing/…
+                </a>
+              </li>
+              <li style={{ fontSize: '0.875rem', lineHeight: 1.5 }}>
+                <strong>Download on Google Play</strong><br />
+                <a href="https://play.google.com/store/apps/details?id=name.georgeclinkscales.tally" target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>
+                  play.google.com/store/apps/…
+                </a>
+              </li>
+            </ol>
           </div>
         </div>
       )}

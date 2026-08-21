@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
 import { todayString } from '../lib/utils'
 import ClientSelect from '../components/ClientSelect'
-import useVoiceControl from '../hooks/useVoiceControl'
 
 const STORAGE_KEY = 'tally_active_timer'
 
@@ -20,11 +19,9 @@ export default function Track() {
   const [success, setSuccess] = useState('')
   const [saving, setSaving] = useState(false)
 
-  // Voice control — refs so commands can access latest state
   const runningRef = useRef(false)
   const elapsedRef = useRef(0)
   const startTimeRef = useRef(null)
-  const timerClientRef = useRef('')
   const pausedRef = useRef(false)
 
   // --- Timer state ---
@@ -179,37 +176,7 @@ export default function Track() {
   useEffect(() => { runningRef.current = running }, [running])
   useEffect(() => { elapsedRef.current = elapsed }, [elapsed])
   useEffect(() => { startTimeRef.current = startTime }, [startTime])
-  useEffect(() => { timerClientRef.current = timerClient }, [timerClient])
   useEffect(() => { pausedRef.current = paused }, [paused])
-
-  function handleVoiceCommand(text) {
-    if (text.includes('start')) {
-      if (!runningRef.current && timerClientRef.current) startTimer()
-      else if (!timerClientRef.current) showSuccess('Say a client name first')
-    } else if (text.includes('stop')) {
-      if (runningRef.current) stopTimer()
-    } else if (text.includes('pause')) {
-      if (runningRef.current && !pausedRef.current) pauseTimer()
-    } else if (text.includes('save')) {
-      if (!runningRef.current && elapsedRef.current > 0) saveTimer()
-    } else if (text.includes('resume')) {
-      if (runningRef.current && pausedRef.current) resumeFromPause()
-      else if (!runningRef.current && elapsedRef.current > 0) resumeTimer()
-    } else if (text.includes('discard')) {
-      discardTimer()
-    } else {
-      const match = clients.find(c => text.includes(c.toLowerCase()))
-      if (match) {
-        setTimerClient(match)
-        timerClientRef.current = match
-        showSuccess(`Client set to ${match}`)
-      }
-    }
-  }
-
-  const { listening, supported, transcript, toggleListening } = useVoiceControl({
-    onCommand: handleVoiceCommand,
-  })
 
   async function saveTimer() {
     setError('')
@@ -313,33 +280,15 @@ export default function Track() {
         <p className="page-subtitle">Start a timer or log time manually</p>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0' }}>
-        <div className="tab-bar" style={{ marginBottom: 0, borderBottom: 'none' }}>
-          <button className={`tab-btn${tab === 'timer' ? ' active' : ''}`} onClick={() => { setTab('timer'); setError('') }}>
-            Timer
-          </button>
-          <button className={`tab-btn${tab === 'manual' ? ' active' : ''}`} onClick={() => { setTab('manual'); setError('') }}>
-            Manual Entry
-          </button>
-        </div>
-        {supported && tab === 'timer' && (
-          <button
-            className={`btn btn-secondary btn-sm${listening ? ' voice-active' : ''}`}
-            onClick={toggleListening}
-            title="Voice control"
-            style={{ gap: '0.35rem' }}
-          >
-            {listening ? '🎙 Listening…' : '🎙 Voice'}
-          </button>
-        )}
+      <div className="tab-bar" style={{ marginBottom: 0, borderBottom: 'none' }}>
+        <button className={`tab-btn${tab === 'timer' ? ' active' : ''}`} onClick={() => { setTab('timer'); setError('') }}>
+          Timer
+        </button>
+        <button className={`tab-btn${tab === 'manual' ? ' active' : ''}`} onClick={() => { setTab('manual'); setError('') }}>
+          Manual Entry
+        </button>
       </div>
       <div style={{ borderBottom: '1px solid var(--border)', marginBottom: '1.25rem' }} />
-
-      {transcript && (
-        <div className="alert alert-info" style={{ fontSize: '0.82rem' }}>
-          Heard: "{transcript}"
-        </div>
-      )}
 
       {!isPro && (
         <div className="alert alert-info" style={{ marginBottom: '1rem' }}>
@@ -387,7 +336,7 @@ export default function Track() {
             />
           </div>
 
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <div className="timer-actions" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
             {!running && elapsed === 0 && (
               <button
                 className="btn btn-primary"

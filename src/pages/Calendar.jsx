@@ -9,7 +9,6 @@ const MONTH_NAMES = [
 ]
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
-// Returns 0–5 based on hours tracked that day
 function intensityLevel(hours) {
   if (!hours || hours <= 0) return 0
   if (hours < 2) return 1
@@ -19,35 +18,58 @@ function intensityLevel(hours) {
   return 5
 }
 
+function formatDayLabel(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', {
+    weekday: 'long', month: 'long', day: 'numeric',
+  })
+}
+
+function groupByClient(sessions) {
+  const map = {}
+  sessions.forEach(s => {
+    if (!map[s.client]) map[s.client] = { client: s.client, hours: 0, notes: [] }
+    map[s.client].hours += s.hours ?? 0
+    if (s.task_note) map[s.client].notes.push(s.task_note)
+  })
+  return Object.values(map).sort((a, b) => b.hours - a.hours)
+}
+
 export default function Calendar() {
   const { user } = useAuth()
   const today = new Date()
   const [year, setYear] = useState(today.getFullYear())
-  const [month, setMonth] = useState(today.getMonth()) // 0-indexed
+  const [month, setMonth] = useState(today.getMonth())
   const [hoursByDay, setHoursByDay] = useState({})
+  const [sessionsByDay, setSessionsByDay] = useState({})
   const [loading, setLoading] = useState(true)
-  const [hoveredDay, setHoveredDay] = useState(null)
+  const [selectedDay, setSelectedDay] = useState(null)
 
   useEffect(() => { loadMonth() }, [year, month, user])
 
   async function loadMonth() {
     setLoading(true)
+    setSelectedDay(null)
     const firstDay = `${year}-${String(month + 1).padStart(2, '0')}-01`
     const lastDayDate = new Date(year, month + 1, 0)
     const lastDay = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDayDate.getDate()).padStart(2, '0')}`
 
     const { data } = await supabase
       .from('sessions')
-      .select('date, hours')
+      .select('date, hours, client, task_note')
       .eq('user_id', user.id)
       .gte('date', firstDay)
       .lte('date', lastDay)
 
     const byDay = {}
+    const byDaySessions = {}
     data?.forEach(s => {
       byDay[s.date] = (byDay[s.date] ?? 0) + (s.hours ?? 0)
+      if (!byDaySessions[s.date]) byDaySessions[s.date] = []
+      byDaySessions[s.date].push(s)
     })
     setHoursByDay(byDay)
+    setSessionsByDay(byDaySessions)
     setLoading(false)
   }
 
@@ -61,10 +83,8 @@ export default function Calendar() {
     else setMonth(m => m + 1)
   }
 
-  // Build the grid: empty cells for days before month starts, then 1–daysInMonth
   const firstOfMonth = new Date(year, month, 1)
   const daysInMonth = new Date(year, month + 1, 0).getDate()
-  // ISO weekday: Mon=0 … Sun=6
   const startDow = (firstOfMonth.getDay() + 6) % 7
   const cells = []
   for (let i = 0; i < startDow; i++) cells.push(null)
@@ -107,20 +127,16 @@ export default function Calendar() {
               const hours = hoursByDay[dateStr] ?? 0
               const level = intensityLevel(hours)
               const isToday = dateStr === todayStr
-              const isHovered = hoveredDay === dateStr
+              const isSelected = selectedDay === dateStr
 
               return (
                 <div
                   key={day}
-                  className={`cal-cell cal-cell-${level}${isToday ? ' cal-today' : ''}`}
-                  onMouseEnter={() => hours > 0 && setHoveredDay(dateStr)}
-                  onMouseLeave={() => setHoveredDay(null)}
-                  title={hours > 0 ? `${formatHours(hours)}` : ''}
+                  className={`cal-cell cal-cell-${level}${isToday ? ' cal-today' : ''}${isSelected ? ' cal-selected' : ''}${hours > 0 ? ' cal-has-hours' : ''}`}
+                  onClick={() => hours > 0 && setSelectedDay(isSelected ? null : dateStr)}
+                  title={hours > 0 ? formatHours(hours) : ''}
                 >
                   <span className="cal-day-num">{day}</span>
-                  {isHovered && hours > 0 && (
-                    <span className="cal-tooltip">{formatHours(hours)}</span>
-                  )}
                 </div>
               )
             })}
@@ -143,6 +159,31 @@ export default function Calendar() {
           <span className="text-muted" style={{ fontSize: '0.72rem' }}>8h+</span>
         </div>
       </div>
+
+      {selectedDay && sessionsByDay[selectedDay] && (
+        <div className="card cal-day-detail">
+          <div className="cal-day-detail-header">
+            <div>
+              <div className="cal-day-detail-title">{formatDayLabel(selectedDay)}</div>
+              <div className="cal-day-detail-total">{formatHours(hoursByDay[selectedDay])} tracked</div>
+            </div>
+            <button className="cal-day-detail-close" onClick={() => setSelectedDay(null)}>✕</button>
+          </div>
+          <div className="cal-day-detail-sessions">
+            {groupByClient(sessionsByDay[selectedDay]).map(({ client, hours, notes }) => (
+              <div key={client} className="cal-day-detail-session">
+                <div className="cal-day-detail-left">
+                  <div className="cal-day-detail-client">{client}</div>
+                  {notes.length > 0 && (
+                    <div className="cal-day-detail-note">{notes.join(' · ')}</div>
+                  )}
+                </div>
+                <div className="cal-day-detail-hours">{formatHours(hours)}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

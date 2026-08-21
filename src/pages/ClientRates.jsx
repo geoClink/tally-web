@@ -202,10 +202,16 @@ export default function ClientRates() {
         </div>
       )}
 
-      <div className="card">
-        <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Add Client</h2>
+      <div className="card add-client-card">
+        <div className="add-client-header">
+          <div className="add-client-icon">+</div>
+          <div>
+            <h2 className="add-client-title">Add Client</h2>
+            <p className="add-client-sub">Set a rate and optional hour budget</p>
+          </div>
+        </div>
         <form onSubmit={addRate}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+          <div className="add-client-fields">
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label>Client Name</label>
               <input
@@ -227,7 +233,7 @@ export default function ClientRates() {
               />
             </div>
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Budget Hours</label>
+              <label>Budget Hours <span className="add-client-optional">optional</span></label>
               <input
                 type="number"
                 value={newBudget}
@@ -238,7 +244,9 @@ export default function ClientRates() {
               />
             </div>
           </div>
-          <button type="submit" className="btn btn-primary" disabled={saving}>Add Client</button>
+          <button type="submit" className="btn btn-primary add-client-btn" disabled={saving}>
+            {saving ? 'Adding…' : '+ Add Client'}
+          </button>
         </form>
       </div>
     </div>
