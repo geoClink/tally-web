@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
 import { Capacitor } from '@capacitor/core'
+import { isAndroid, initPlayBilling, purchaseProduct, restorePurchases, setOnPurchaseSuccess } from '../lib/playBilling'
 
 const isNative = Capacitor.isNativePlatform()
 
@@ -31,16 +32,49 @@ export default function Billing() {
   const { tier, subscription, refetch } = useSubscription()
   const [searchParams] = useSearchParams()
   const [upgraded, setUpgraded] = useState(false)
+  const [purchasing, setPurchasing] = useState(false)
+  const [purchaseError, setPurchaseError] = useState('')
 
-  // Stripe redirects back here with ?upgraded=pro or ?upgraded=business after webhook activates subscription
   useEffect(() => {
     if (!user) return
     const upgradedTier = searchParams.get('upgraded')
     if (upgradedTier === 'pro' || upgradedTier === 'business') {
-      // Webhook writes the subscription server-side — just refresh and show confirmation
       refetch().then(() => setUpgraded(true))
     }
   }, [user])
+
+  useEffect(() => {
+    if (!isAndroid) return
+    setOnPurchaseSuccess(() => {
+      refetch().then(() => setUpgraded(true))
+    })
+    initPlayBilling()
+  }, [])
+
+  async function handleAndroidPurchase(productId) {
+    setPurchaseError('')
+    setPurchasing(true)
+    try {
+      await purchaseProduct(productId)
+    } catch (err) {
+      setPurchaseError(err.message)
+    } finally {
+      setPurchasing(false)
+    }
+  }
+
+  async function handleRestore() {
+    setPurchaseError('')
+    setPurchasing(true)
+    try {
+      await restorePurchases()
+      await refetch()
+    } catch (err) {
+      setPurchaseError(err.message)
+    } finally {
+      setPurchasing(false)
+    }
+  }
 
   function handleUpgrade(plan) {
     if (user?.email === import.meta.env.VITE_DEMO_EMAIL) {
@@ -101,13 +135,54 @@ export default function Billing() {
         )}
       </div>
 
-      {isNative ? (
-        <div className="card">
-          <div className="card-title">Upgrade your plan</div>
-          <p className="text-muted" style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
-            To upgrade to Pro or Business, purchase through Google Play. Your subscription will activate automatically once payment is confirmed.
-          </p>
-        </div>
+      {purchaseError && <div className="auth-error" style={{ marginBottom: '1rem' }}>{purchaseError}</div>}
+
+      {isAndroid ? (
+        <>
+          {tier === 'free' && (
+            <>
+              <div style={{ marginBottom: '1rem' }}>
+                <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Upgrade your plan</h2>
+                <p className="text-muted" style={{ fontSize: '0.9rem', marginTop: '0.25rem' }}>
+                  Purchased here? It unlocks on iOS and web too.
+                </p>
+              </div>
+              <div className="plan-grid">
+                {PLANS.map(plan => (
+                  <div key={plan.id} className={`plan-card${plan.featured ? ' featured' : ''}`}>
+                    <div className="plan-name">{plan.name}</div>
+                    <div className="plan-price">{plan.price}</div>
+                    <div className="plan-period">{plan.period}</div>
+                    <ul className="plan-features">
+                      {plan.features.map(f => <li key={f}>{f}</li>)}
+                    </ul>
+                    <button
+                      className="btn btn-primary"
+                      style={{ width: '100%' }}
+                      disabled={purchasing}
+                      onClick={() => handleAndroidPurchase(plan.id === 'pro' ? 'pro_lifetime' : 'business_monthly')}
+                    >
+                      {purchasing ? 'Opening…' : `Upgrade to ${plan.name}`}
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                <button className="btn btn-secondary" onClick={handleRestore} disabled={purchasing}>
+                  Restore purchases
+                </button>
+              </div>
+            </>
+          )}
+          {tier !== 'free' && (
+            <div className="card">
+              <div className="card-title">Manage subscription</div>
+              <p className="text-muted" style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>
+                Manage or cancel your subscription in Google Play → Account → Payments & subscriptions.
+              </p>
+            </div>
+          )}
+        </>
       ) : (
         <>
           {tier === 'free' && (

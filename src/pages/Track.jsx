@@ -8,6 +8,22 @@ import ClientSelect from '../components/ClientSelect'
 
 const STORAGE_KEY = 'tally_active_timer'
 
+function playTone(frequency, duration, type = 'sine') {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)()
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.type = type
+    osc.frequency.setValueAtTime(frequency, ctx.currentTime)
+    gain.gain.setValueAtTime(0.18, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration)
+    osc.start(ctx.currentTime)
+    osc.stop(ctx.currentTime + duration)
+  } catch {}
+}
+
 export default function Track() {
   const { user } = useAuth()
   const { isPro } = useSubscription()
@@ -128,6 +144,7 @@ export default function Track() {
   }
 
   function startTimer() {
+    playTone(880, 0.12)
     setError('')
     const now = new Date()
     setStartTime(now)
@@ -162,6 +179,7 @@ export default function Track() {
   }
 
   function stopTimer() {
+    playTone(440, 0.18)
     setRunning(false)
     runningRef.current = false
     setPaused(false)
