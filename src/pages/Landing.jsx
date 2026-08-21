@@ -435,7 +435,7 @@ export default function Landing() {
 
       <section className="landing-review">
         <p className="landing-review-text">Love Tally? Leave a review on the App Store — it helps more than you know.</p>
-        <a href={`${APP_STORE_URL}?action=write-review`} target="_blank" rel="noopener noreferrer" className="landing-review-link">⭐ Write a review →</a>
+        <a href={`${APP_STORE_URL}?action=write-review`} target="_blank" rel="noopener noreferrer" className="landing-review-link">Write a review →</a>
       </section>
 
       <footer className="landing-footer">
