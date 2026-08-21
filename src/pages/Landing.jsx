@@ -425,9 +425,14 @@ export default function Landing() {
         {emailStatus === 'error' && <p className="landing-email-error">Something went wrong — try again.</p>}
       </section>
 
+      <section className="landing-review">
+        <p className="landing-review-text">Love Tally? Leave a review on the App Store — it helps more than you know.</p>
+        <a href={`${APP_STORE_URL}&action=write-review`} target="_blank" rel="noopener noreferrer" className="landing-review-link">⭐ Write a review →</a>
+      </section>
+
       <footer className="landing-footer">
         <div className="landing-footer-inner">
-          <span className="landing-footer-byline">© 2026 Tally · Made by George Clinkscales</span>
+          <span className="landing-footer-byline">© 2026 Tally · Made by <a href="https://georgeclinkscalesdev.com" target="_blank" rel="noopener noreferrer">George Clinkscales</a></span>
           <div className="landing-footer-links">
             <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">App Store</a>
             <Link to="/login">Sign in</Link>

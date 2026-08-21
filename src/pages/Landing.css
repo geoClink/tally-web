@@ -1155,6 +1155,30 @@
 }
 
 /* ── Footer ── */
+.landing-review {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.landing-review-text {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.landing-review-link {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.landing-review-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .landing-footer {
   border-top: 1px solid var(--border);
   padding: 1.5rem;
@@ -1172,6 +1196,16 @@
 .landing-footer-byline {
   font-size: 0.8rem;
   color: var(--text-muted);
+}
+
+.landing-footer-byline a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.landing-footer-byline a:hover {
+  color: var(--accent);
 }
 
 .landing-footer-links {
