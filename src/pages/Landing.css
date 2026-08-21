@@ -301,11 +301,11 @@
 }
 
 .modal-card {
-  background: var(--card-bg);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 2rem;
-  max-width: 360px;
+  max-width: 420px;
   width: 100%;
   text-align: center;
   position: relative;
