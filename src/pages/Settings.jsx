@@ -19,6 +19,8 @@ export default function Settings() {
   const [error, setError] = useState('')
   const [deleting, setDeleting] = useState(false)
   const [bugModalOpen, setBugModalOpen] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
+  const [sendingReset, setSendingReset] = useState(false)
 
   useEffect(() => {
     loadAll()
@@ -78,6 +80,15 @@ export default function Settings() {
     setClientGoals(prev => prev.filter(g => g.client !== client))
   }
 
+  async function handleChangePassword() {
+    setSendingReset(true)
+    await supabase.auth.resetPasswordForEmail(user.email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+    setSendingReset(false)
+    setResetSent(true)
+  }
+
   async function deleteAccount() {
     if (!confirm('This will permanently delete your account and all data. This cannot be undone. Continue?')) return
     if (!confirm('Last chance — are you absolutely sure?')) return
@@ -109,7 +120,7 @@ export default function Settings() {
   if (loading) return <div className="loading">Loading…</div>
 
   return (
-    <div>
+    <div className="settings-page">
       <div className="page-header">
         <h1 className="page-title">Settings</h1>
         <p className="page-subtitle">Configure your Tally preferences</p>
@@ -202,6 +213,20 @@ export default function Settings() {
           {saving ? 'Saving…' : 'Save Settings'}
         </button>
       </form>
+
+      <div className="card" style={{ marginTop: '2rem' }}>
+        <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.4rem' }}>Change Password</h2>
+        <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+          We'll email a reset link to <strong>{user.email}</strong>.
+        </p>
+        {resetSent ? (
+          <div className="alert alert-success">Check your email for a password reset link.</div>
+        ) : (
+          <button type="button" className="btn btn-secondary" onClick={handleChangePassword} disabled={sendingReset}>
+            {sendingReset ? 'Sending…' : 'Send Reset Email'}
+          </button>
+        )}
+      </div>
 
       <div className="card" style={{ marginTop: '2rem' }}>
         <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.4rem' }}>Report a Bug</h2>

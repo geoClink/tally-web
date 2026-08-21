@@ -188,7 +188,7 @@ export default function Dashboard() {
       {recentSessions.length === 0 ? (
         <div className="empty-state">No sessions yet. Track time using the timer or add one manually.</div>
       ) : (
-        <div className="table-wrapper">
+        <div className="table-wrapper dashboard-sessions">
           <table>
             <thead>
               <tr>
@@ -205,16 +205,16 @@ export default function Dashboard() {
                 if (s.task_note) params.set('note', s.task_note)
                 return (
                   <tr key={s.id}>
-                    <td style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
-                    <td style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.client}</td>
-                    <td style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
+                    <td data-label="Date" style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
+                    <td data-label="Client" style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.client}</td>
+                    <td data-label="Hours" style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
                     <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
-                    <td>
+                    <td className="session-action-cell">
                       <Link
                         to={`/track?${params.toString()}`}
                         className="btn btn-secondary btn-sm"
                         title="Log time for this client and task"
-                        style={{ padding: '0.35rem 0.85rem', whiteSpace: 'nowrap' }}
+                        style={{ whiteSpace: 'nowrap' }}
                       >
                         Log again
                       </Link>

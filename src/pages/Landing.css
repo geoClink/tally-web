@@ -617,7 +617,7 @@
 }
 
 .landing-scroll-item--ipad {
-  width: 420px;
+  width: 640px;
 }
 
 .landing-scroll-item--watch {
@@ -1361,6 +1361,10 @@
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.8);
   margin-bottom: 1.75rem;
+}
+
+.landing-closing-cta .landing-hero-ctas {
+  justify-content: center;
 }
 
 .landing-closing-cta .landing-btn-primary {

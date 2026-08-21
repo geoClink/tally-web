@@ -644,7 +644,7 @@ select:focus {
   background-color: #fff;
   background-image: none;
   border: 1px solid #747775;
-  border-radius: 4px;
+  border-radius: var(--radius);
   box-sizing: border-box;
   color: #1f1f1f;
   cursor: pointer;
@@ -662,6 +662,25 @@ select:focus {
   white-space: nowrap;
   width: 100%;
   margin-bottom: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .gsi-material-button {
+    background-color: #131314;
+    border-color: #8e918f;
+    color: #e3e3e3;
+  }
+  .gsi-material-button:disabled {
+    background-color: #13131461;
+    border-color: #8e918f1f;
+  }
+  .gsi-material-button:not(:disabled):active .gsi-material-button-state,
+  .gsi-material-button:not(:disabled):focus .gsi-material-button-state {
+    background-color: #e3e3e3;
+  }
+  .gsi-material-button:not(:disabled):hover .gsi-material-button-state {
+    background-color: #e3e3e3;
+  }
 }
 .gsi-material-button .gsi-material-button-icon {
   height: 20px;
@@ -725,7 +744,7 @@ select:focus {
   border: none;
   padding: 0;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--radius);
   overflow: hidden;
 }
 
@@ -1367,6 +1386,17 @@ select:focus {
 }
 
 /* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -1420,4 +1450,147 @@ select:focus {
   font-size: inherit;
   resize: vertical;
   box-sizing: border-box;
+}
+
+/* =============================================
+   SETTINGS PAGE — mobile
+   ============================================= */
+@media (max-width: 640px) {
+  /* Full-width action buttons */
+  .settings-page .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Client goals: turn table into a stacked list */
+  .settings-page .table-wrapper table,
+  .settings-page .table-wrapper thead,
+  .settings-page .table-wrapper tbody,
+  .settings-page .table-wrapper th,
+  .settings-page .table-wrapper td,
+  .settings-page .table-wrapper tr {
+    display: block;
+  }
+
+  .settings-page .table-wrapper thead {
+    display: none;
+  }
+
+  .settings-page .table-wrapper tr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .settings-page .table-wrapper tr:not(:last-child) {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .settings-page .table-wrapper td {
+    padding: 0;
+    border-bottom: none;
+    font-size: 0.875rem;
+  }
+
+  /* Give the remove button a decent tap target */
+  .settings-page .table-wrapper td .btn {
+    width: auto;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* =============================================
+   DASHBOARD — mobile
+   ============================================= */
+
+/* 3 stat cards: stack to 2-col grid then full-width on tiny screens */
+@media (max-width: 480px) {
+  .card-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  /* Third card (Weekly Goal %) spans full width */
+  .card-grid .card:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Recent Sessions: replace cramped table with card-rows on mobile */
+@media (max-width: 640px) {
+  .dashboard-sessions table,
+  .dashboard-sessions thead,
+  .dashboard-sessions tbody,
+  .dashboard-sessions th,
+  .dashboard-sessions td,
+  .dashboard-sessions tr {
+    display: block;
+  }
+
+  .dashboard-sessions thead {
+    display: none;
+  }
+
+  /* Each row becomes a two-line card row */
+  .dashboard-sessions tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    gap: 0.1rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dashboard-sessions tr:last-child {
+    border-bottom: none;
+  }
+
+  /* Client name — top left, bold */
+  .dashboard-sessions td[data-label="Client"] {
+    grid-column: 1;
+    grid-row: 1;
+    font-weight: 500;
+    font-size: 0.9rem;
+    max-width: none;
+    padding: 0;
+  }
+
+  /* Hours — top right */
+  .dashboard-sessions td[data-label="Hours"] {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: right;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0;
+  }
+
+  /* Date — bottom left, muted */
+  .dashboard-sessions td[data-label="Date"] {
+    grid-column: 1;
+    grid-row: 2;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    padding: 0;
+  }
+
+  /* Log again — bottom right */
+  .dashboard-sessions .session-action-cell {
+    grid-column: 2;
+    grid-row: 2;
+    padding: 0;
+    text-align: right;
+  }
+
+  .dashboard-sessions .session-action-cell .btn {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.65rem;
+  }
+
+  /* Hide Note column entirely on mobile (already hidden via hide-mobile) */
+  .dashboard-sessions td:not([data-label]):not(.session-action-cell) {
+    display: none;
+  }
 }
