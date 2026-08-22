@@ -1225,6 +1225,13 @@
 
 .privacy-content a { color: var(--accent); }
 
+/* ── App Store group (badges side by side) ── */
+.landing-appstore-group {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 /* ── Tablet responsive ── */
 @media (min-width: 641px) and (max-width: 1024px) {
   .landing-scroll-item {
@@ -1234,6 +1241,20 @@
   .landing-scroll-track {
     padding-left: 2rem;
     padding-right: 2rem;
+  }
+
+  .landing-hero-ctas {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .landing-hero-ctas .landing-btn-primary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .landing-closing-cta .landing-hero-ctas {
+    align-items: center;
   }
 }
 
