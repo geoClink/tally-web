@@ -1298,6 +1298,10 @@
     width: 200px;
   }
 
+  .landing-scroll-item--ipad {
+    width: 320px;
+  }
+
   .landing-nav-signin {
     display: none;
   }
