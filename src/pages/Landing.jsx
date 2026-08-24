@@ -179,7 +179,10 @@ export default function Landing() {
   return (
     <div className="landing">
       <nav className="landing-nav">
-        <span className="landing-logo">Tally</span>
+        <div className="landing-logo-group">
+          <img src="/images/tallyios/appicon.webp" alt="" className="landing-nav-icon" aria-hidden="true" />
+          <span className="landing-logo">Tally</span>
+        </div>
         <div className="landing-nav-actions">
           <Link to="/login" className="landing-nav-signin">Sign in</Link>
           <Link to="/login?mode=signup" className="landing-nav-cta">Sign up free →</Link>
@@ -494,7 +497,10 @@ export default function Landing() {
       <footer className="landing-footer">
         <div className="landing-footer-inner">
           <div className="landing-footer-brand">
-            <span className="landing-logo">Tally</span>
+            <div className="landing-logo-group">
+              <img src="/images/tallyios/appicon.webp" alt="" className="landing-nav-icon" aria-hidden="true" />
+              <span className="landing-logo">Tally</span>
+            </div>
             <p className="landing-footer-tagline">Your time, your money.</p>
             <span className="landing-footer-copy">© 2026 Tally · Made by <a href="https://georgeclinkscalesdev.com" target="_blank" rel="noopener noreferrer">George Clinkscales</a></span>
           </div>

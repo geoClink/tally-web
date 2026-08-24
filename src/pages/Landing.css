@@ -134,6 +134,20 @@
   color: #fff;
 }
 
+.landing-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.landing-nav-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: block;
+  flex-shrink: 0;
+}
+
 .landing-logo {
   font-size: 1.3rem;
   font-weight: 800;
