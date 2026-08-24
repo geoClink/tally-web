@@ -188,7 +188,7 @@ export default function Landing() {
       <header className="landing-banner">
       <section className="landing-hero">
         <div className="landing-hero-text">
-          <h1 className="landing-headline">Freelance time tracking,<br />wherever you work.</h1>
+          <h1 className="landing-headline">Bill every hour.<br />On every device.</h1>
           <p className="landing-platforms">iPhone · iPad · Apple Watch · Web · <span className="landing-platforms-soon">Android in beta</span></p>
           <p className="landing-subhead">
             Log billable hours with one tap. Send invoices from your phone. Track your whole team when you're ready to grow.
@@ -493,14 +493,29 @@ export default function Landing() {
 
       <footer className="landing-footer">
         <div className="landing-footer-inner">
-          <span className="landing-footer-byline">© 2026 Tally · Made by <a href="https://georgeclinkscalesdev.com" target="_blank" rel="noopener noreferrer">George Clinkscales</a></span>
-          <div className="landing-footer-links">
-            <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">iOS App</a>
-            <button onClick={() => setAndroidModalOpen(true)}>Android Beta</button>
-            <Link to="/login">Sign in</Link>
-            <Link to="/privacy">Privacy</Link>
-            <Link to="/delete-account">Delete Account</Link>
-            <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
+          <div className="landing-footer-brand">
+            <span className="landing-logo">Tally</span>
+            <p className="landing-footer-tagline">Your time, your money.</p>
+            <span className="landing-footer-copy">© 2026 Tally · Made by <a href="https://georgeclinkscalesdev.com" target="_blank" rel="noopener noreferrer">George Clinkscales</a></span>
+          </div>
+          <div className="landing-footer-cols">
+            <div className="landing-footer-col">
+              <h4>Product</h4>
+              <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">iOS App</a>
+              <button onClick={() => setAndroidModalOpen(true)}>Android Beta</button>
+              <a href="/demo" target="_blank" rel="noopener noreferrer">Live Demo</a>
+            </div>
+            <div className="landing-footer-col">
+              <h4>Account</h4>
+              <Link to="/login">Sign in</Link>
+              <Link to="/login?mode=signup">Sign up free</Link>
+            </div>
+            <div className="landing-footer-col">
+              <h4>Legal</h4>
+              <Link to="/privacy">Privacy</Link>
+              <Link to="/delete-account">Delete Account</Link>
+              <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
+            </div>
           </div>
         </div>
       </footer>
