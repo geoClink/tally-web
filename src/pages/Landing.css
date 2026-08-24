@@ -345,7 +345,7 @@
 }
 
 .landing-appstore-badge--android::after {
-  content: 'Soon';
+  content: 'Beta';
   position: absolute;
   top: -8px;
   right: -8px;
@@ -794,18 +794,6 @@
   transform: translateY(-2px);
 }
 
-.landing-feature-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: var(--accent-light);
-  border-radius: 10px;
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  line-height: 1;
-}
 
 .landing-feature-card h3 {
   font-size: 0.95rem;
@@ -1317,6 +1305,111 @@
 }
 
 .privacy-content a { color: var(--accent); }
+
+/* ── Scroll animations ── */
+.fade-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease-out, transform 0.65s ease-out;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { opacity: 1; transform: none; transition: none; }
+}
+
+/* ── Hero rating ── */
+.landing-hero-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.landing-stars {
+  color: #facc15;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+}
+
+.landing-rating-text {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ── How it works ── */
+.landing-how {
+  padding: 5rem 1.5rem;
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing-how-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.landing-how-sub {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+
+.landing-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.landing-step {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.landing-step-num {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.landing-step h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.landing-step p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+@media (max-width: 640px) {
+  .landing-steps {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .landing-how {
+    padding: 3.5rem 1.25rem;
+  }
+}
 
 /* ── App Store group (badges side by side) ── */
 .landing-appstore-group {

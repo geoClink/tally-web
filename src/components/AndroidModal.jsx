@@ -8,7 +8,7 @@ export default function AndroidModal({ onClose }) {
         <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🤖</div>
         <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.5rem' }}>Join the Android Beta</h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', lineHeight: 1.6, marginBottom: '1.25rem' }}>
-          Tally is in closed testing on Google Play. Follow these three steps to get early access:
+          Tally is in closed testing on Google Play. Follow these three steps to get early access — your 7-day free trial starts inside the app.
         </p>
         <ol style={{ paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <li style={{ fontSize: '0.875rem', lineHeight: 1.5 }}>

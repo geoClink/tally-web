@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -7,6 +7,7 @@ import AndroidModal from '../components/AndroidModal'
 import './Landing.css'
 
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+const isAndroid = /Android/.test(navigator.userAgent)
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/tally-time-tracker/id6775275483'
 
@@ -38,12 +39,12 @@ const watchScreenshots = [
 ]
 
 const features = [
-  { icon: '⚡', title: 'Live Activity & Dynamic Island', body: 'Your running timer stays on the lock screen and Dynamic Island the entire time — no need to open the app.' },
-  { icon: '🎙️', title: 'Widgets & Siri', body: 'Small and medium home screen widgets show your active session. Start and stop timers by voice via App Intents and Siri Shortcuts.' },
-  { icon: '⌚', title: 'Apple Watch', body: 'Full watchOS companion app synced via WatchConnectivity. Log sessions and check your weekly progress from your wrist.' },
-  { icon: '🎯', title: 'Focus Mode', body: 'A custom App Intent filter lets Tally activate automatically when your Work focus turns on.' },
-  { icon: '📈', title: 'Reports & export', body: 'Swift Charts visualize hours by client across weekly and all-time views. Pro includes CSV export for invoicing.' },
-  { icon: '👥', title: 'Team workspaces', body: 'Invite members, assign clients, and roll up hours across your whole team. Business tier adds Stripe invoicing.' },
+  { title: 'Live Activity & Dynamic Island', body: 'Your running timer stays on the lock screen and Dynamic Island the entire time — no need to open the app.' },
+  { title: 'Widgets & Siri', body: 'Small and medium home screen widgets show your active session. Start and stop timers by voice via App Intents and Siri Shortcuts.' },
+  { title: 'Apple Watch', body: 'Full watchOS companion app synced via WatchConnectivity. Log sessions and check your weekly progress from your wrist.' },
+  { title: 'Focus Mode', body: 'A custom App Intent filter lets Tally activate automatically when your Work focus turns on.' },
+  { title: 'Reports & export', body: 'Swift Charts visualize hours by client across weekly and all-time views. Pro includes CSV export for invoicing.' },
+  { title: 'Team workspaces', body: 'Invite members, assign clients, and roll up hours across your whole team. Business tier adds Stripe invoicing.' },
 ]
 
 const versions = [
@@ -151,6 +152,15 @@ export default function Landing() {
   const [emailStatus, setEmailStatus] = useState('idle')
   const [openFaq, setOpenFaq] = useState(null)
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => entries.forEach(e => e.isIntersecting && e.target.classList.add('visible')),
+      { threshold: 0.08 }
+    )
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
+
   async function handleEmailSubmit(e) {
     e.preventDefault()
     setEmailStatus('loading')
@@ -179,7 +189,7 @@ export default function Landing() {
       <section className="landing-hero">
         <div className="landing-hero-text">
           <h1 className="landing-headline">Freelance time tracking,<br />wherever you work.</h1>
-          <p className="landing-platforms">iPhone · iPad · Apple Watch · Web · <span className="landing-platforms-soon">Android coming soon</span></p>
+          <p className="landing-platforms">iPhone · iPad · Apple Watch · Web · <span className="landing-platforms-soon">Android in beta</span></p>
           <p className="landing-subhead">
             Log billable hours with one tap. Send invoices from your phone. Track your whole team when you're ready to grow.
           </p>
@@ -203,7 +213,7 @@ export default function Landing() {
                   <path d="M3 22.2L21.5 12L12 12Z" fill="#EA4335"/>
                 </svg>
                 <span className="landing-appstore-text">
-                  <span className="landing-appstore-sub">Coming soon to</span>
+                  <span className="landing-appstore-sub">Now in beta on</span>
                   <span className="landing-appstore-main">Google Play</span>
                 </span>
               </button>
@@ -225,7 +235,7 @@ export default function Landing() {
       </section>
       </header>
 
-<section className="landing-demo">
+<section className="landing-demo fade-up">
         <h2 className="landing-section-title">Try it live</h2>
         <p className="landing-demo-sub">No sign-up needed — the full dashboard, right here.</p>
         <a href="/demo" target="_blank" rel="noopener noreferrer" className="landing-browser-mockup landing-browser-mockup--link">
@@ -252,7 +262,31 @@ export default function Landing() {
         </a>
       </section>
 
-      <section className="landing-screenshots">
+      <section className="landing-how fade-up">
+        <div className="landing-how-header">
+          <h2 className="landing-section-title">How it works</h2>
+          <p className="landing-how-sub">From first tap to paid invoice — the whole workflow in one app.</p>
+        </div>
+        <div className="landing-steps">
+          <div className="landing-step">
+            <div className="landing-step-num">1</div>
+            <h3>Start a timer</h3>
+            <p>One tap picks a client and starts tracking. Tally runs in the background — no need to keep the app open.</p>
+          </div>
+          <div className="landing-step">
+            <div className="landing-step-num">2</div>
+            <h3>Review your hours</h3>
+            <p>Every session is saved automatically. See earnings by client, weekly totals, and your full history at a glance.</p>
+          </div>
+          <div className="landing-step">
+            <div className="landing-step-num">3</div>
+            <h3>Send an invoice</h3>
+            <p>Generate a PDF invoice from your logged hours and send it to your client in seconds — straight from your phone.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="landing-screenshots fade-up">
         <div className="landing-screenshots-header">
           <span className="landing-platform-badge">iPhone · iPad · Apple Watch · Web</span>
           <h2 className="landing-section-title">Native on every Apple device</h2>
@@ -286,7 +320,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-features-section">
+      <section className="landing-features-section fade-up">
         <div className="landing-features-header">
           <h2 className="landing-section-title">Built for how freelancers actually work</h2>
           <p className="landing-features-sub">Not just a timer — a complete billing workflow for iPhone, iPad, Apple Watch, and web.</p>
@@ -294,7 +328,6 @@ export default function Landing() {
         <div className="landing-features">
           {features.map((f) => (
             <div key={f.title} className="landing-feature-card">
-              <span className="landing-feature-icon">{f.icon}</span>
               <h3>{f.title}</h3>
               <p>{f.body}</p>
             </div>
@@ -302,7 +335,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-pricing">
+      <section className="landing-pricing fade-up">
         <h2 className="landing-section-title">Pricing</h2>
         <p className="landing-pricing-sub">No subscriptions for solo users. Pay once, own it forever.</p>
         <div className="landing-pricing-grid">
@@ -318,14 +351,23 @@ export default function Landing() {
               </ul>
               <div className="landing-tier-cta-group">
                 {t.name === 'Business' ? (
+                  isAndroid ? (
+                    <button
+                      onClick={() => setAndroidModalOpen(true)}
+                      className="landing-btn-outline"
+                    >
+                      Start free trial →
+                    </button>
+                  ) : (
                   <a
                     href={isIOS ? APP_STORE_URL : import.meta.env.VITE_STRIPE_BUSINESS_LINK}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="landing-btn-outline"
                   >
-                    {isIOS ? 'Start free trial on iOS' : 'Start free trial →'}
+                    {isIOS ? 'Start free trial on iOS' : 'Get Business →'}
                   </a>
+                  )
                 ) : t.ctaHref ? (
                   <a href={t.ctaHref} target="_blank" rel="noopener noreferrer" className={t.highlight ? 'landing-btn-primary' : 'landing-btn-outline'}>
                     {t.cta}
@@ -348,7 +390,7 @@ export default function Landing() {
         </p>
       </section>
 
-      <section className="landing-changelog">
+      <section className="landing-changelog fade-up">
         <div className="landing-changelog-header">
           <h2 className="landing-section-title">What's New</h2>
           <p className="landing-features-sub">Updated regularly across iOS and web.</p>
@@ -370,7 +412,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-faq">
+      <section className="landing-faq fade-up">
         <h2 className="landing-section-title">Common questions</h2>
         <div className="landing-faq-list">
           {faqs.map((item, i) => (
