@@ -180,7 +180,7 @@ export default function Landing() {
     <div className="landing">
       <nav className="landing-nav">
         <div className="landing-logo-group">
-          <img src="/images/tallyios/appicon.webp" alt="" className="landing-nav-icon" aria-hidden="true" />
+          <img src="/favicon.svg" alt="" className="landing-nav-icon" aria-hidden="true" />
           <span className="landing-logo">Tally</span>
         </div>
         <div className="landing-nav-actions">
@@ -498,7 +498,7 @@ export default function Landing() {
         <div className="landing-footer-inner">
           <div className="landing-footer-brand">
             <div className="landing-logo-group">
-              <img src="/images/tallyios/appicon.webp" alt="" className="landing-nav-icon" aria-hidden="true" />
+              <img src="/favicon.svg" alt="" className="landing-nav-icon" aria-hidden="true" />
               <span className="landing-logo">Tally</span>
             </div>
             <p className="landing-footer-tagline">Your time, your money.</p>
