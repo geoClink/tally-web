@@ -1238,6 +1238,10 @@
     width: 200px;
   }
 
+  .landing-scroll-item--ipad {
+    width: 520px;
+  }
+
   .landing-scroll-track {
     padding-left: 2rem;
     padding-right: 2rem;
