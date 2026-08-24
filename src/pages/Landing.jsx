@@ -38,12 +38,12 @@ const watchScreenshots = [
 ]
 
 const features = [
-  { title: 'Live Activity & Dynamic Island', body: 'Your running timer stays on the lock screen and Dynamic Island the entire time — no need to open the app.' },
-  { title: 'Widgets & Siri', body: 'Small and medium home screen widgets show your active session. Start and stop timers by voice via App Intents and Siri Shortcuts.' },
-  { title: 'Apple Watch', body: 'Full watchOS companion app synced via WatchConnectivity. Log sessions and check your weekly progress from your wrist.' },
-  { title: 'Focus Mode', body: 'A custom App Intent filter lets Tally activate automatically when your Work focus turns on.' },
-  { title: 'Reports & export', body: 'Swift Charts visualize hours by client across weekly and all-time views. Pro includes CSV export for invoicing.' },
-  { title: 'Team workspaces', body: 'Invite members, assign clients, and roll up hours across your whole team. Business tier adds Stripe invoicing.' },
+  { icon: '⚡', title: 'Live Activity & Dynamic Island', body: 'Your running timer stays on the lock screen and Dynamic Island the entire time — no need to open the app.' },
+  { icon: '🎙️', title: 'Widgets & Siri', body: 'Small and medium home screen widgets show your active session. Start and stop timers by voice via App Intents and Siri Shortcuts.' },
+  { icon: '⌚', title: 'Apple Watch', body: 'Full watchOS companion app synced via WatchConnectivity. Log sessions and check your weekly progress from your wrist.' },
+  { icon: '🎯', title: 'Focus Mode', body: 'A custom App Intent filter lets Tally activate automatically when your Work focus turns on.' },
+  { icon: '📈', title: 'Reports & export', body: 'Swift Charts visualize hours by client across weekly and all-time views. Pro includes CSV export for invoicing.' },
+  { icon: '👥', title: 'Team workspaces', body: 'Invite members, assign clients, and roll up hours across your whole team. Business tier adds Stripe invoicing.' },
 ]
 
 const versions = [
@@ -294,6 +294,7 @@ export default function Landing() {
         <div className="landing-features">
           {features.map((f) => (
             <div key={f.title} className="landing-feature-card">
+              <span className="landing-feature-icon">{f.icon}</span>
               <h3>{f.title}</h3>
               <p>{f.body}</p>
             </div>
