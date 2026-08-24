@@ -1239,7 +1239,7 @@
   }
 
   .landing-scroll-item--ipad {
-    width: 520px;
+    width: 640px;
   }
 
   .landing-scroll-track {
@@ -1287,6 +1287,11 @@
     width: 100%;
     justify-content: center;
     text-align: center;
+  }
+
+  .landing-appstore-group {
+    width: 100%;
+    flex-direction: column;
   }
 
   .landing-scroll-item {
