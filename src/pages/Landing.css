@@ -1,7 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 .landing {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 /* ── Hero Banner ── */
@@ -148,11 +151,11 @@
 }
 
 .landing-headline {
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(2.25rem, 6vw, 3.75rem);
   font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  margin-bottom: 1rem;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 1.25rem;
   animation: heroFadeUp 0.5s ease-out both;
 }
 
@@ -183,8 +186,8 @@
 
 .landing-subhead {
   color: var(--text-muted);
-  font-size: 1.05rem;
-  line-height: 1.6;
+  font-size: 1.1rem;
+  line-height: 1.7;
   margin-bottom: 2rem;
 }
 
@@ -383,14 +386,16 @@
 /* ── Section title ── */
 .landing-section-title {
   text-align: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 0.75rem;
 }
 
 /* ── Live demo ── */
 .landing-demo {
-  padding: 3rem 1.5rem;
+  padding: 5rem 1.5rem;
   max-width: 960px;
   margin: 0 auto;
   width: 100%;
@@ -520,7 +525,8 @@
 
 /* ── Screenshots ── */
 .landing-screenshots {
-  padding: 3rem 0 2rem;
+  padding: 5rem 0 3rem;
+  background: var(--bg-secondary);
 }
 
 .landing-screenshots-header {
@@ -545,10 +551,12 @@
 }
 
 .landing-screenshots-sub {
-  font-size: 0.875rem;
+  font-size: 1rem;
   color: var(--text-muted);
   text-align: center;
-  line-height: 1.5;
+  line-height: 1.6;
+  max-width: 520px;
+  margin: 0 auto;
 }
 
 .landing-scroll-track {
@@ -717,28 +725,33 @@
 .landing-feature-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-top: 3px solid var(--accent);
-  border-radius: var(--radius);
-  padding: 1.25rem 1.5rem;
-  box-shadow: var(--shadow);
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.landing-feature-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .landing-feature-card h3 {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
   color: var(--text);
 }
 
 .landing-feature-card p {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
 /* ── Pricing ── */
 .landing-pricing {
-  padding: 3rem 1.5rem;
+  padding: 5rem 1.5rem;
   max-width: 900px;
   margin: 0 auto;
   width: 100%;
@@ -770,7 +783,8 @@
 
 .landing-tier--highlight {
   border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent), var(--shadow);
+  box-shadow: 0 0 0 1px var(--accent), 0 8px 32px rgba(37, 99, 235, 0.15);
+  background: linear-gradient(160deg, var(--bg-card) 0%, var(--accent-light) 100%);
 }
 
 .landing-tier-name {
@@ -966,19 +980,21 @@
 
 /* ── Features section with header ── */
 .landing-features-section {
-  padding-top: 3rem;
+  padding-top: 5rem;
+  padding-bottom: 1rem;
 }
 
 .landing-features-header {
   text-align: center;
   padding: 0 1.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .landing-features-sub {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--text-muted);
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
+  line-height: 1.6;
 }
 
 /* ── Tier badge ── */
@@ -997,7 +1013,7 @@
 
 /* ── What's New / Changelog ── */
 .landing-changelog {
-  padding: 3rem 1.5rem;
+  padding: 5rem 1.5rem;
   max-width: 720px;
   margin: 0 auto;
   width: 100%;
@@ -1077,7 +1093,7 @@
 
 /* ── FAQ ── */
 .landing-faq {
-  padding: 3rem 1.5rem;
+  padding: 5rem 1.5rem;
   max-width: 680px;
   margin: 0 auto;
   width: 100%;
@@ -1138,16 +1154,17 @@
 /* ── Closing CTA ── */
 .landing-closing-cta {
   text-align: center;
-  padding: 4rem 1.5rem;
+  padding: 6rem 1.5rem;
   background: linear-gradient(150deg, #1e3a8a 0%, #2563eb 100%);
 }
 
 .landing-closing-headline {
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
   color: #fff;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .landing-closing-sub {
@@ -1335,6 +1352,6 @@
   }
 
   .landing-section-title {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
   }
 }
