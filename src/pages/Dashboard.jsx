@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
 import { usePendingInvite } from '../context/PendingInviteContext'
-import { formatHours, todayString, weekStartString } from '../lib/utils'
+import { formatHours, todayString, weekStartString, monthStartString } from '../lib/utils'
 import { useCountUp } from '../hooks/useCountUp'
 
 export default function Dashboard() {
@@ -17,16 +17,21 @@ export default function Dashboard() {
   const [clientGoals, setClientGoals] = useState([])
   const [weekByClient, setWeekByClient] = useState({})
   const [recentSessions, setRecentSessions] = useState([])
+  const [monthByClient, setMonthByClient] = useState({})
+  const [dismissedNudges, setDismissedNudges] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('tally_nudge_dismissed') ?? '{}') } catch { return {} }
+  })
   const [loading, setLoading] = useState(true)
 
   const today = todayString()
   const weekStart = weekStartString()
+  const monthStart = monthStartString()
   const historyStart = isPro ? null : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
   useEffect(() => {
     async function load() {
       setLoading(true)
-      await Promise.all([fetchTodaySessions(), fetchWeekSessions(), fetchGoal(), fetchRecentSessions()])
+      await Promise.all([fetchTodaySessions(), fetchWeekSessions(), fetchGoal(), fetchRecentSessions(), fetchMonthSessions()])
       setLoading(false)
     }
     load()
@@ -75,6 +80,20 @@ export default function Dashboard() {
     }
   }
 
+  async function fetchMonthSessions() {
+    const { data } = await supabase
+      .from('sessions')
+      .select('client, hours')
+      .eq('user_id', user.id)
+      .gte('date', monthStart)
+      .gt('hours', 0)
+    const byClient = {}
+    data?.forEach(s => {
+      byClient[s.client] = (byClient[s.client] ?? 0) + (s.hours ?? 0)
+    })
+    setMonthByClient(byClient)
+  }
+
   async function fetchRecentSessions() {
     let query = supabase
       .from('sessions')
@@ -89,6 +108,23 @@ export default function Dashboard() {
   }
 
   const weekProgress = weekGoal > 0 ? Math.min((weekHours / weekGoal) * 100, 100) : 0
+
+  const NUDGE_THRESHOLD = 8
+  const now = Date.now()
+  const invoiceNudges = Object.entries(monthByClient)
+    .filter(([client, hours]) => {
+      if (hours < NUDGE_THRESHOLD) return false
+      const dismissedUntil = dismissedNudges[client] ?? 0
+      return now > dismissedUntil
+    })
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 1)
+
+  function dismissNudge(client) {
+    const updated = { ...dismissedNudges, [client]: Date.now() + 7 * 24 * 60 * 60 * 1000 }
+    setDismissedNudges(updated)
+    try { localStorage.setItem('tally_nudge_dismissed', JSON.stringify(updated)) } catch {}
+  }
 
   const animatedToday = useCountUp(todayHours, 700, !loading)
   const animatedWeek = useCountUp(weekHours, 700, !loading)
@@ -113,6 +149,18 @@ export default function Dashboard() {
           </Link>
         </div>
       )}
+
+      {invoiceNudges.map(([client, hours]) => (
+        <div key={client} className="alert alert-info" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <span>
+            You have <strong>{formatHours(hours)}</strong> logged for <strong>{client}</strong> this month — ready to invoice?
+          </span>
+          <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+            <Link to="/invoices" className="btn btn-primary btn-sm">Create Invoice →</Link>
+            <button className="btn btn-secondary btn-sm" onClick={() => dismissNudge(client)}>Later</button>
+          </div>
+        </div>
+      ))}
 
       <div className="card-grid">
         <div className="card">
