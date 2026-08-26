@@ -25,6 +25,8 @@ export default function Login() {
     setError('')
     setLoading(true)
 
+    window.gtag?.('event', 'form_submit_attempt', { form_name: mode })
+
     const { error: authError } = mode === 'signin'
       ? await signIn(email, password)
       : await signUp(email, password)
@@ -33,9 +35,13 @@ export default function Login() {
 
     if (authError) {
       setError(authError.message)
+      window.gtag?.('event', 'form_submit_error', {
+        form_name: mode,
+        error_message: authError.message,
+      })
     } else {
       if (mode === 'signup') {
-        window.gtag('event', 'sign_up', { method: 'email' })
+        window.gtag?.('event', 'sign_up', { method: 'email' })
       }
       navigate('/dashboard')
     }
