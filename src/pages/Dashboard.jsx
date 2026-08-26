@@ -228,51 +228,74 @@ export default function Dashboard() {
         </>
       )}
 
-      <div className="section-header">
-        <h2 className="section-title">Recent Sessions</h2>
-        <Link to="/sessions" className="section-link">View all</Link>
-      </div>
-
       {recentSessions.length === 0 ? (
-        <div className="empty-state">No sessions yet. Track time using the timer or add one manually.</div>
-      ) : (
-        <div className="table-wrapper dashboard-sessions">
-          <table>
-            <thead>
-              <tr>
-                <th style={{ whiteSpace: 'nowrap' }}>Date</th>
-                <th>Client</th>
-                <th>Hours</th>
-                <th className="hide-mobile">Note</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentSessions.map(s => {
-                const params = new URLSearchParams({ client: s.client })
-                if (s.task_note) params.set('note', s.task_note)
-                return (
-                  <tr key={s.id}>
-                    <td data-label="Date" style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
-                    <td data-label="Client" style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.client}</td>
-                    <td data-label="Hours" style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
-                    <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
-                    <td className="session-action-cell">
-                      <Link
-                        to={`/track?${params.toString()}`}
-                        className="btn btn-secondary btn-sm"
-                        title="Log time for this client and task"
-                        style={{ whiteSpace: 'nowrap' }}
-                      >
-                        Log again
-                      </Link>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+        <div className="onboarding-card card">
+          <p className="onboarding-eyebrow">Getting started</p>
+          <h2 className="onboarding-heading">Welcome to Tally</h2>
+          <p className="onboarding-subtext">Track every hour you work so you always know exactly what to invoice. Here's how to get going:</p>
+          <ol className="onboarding-steps">
+            <li>
+              <span className="onboarding-step-title">Add a client</span>
+              <span className="onboarding-step-desc">Type a new client name on the Track page — no setup required</span>
+            </li>
+            <li>
+              <span className="onboarding-step-title">Log your first session</span>
+              <span className="onboarding-step-desc">Start the timer while you work, or enter hours manually after</span>
+            </li>
+            <li>
+              <span className="onboarding-step-title">See your hours here</span>
+              <span className="onboarding-step-desc">Your dashboard fills in automatically as you track</span>
+            </li>
+          </ol>
+          <div className="onboarding-actions">
+            <Link to="/track" className="btn btn-primary">Start tracking →</Link>
+            <Link to="/demo" className="btn btn-secondary">Try the demo first</Link>
+          </div>
         </div>
+      ) : (
+        <>
+          <div className="section-header">
+            <h2 className="section-title">Recent Sessions</h2>
+            <Link to="/sessions" className="section-link">View all</Link>
+          </div>
+          <div className="table-wrapper dashboard-sessions">
+            <table>
+              <thead>
+                <tr>
+                  <th style={{ whiteSpace: 'nowrap' }}>Date</th>
+                  <th>Client</th>
+                  <th>Hours</th>
+                  <th className="hide-mobile">Note</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentSessions.map(s => {
+                  const params = new URLSearchParams({ client: s.client })
+                  if (s.task_note) params.set('note', s.task_note)
+                  return (
+                    <tr key={s.id}>
+                      <td data-label="Date" style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
+                      <td data-label="Client" style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.client}</td>
+                      <td data-label="Hours" style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
+                      <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
+                      <td className="session-action-cell">
+                        <Link
+                          to={`/track?${params.toString()}`}
+                          className="btn btn-secondary btn-sm"
+                          title="Log time for this client and task"
+                          style={{ whiteSpace: 'nowrap' }}
+                        >
+                          Log again
+                        </Link>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   )
