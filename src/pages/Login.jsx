@@ -34,6 +34,9 @@ export default function Login() {
     if (authError) {
       setError(authError.message)
     } else {
+      if (mode === 'signup') {
+        window.gtag('event', 'sign_up', { method: 'email' })
+      }
       navigate('/dashboard')
     }
   }

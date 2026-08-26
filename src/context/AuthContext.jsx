@@ -10,7 +10,13 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [recoveryMode, setRecoveryMode] = useState(false)
+  // Initialize synchronously from the URL hash before Supabase clears it.
+  // The PASSWORD_RECOVERY event fires during async Supabase startup, before
+  // the onAuthStateChange listener (in useEffect) is registered — so we'd
+  // miss it. Reading the hash here happens before Supabase clears it.
+  const [recoveryMode, setRecoveryMode] = useState(
+    () => window.location.hash.includes('type=recovery')
+  )
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {

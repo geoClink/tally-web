@@ -14,7 +14,7 @@ export default function ForgotPassword() {
     setLoading(true)
 
     const { error: authError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'https://tallytimetracker.com/reset-password',
+      redirectTo: `${window.location.origin}/reset-password`,
     })
 
     setLoading(false)
