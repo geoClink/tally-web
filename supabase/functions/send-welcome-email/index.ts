@@ -35,7 +35,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Tally <noreply@georgeclinkscalesdev.com>',
+        from: 'Tally <noreply@tallytimetracker.com>',
         to: email,
         subject: 'Welcome to Tally',
         html: `<!DOCTYPE html>
@@ -53,8 +53,17 @@ Deno.serve(async (req) => {
 
           <!-- Header -->
           <tr>
-            <td style="background:#1d4ed8;border-radius:10px 10px 0 0;padding:28px 40px;text-align:center;">
-              <span style="font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">Tally</span>
+            <td style="background:#1d4ed8;border-radius:10px 10px 0 0;padding:24px 40px;text-align:center;">
+              <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 auto;">
+                <tr>
+                  <td style="vertical-align:middle;padding-right:10px;">
+                    <img src="https://tallytimetracker.com/logo.png" alt="Tally" width="32" height="32" style="display:block;border-radius:8px;">
+                  </td>
+                  <td style="vertical-align:middle;">
+                    <span style="font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">Tally</span>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 

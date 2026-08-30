@@ -23,6 +23,8 @@ export default function Dashboard() {
     try { return JSON.parse(localStorage.getItem('tally_nudge_dismissed') ?? '{}') } catch { return {} }
   })
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
+  const [streak, setStreak] = useState(0)
   const [showEmailCapture, setShowEmailCapture] = useState(false)
 
   const today = todayString()
@@ -33,7 +35,12 @@ export default function Dashboard() {
   useEffect(() => {
     async function load() {
       setLoading(true)
-      await Promise.all([fetchTodaySessions(), fetchWeekSessions(), fetchGoal(), fetchRecentSessions(), fetchMonthSessions()])
+      setLoadError(false)
+      try {
+        await Promise.all([fetchTodaySessions(), fetchWeekSessions(), fetchGoal(), fetchRecentSessions(), fetchMonthSessions(), fetchStreak()])
+      } catch {
+        setLoadError(true)
+      }
       setLoading(false)
     }
     load()
@@ -97,6 +104,27 @@ export default function Dashboard() {
     setMonthByClient(byClient)
   }
 
+  async function fetchStreak() {
+    const { data } = await supabase
+      .from('sessions')
+      .select('date')
+      .eq('user_id', user.id)
+      .gt('hours', 0)
+      .order('date', { ascending: false })
+    if (!data?.length) { setStreak(0); return }
+    const dates = [...new Set(data.map(s => s.date))].sort().reverse()
+    const today = todayString()
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+    if (dates[0] !== today && dates[0] !== yesterday) { setStreak(0); return }
+    let count = 1
+    for (let i = 1; i < dates.length; i++) {
+      const diff = (new Date(dates[i - 1]) - new Date(dates[i])) / 86400000
+      if (diff === 1) count++
+      else break
+    }
+    setStreak(count)
+  }
+
   async function fetchRecentSessions() {
     let query = supabase
       .from('sessions')
@@ -133,7 +161,34 @@ export default function Dashboard() {
   const animatedWeek = useCountUp(weekHours, 700, !loading)
   const animatedProgress = useCountUp(weekProgress, 700, !loading)
 
-  if (loading) return <div className="loading">Loading…</div>
+  if (loading) return (
+    <div>
+      <div className="page-header">
+        <h1 className="page-title">Dashboard</h1>
+        <p className="page-subtitle" style={{ background: 'var(--color-border)', borderRadius: 4, width: 160, height: 16, display: 'inline-block' }} />
+      </div>
+      <div className="card-grid">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="card" style={{ minHeight: 90 }}>
+            <div style={{ background: 'var(--color-border)', borderRadius: 4, height: 12, width: '50%', marginBottom: '0.75rem' }} />
+            <div style={{ background: 'var(--color-border)', borderRadius: 4, height: 28, width: '40%', marginBottom: '0.5rem' }} />
+            <div style={{ background: 'var(--color-border)', borderRadius: 4, height: 10, width: '60%' }} />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+
+  if (loadError) return (
+    <div>
+      <div className="page-header">
+        <h1 className="page-title">Dashboard</h1>
+      </div>
+      <div className="alert alert-danger">
+        Something went wrong loading your data. <button className="alert-link" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, textDecoration: 'underline' }} onClick={() => window.location.reload()}>Reload</button>
+      </div>
+    </div>
+  )
 
   return (
     <div>
@@ -192,6 +247,14 @@ export default function Dashboard() {
           <div className="card-title">Weekly Goal</div>
           <div className="card-value">{Math.round(animatedProgress)}%</div>
           <div className="card-subtitle">{weekProgress >= 100 ? 'Goal reached!' : `${formatHours(Math.max(weekGoal - weekHours, 0))} remaining`}</div>
+        </div>
+
+        <div className="card">
+          <div className="card-title">Streak</div>
+          <div className="card-value" style={{ color: streak >= 3 ? 'var(--color-primary)' : undefined }}>
+            {streak} {streak === 1 ? 'day' : 'days'}
+          </div>
+          <div className="card-subtitle">{streak === 0 ? 'Track today to start' : streak >= 7 ? 'On fire!' : 'Keep it up'}</div>
         </div>
       </div>
 

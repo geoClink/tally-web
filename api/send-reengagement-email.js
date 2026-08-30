@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Vercel cron job handler — runs every Monday at 8am UTC.
-// Vercel automatically sends `Authorization: Bearer <CRON_SECRET>` for cron invocations.
+// Vercel cron — runs every Monday at 9am UTC.
+// Emails users who tracked time 7–30 days ago but nothing in the last 7 days.
 export default async function handler(req, res) {
   const cronSecret = process.env.CRON_SECRET
   if (cronSecret && req.headers.authorization !== `Bearer ${cronSecret}`) {
@@ -12,55 +12,42 @@ export default async function handler(req, res) {
     process.env.VITE_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
   )
-
   const resendKey = process.env.RESEND_API_KEY
   if (!resendKey) return res.status(500).json({ error: 'RESEND_API_KEY not set' })
 
-  // Last 7 full days
-  const weekAgo = new Date()
-  weekAgo.setDate(weekAgo.getDate() - 7)
-  const weekAgoStr = weekAgo.toISOString().split('T')[0]
+  const now = new Date()
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
-  const { data: sessions, error } = await supabase
+  const { data: activeSessions } = await supabase
     .from('sessions')
-    .select('user_id, client, hours, date')
-    .gte('date', weekAgoStr)
-    .gt('hours', 0)
+    .select('user_id')
+    .gte('date', sevenDaysAgo)
 
-  if (error) return res.status(500).json({ error: error.message })
-  if (!sessions?.length) return res.json({ sent: 0, message: 'No sessions this week' })
+  const activeIds = new Set((activeSessions ?? []).map(s => s.user_id))
 
-  // Group by user
-  const byUser = {}
-  for (const s of sessions) {
-    if (!byUser[s.user_id]) byUser[s.user_id] = { totalHours: 0, clients: {} }
-    byUser[s.user_id].totalHours += s.hours
-    byUser[s.user_id].clients[s.client] = (byUser[s.user_id].clients[s.client] ?? 0) + s.hours
-  }
+  const { data: oldSessions } = await supabase
+    .from('sessions')
+    .select('user_id')
+    .gte('date', thirtyDaysAgo)
+    .lt('date', sevenDaysAgo)
 
-  // Get emails from auth.users
+  if (!oldSessions?.length) return res.json({ sent: 0, message: 'No inactive users' })
+
+  const inactiveIds = [...new Set(oldSessions.map(s => s.user_id))].filter(id => !activeIds.has(id))
+
   const { data: { users }, error: usersError } = await supabase.auth.admin.listUsers()
   if (usersError) return res.status(500).json({ error: usersError.message })
 
   const emailMap = {}
   for (const u of users) {
-    if (byUser[u.id] && u.email) emailMap[u.id] = u.email
+    if (u.email && !u.email.includes('privaterelay.appleid.com')) emailMap[u.id] = u.email
   }
 
   let sent = 0
-  for (const [userId, data] of Object.entries(byUser)) {
+  for (const userId of inactiveIds) {
     const email = emailMap[userId]
     if (!email) continue
-
-    const total = data.totalHours
-    const clientRows = Object.entries(data.clients)
-      .sort((a, b) => b[1] - a[1])
-      .map(([client, hours]) => `
-        <tr>
-          <td style="padding:8px 0;font-size:14px;color:#111827;border-bottom:1px solid #f3f4f6;">${client}</td>
-          <td style="padding:8px 0;font-size:14px;color:#111827;text-align:right;border-bottom:1px solid #f3f4f6;">${hours.toFixed(1)}h</td>
-        </tr>`)
-      .join('')
 
     const emailRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -71,13 +58,13 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         from: 'Tally <noreply@tallytimetracker.com>',
         to: email,
-        subject: `Your week in Tally — ${total.toFixed(1)} hours tracked`,
+        subject: 'Still tracking time?',
         html: `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your week in Tally</title>
+  <title>Still tracking time?</title>
 </head>
 <body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#f3f4f6;padding:40px 20px;">
@@ -100,19 +87,18 @@ export default async function handler(req, res) {
           </tr>
           <tr>
             <td style="background:#ffffff;padding:40px 40px 32px;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb;">
-              <p style="margin:0 0 4px;font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#9ca3af;">Weekly summary</p>
-              <h1 style="margin:0 0 24px;font-size:32px;font-weight:700;color:#111827;letter-spacing:-0.5px;line-height:1.1;">
-                ${total.toFixed(1)}<span style="font-size:18px;font-weight:500;color:#6b7280;"> hours this week</span>
-              </h1>
-              <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#374151;">Hours by client</p>
-              <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin:0 0 28px;">
-                ${clientRows}
-              </table>
+              <h1 style="margin:0 0 16px;font-size:20px;font-weight:600;color:#111827;line-height:1.3;">It's been a while</h1>
+              <p style="margin:0 0 20px;font-size:15px;color:#6b7280;line-height:1.6;">
+                You haven't logged any time in Tally recently. We get it — things get busy.
+              </p>
+              <p style="margin:0 0 28px;font-size:15px;color:#6b7280;line-height:1.6;">
+                Your data is still here whenever you're ready.
+              </p>
               <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 0 28px;">
                 <tr>
                   <td style="background:#1d4ed8;border-radius:8px;">
-                    <a href="https://tallytimetracker.com/reports" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;">
-                      View full report →
+                    <a href="https://tallytimetracker.com/track" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;">
+                      Start tracking →
                     </a>
                   </td>
                 </tr>
@@ -126,8 +112,8 @@ export default async function handler(req, res) {
           <tr>
             <td style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:0 0 10px 10px;padding:20px 40px;text-align:center;">
               <p style="margin:0;font-size:13px;color:#9ca3af;line-height:1.6;">
-                You're receiving this weekly summary from Tally.<br>
-                <a href="https://tallytimetracker.com/settings" style="color:#9ca3af;">Manage email settings</a>
+                You're receiving this from Tally because you have an account.<br>
+                <a href="https://tallytimetracker.com/settings" style="color:#9ca3af;">Unsubscribe</a>
               </p>
             </td>
           </tr>
@@ -143,5 +129,5 @@ export default async function handler(req, res) {
     if (emailRes.ok) sent++
   }
 
-  return res.json({ sent })
+  return res.json({ sent, inactive: inactiveIds.length })
 }

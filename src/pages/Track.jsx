@@ -34,6 +34,7 @@ export default function Track() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [saving, setSaving] = useState(false)
+  const [showDiscardConfirm, setShowDiscardConfirm] = useState(false)
 
   const runningRef = useRef(false)
   const elapsedRef = useRef(0)
@@ -139,11 +140,9 @@ export default function Track() {
   }
 
   // Returns an error string if the free-tier 5-client limit would be exceeded, or null if OK
-  async function checkClientLimit(newClient) {
+  function checkClientLimit(newClient) {
     if (isPro) return null
-    const { data } = await supabase.from('sessions').select('client').eq('user_id', user.id)
-    const existing = [...new Set(data?.map(s => s.client) ?? [])]
-    if (existing.length >= 5 && !existing.includes(newClient.trim())) {
+    if (clients.length >= 5 && !clients.includes(newClient.trim())) {
       return 'Free tier is limited to 5 clients. Upgrade to Pro for unlimited clients.'
     }
     return null
@@ -193,8 +192,13 @@ export default function Track() {
   }
 
   function resumeTimer() {
+    const newStart = new Date(Date.now() - elapsed * 1000)
+    setStartTime(newStart)
+    startTimeRef.current = newStart
     setRunning(true)
     runningRef.current = true
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...saved, start: newStart.toISOString(), paused: false }))
   }
 
   useEffect(() => { runningRef.current = running }, [running])
@@ -255,7 +259,7 @@ export default function Track() {
     if (hours < 0.001) { setError('No time recorded yet'); return }
 
     setSaving(true)
-    const limitErr = await checkClientLimit(timerClient)
+    const limitErr = checkClientLimit(timerClient)
     if (limitErr) { setError(limitErr); setSaving(false); return }
 
     const { error: err } = await supabase.from('sessions').insert({
@@ -283,7 +287,6 @@ export default function Track() {
   }
 
   function discardTimer() {
-    if (!confirm('Discard this session?')) return
     localStorage.removeItem(STORAGE_KEY)
     setRunning(false)
     runningRef.current = false
@@ -293,6 +296,7 @@ export default function Track() {
     setStartTime(null)
     setTimerClient('')
     setTimerNote('')
+    setShowDiscardConfirm(false)
   }
 
   function updateTimerField(field, value) {
@@ -408,13 +412,20 @@ export default function Track() {
 
           <div className="timer-actions" style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
             {!running && elapsed === 0 && (
-              <button
-                className="btn btn-primary"
-                onClick={startTimer}
-                disabled={!timerClient.trim()}
-              >
-                Start Timer
-              </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <button
+                  className="btn btn-primary"
+                  onClick={startTimer}
+                  disabled={!timerClient.trim()}
+                >
+                  Start Timer
+                </button>
+                {!timerClient.trim() && (
+                  <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: 0 }}>
+                    Type a client name above to unlock
+                  </p>
+                )}
+              </div>
             )}
             {running && (
               <>
@@ -432,7 +443,15 @@ export default function Track() {
                   {saving ? 'Saving…' : 'Save Session'}
                 </button>
                 <button className="btn btn-secondary" onClick={resumeTimer}>Resume</button>
-                <button className="btn btn-secondary" onClick={discardTimer}>Discard</button>
+                {showDiscardConfirm ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Discard session?</span>
+                    <button className="btn btn-danger btn-sm" onClick={discardTimer}>Yes, discard</button>
+                    <button className="btn btn-secondary btn-sm" onClick={() => setShowDiscardConfirm(false)}>Cancel</button>
+                  </div>
+                ) : (
+                  <button className="btn btn-secondary" onClick={() => setShowDiscardConfirm(true)}>Discard</button>
+                )}
               </>
             )}
           </div>

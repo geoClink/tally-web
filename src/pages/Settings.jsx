@@ -109,8 +109,9 @@ export default function Settings() {
     // Delete all user data
     await supabase.from('sessions').delete().eq('user_id', user.id)
     await supabase.from('config').delete().eq('user_id', user.id)
-    await supabase.from('subscriptions').delete().eq('user_id', user.id)
     await supabase.from('client_rates').delete().eq('user_id', user.id)
+    // Subscriptions table blocks user-level deletes (service role only) — cleaned up server-side via RPC
+    await supabase.rpc('delete_own_subscription')
 
     setDeleting(false)
     await signOut()
