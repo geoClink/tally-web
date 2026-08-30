@@ -16,20 +16,11 @@ create policy "Users can read own subscriptions"
   on subscriptions for select
   using (auth.uid() = user_id);
 
-create policy "Users can insert own subscriptions"
-  on subscriptions for insert
-  with check (auth.uid() = user_id);
-
-create policy "Users can update own subscriptions"
-  on subscriptions for update
-  using (auth.uid() = user_id);
+-- Insert and update are intentionally blocked for regular users.
+-- Only the service role (Stripe webhook Edge Function) can write to this table.
 
 -- Index for fast per-user lookups
 create index if not exists subscriptions_user_id_idx on subscriptions(user_id);
-
--- NOTE: In production, subscription writes after Stripe payment should be done
--- via a Supabase Edge Function triggered by a Stripe webhook — not from the client.
--- The client-side write on the success page is acceptable for an MVP but not secure.
 
 -- ── Subscribers (landing page email capture) ──────────────────────────────────
 create table if not exists subscribers (

@@ -25,6 +25,7 @@ import DeleteAccount from './pages/DeleteAccount'
 import ForgotPassword from './pages/ForgotPassword'
 import ResetPassword from './pages/ResetPassword'
 import Help from './pages/Help'
+import Admin from './pages/Admin'
 
 function RecoveryRedirect() {
   const navigate = useNavigate()
@@ -70,6 +71,7 @@ export default function App() {
               <Route path="/team-dashboard" element={<TeamDashboard />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/help" element={<Help />} />
+              <Route path="/admin" element={<Admin />} />
             </Route>
           </Routes>
           </PendingInviteProvider>
