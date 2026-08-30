@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Tally <noreply@georgeclinkscalesdev.com>',
+        from: 'Tally <noreply@tallytimetracker.com>',
         to: email.trim().toLowerCase(),
         subject: "You're on the Tally update list",
         html: `<!DOCTYPE html>
