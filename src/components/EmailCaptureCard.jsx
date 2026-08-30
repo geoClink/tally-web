@@ -55,7 +55,7 @@ export default function EmailCaptureCard({ userId, onDone }) {
           style={{ flex: '1 1 180px', minWidth: 0 }}
           autoComplete="email"
         />
-        <button type="submit" className="btn-primary" disabled={saving} style={{ whiteSpace: 'nowrap' }}>
+        <button type="submit" className="btn btn-primary" disabled={saving} style={{ whiteSpace: 'nowrap' }}>
           {saving ? 'Saving…' : 'Save email'}
         </button>
       </form>

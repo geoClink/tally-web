@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
 import { todayString } from '../lib/utils'
 import ClientSelect from '../components/ClientSelect'
+import UpgradeModal from '../components/UpgradeModal'
 
 const STORAGE_KEY = 'tally_active_timer'
 
@@ -35,6 +36,7 @@ export default function Track() {
   const [success, setSuccess] = useState('')
   const [saving, setSaving] = useState(false)
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false)
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false)
 
   const runningRef = useRef(false)
   const elapsedRef = useRef(0)
@@ -260,7 +262,7 @@ export default function Track() {
 
     setSaving(true)
     const limitErr = checkClientLimit(timerClient)
-    if (limitErr) { setError(limitErr); setSaving(false); return }
+    if (limitErr) { setSaving(false); setShowUpgradeModal(true); return }
 
     const { error: err } = await supabase.from('sessions').insert({
       user_id: user.id,
@@ -316,8 +318,8 @@ export default function Track() {
     if (isNaN(hours) || hours <= 0) { setError('Enter valid hours (e.g. 1.5)'); return }
 
     setSaving(true)
-    const limitErr = await checkClientLimit(manualClient)
-    if (limitErr) { setError(limitErr); setSaving(false); return }
+    const limitErr = checkClientLimit(manualClient)
+    if (limitErr) { setSaving(false); setShowUpgradeModal(true); return }
 
     const { error: err } = await supabase.from('sessions').insert({
       user_id: user.id,
@@ -349,6 +351,7 @@ export default function Track() {
 
   return (
     <div>
+      {showUpgradeModal && <UpgradeModal onClose={() => setShowUpgradeModal(false)} />}
       <div className="page-header">
         <h1 className="page-title">Track Time</h1>
         <p className="page-subtitle">Start a timer or log time manually</p>
