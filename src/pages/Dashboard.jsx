@@ -6,6 +6,7 @@ import { useSubscription } from '../context/SubscriptionContext'
 import { usePendingInvite } from '../context/PendingInviteContext'
 import { formatHours, todayString, weekStartString, monthStartString } from '../lib/utils'
 import { useCountUp } from '../hooks/useCountUp'
+import EmailCaptureCard from '../components/EmailCaptureCard'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -22,6 +23,7 @@ export default function Dashboard() {
     try { return JSON.parse(localStorage.getItem('tally_nudge_dismissed') ?? '{}') } catch { return {} }
   })
   const [loading, setLoading] = useState(true)
+  const [showEmailCapture, setShowEmailCapture] = useState(false)
 
   const today = todayString()
   const weekStart = weekStartString()
@@ -69,7 +71,7 @@ export default function Dashboard() {
   async function fetchGoal() {
     const { data } = await supabase
       .from('config')
-      .select('weekly_goal, client_goals')
+      .select('weekly_goal, client_goals, contact_email')
       .eq('user_id', user.id)
       .maybeSingle()
     if (data?.client_goals?.length > 0) {
@@ -78,6 +80,7 @@ export default function Dashboard() {
     } else if (data?.weekly_goal) {
       setWeekGoal(data.weekly_goal)
     }
+    if (!data?.contact_email) setShowEmailCapture(true)
   }
 
   async function fetchMonthSessions() {
@@ -138,6 +141,10 @@ export default function Dashboard() {
         <h1 className="page-title">Dashboard</h1>
         <p className="page-subtitle">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
       </div>
+
+      {showEmailCapture && (
+        <EmailCaptureCard userId={user.id} onDone={() => setShowEmailCapture(false)} />
+      )}
 
       {pendingInvite && (
         <div className="alert alert-info" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
