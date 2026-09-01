@@ -28,7 +28,6 @@ export default function Dashboard() {
   const [showEmailCapture, setShowEmailCapture] = useState(false)
 
   const today = todayString()
-  const weekStart = weekStartString()
   const monthStart = monthStartString()
   const historyStart = isPro ? null : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
@@ -37,7 +36,8 @@ export default function Dashboard() {
       setLoading(true)
       setLoadError(false)
       try {
-        await Promise.all([fetchTodaySessions(), fetchWeekSessions(), fetchGoal(), fetchRecentSessions(), fetchMonthSessions(), fetchStreak()])
+        const ws = await fetchGoal()
+        await Promise.all([fetchTodaySessions(), fetchWeekSessions(ws), fetchRecentSessions(), fetchMonthSessions(), fetchStreak()])
       } catch {
         setLoadError(true)
       }
@@ -55,13 +55,14 @@ export default function Dashboard() {
     setTodayHours(data?.reduce((sum, s) => sum + (s.hours ?? 0), 0) ?? 0)
   }
 
-  async function fetchWeekSessions() {
+  async function fetchWeekSessions(ws) {
+    const weekStartDate = weekStartString(ws)
     let query = supabase
       .from('sessions')
       .select('hours, client')
       .eq('user_id', user.id)
-      .gte('date', weekStart)
-    if (historyStart && historyStart > weekStart) {
+      .gte('date', weekStartDate)
+    if (historyStart && historyStart > weekStartDate) {
       query = query.gte('date', historyStart)
     }
     const { data } = await query
@@ -78,7 +79,7 @@ export default function Dashboard() {
   async function fetchGoal() {
     const { data } = await supabase
       .from('config')
-      .select('weekly_goal, client_goals, contact_email')
+      .select('weekly_goal, client_goals, contact_email, week_start')
       .eq('user_id', user.id)
       .maybeSingle()
     if (data?.client_goals?.length > 0) {
@@ -88,6 +89,7 @@ export default function Dashboard() {
       setWeekGoal(data.weekly_goal)
     }
     if (!data?.contact_email) setShowEmailCapture(true)
+    return data?.week_start ?? 1
   }
 
   async function fetchMonthSessions() {

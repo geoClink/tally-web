@@ -7,7 +7,7 @@ const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
-const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const ALL_DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 function intensityLevel(hours) {
   if (!hours || hours <= 0) return 0
@@ -44,6 +44,7 @@ export default function Calendar() {
   const [sessionsByDay, setSessionsByDay] = useState({})
   const [loading, setLoading] = useState(true)
   const [selectedDay, setSelectedDay] = useState(null)
+  const [weekStart, setWeekStart] = useState(1)
 
   useEffect(() => { loadMonth() }, [year, month, user])
 
@@ -54,12 +55,16 @@ export default function Calendar() {
     const lastDayDate = new Date(year, month + 1, 0)
     const lastDay = `${year}-${String(month + 1).padStart(2, '0')}-${String(lastDayDate.getDate()).padStart(2, '0')}`
 
-    const { data } = await supabase
-      .from('sessions')
-      .select('date, hours, client, task_note')
-      .eq('user_id', user.id)
-      .gte('date', firstDay)
-      .lte('date', lastDay)
+    const [{ data }, { data: config }] = await Promise.all([
+      supabase
+        .from('sessions')
+        .select('date, hours, client, task_note')
+        .eq('user_id', user.id)
+        .gte('date', firstDay)
+        .lte('date', lastDay),
+      supabase.from('config').select('week_start').eq('user_id', user.id).maybeSingle(),
+    ])
+    if (config?.week_start != null) setWeekStart(config.week_start)
 
     const byDay = {}
     const byDaySessions = {}
@@ -85,7 +90,8 @@ export default function Calendar() {
 
   const firstOfMonth = new Date(year, month, 1)
   const daysInMonth = new Date(year, month + 1, 0).getDate()
-  const startDow = (firstOfMonth.getDay() + 6) % 7
+  const startDow = (firstOfMonth.getDay() - weekStart + 7) % 7
+  const DAY_LABELS = [...ALL_DAYS.slice(weekStart), ...ALL_DAYS.slice(0, weekStart)]
   const cells = []
   for (let i = 0; i < startDow; i++) cells.push(null)
   for (let d = 1; d <= daysInMonth; d++) cells.push(d)

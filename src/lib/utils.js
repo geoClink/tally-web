@@ -16,11 +16,12 @@ export function todayString() {
   return new Date().toISOString().split('T')[0]
 }
 
-// Returns the Monday of the current week as YYYY-MM-DD
-export function weekStartString() {
+// Returns the start of the current week as YYYY-MM-DD.
+// weekStart: 0 = Sunday, 1 = Monday (default, matches previous behavior)
+export function weekStartString(weekStart = 1) {
   const d = new Date()
   const day = d.getDay()
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1)
+  const diff = d.getDate() - ((day - weekStart + 7) % 7)
   return new Date(d.setDate(diff)).toISOString().split('T')[0]
 }
 

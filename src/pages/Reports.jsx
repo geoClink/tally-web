@@ -27,16 +27,16 @@ const FILTERS = [
   { label: 'All Time',   value: 'all', requiresPro: true },
 ]
 
-function lastWeekRange() {
+function lastWeekRange(weekStart = 1) {
   const now = new Date()
   const day = now.getDay()
-  const diff = day === 0 ? -6 : 1 - day
-  const thisMonday = new Date(now); thisMonday.setDate(now.getDate() + diff)
-  const lastMonday = new Date(thisMonday); lastMonday.setDate(thisMonday.getDate() - 7)
-  const lastSunday = new Date(lastMonday); lastSunday.setDate(lastMonday.getDate() + 6)
+  const diff = -((day - weekStart + 7) % 7)
+  const thisWeekStart = new Date(now); thisWeekStart.setDate(now.getDate() + diff)
+  const lastWeekStart = new Date(thisWeekStart); lastWeekStart.setDate(thisWeekStart.getDate() - 7)
+  const lastWeekEnd = new Date(lastWeekStart); lastWeekEnd.setDate(lastWeekStart.getDate() + 6)
   return {
-    start: lastMonday.toISOString().split('T')[0],
-    end:   lastSunday.toISOString().split('T')[0],
+    start: lastWeekStart.toISOString().split('T')[0],
+    end:   lastWeekEnd.toISOString().split('T')[0],
   }
 }
 
@@ -76,6 +76,7 @@ export default function Reports() {
   const [sessions, setSessions] = useState([])
   const [prevSessions, setPrevSessions] = useState([])
   const [rateMap, setRateMap] = useState({})
+  const [weekStart, setWeekStart] = useState(1)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -84,30 +85,31 @@ export default function Reports() {
 
   useEffect(() => {
     fetchSessions()
-  }, [filter, user])
+  }, [filter, user, weekStart])
 
   async function fetchRates() {
-    const { data } = await supabase
-      .from('client_rates')
-      .select('client, hourly_rate')
-      .eq('user_id', user.id)
+    const [{ data: rates }, { data: config }] = await Promise.all([
+      supabase.from('client_rates').select('client, hourly_rate').eq('user_id', user.id),
+      supabase.from('config').select('week_start').eq('user_id', user.id).maybeSingle(),
+    ])
     const map = {}
-    data?.forEach(r => { map[r.client] = r.hourly_rate })
+    rates?.forEach(r => { map[r.client] = r.hourly_rate })
     setRateMap(map)
+    if (config?.week_start != null) setWeekStart(config.week_start)
   }
 
   async function fetchSessions() {
     setLoading(true)
 
     let query = supabase.from('sessions').select('client, hours, date').eq('user_id', user.id)
-    if (filter === 'week')  query = query.gte('date', weekStartString())
+    if (filter === 'week')  query = query.gte('date', weekStartString(weekStart))
     if (filter === 'month') query = query.gte('date', monthStartString())
     const { data } = await query
     setSessions(data ?? [])
 
     // Fetch comparison period
     if (filter === 'week') {
-      const { start, end } = lastWeekRange()
+      const { start, end } = lastWeekRange(weekStart)
       const { data: prev } = await supabase
         .from('sessions').select('client, hours')
         .eq('user_id', user.id).gte('date', start).lte('date', end)

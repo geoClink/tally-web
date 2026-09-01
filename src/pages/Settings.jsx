@@ -9,6 +9,7 @@ export default function Settings() {
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const [weeklyGoal, setWeeklyGoal] = useState('')
+  const [weekStart, setWeekStart] = useState(1)
   const [clientGoals, setClientGoals] = useState([]) // [{ client, weekly_hours }]
   const [clients, setClients] = useState([])
   const [newClientGoalName, setNewClientGoalName] = useState('')
@@ -36,6 +37,7 @@ export default function Settings() {
 
     if (config?.weekly_goal) setWeeklyGoal(config.weekly_goal)
     if (config?.client_goals) setClientGoals(config.client_goals)
+    if (config?.week_start != null) setWeekStart(config.week_start)
 
     // Build unique client list from both sources
     const all = [
@@ -55,7 +57,7 @@ export default function Settings() {
     setSaving(true)
     const { error: err } = await supabase
       .from('config')
-      .upsert({ user_id: user.id, weekly_goal: goal, client_goals: clientGoals }, { onConflict: 'user_id' })
+      .upsert({ user_id: user.id, weekly_goal: goal, client_goals: clientGoals, week_start: weekStart }, { onConflict: 'user_id' })
     setSaving(false)
 
     if (err) { setError(err.message); return }
@@ -146,6 +148,19 @@ export default function Settings() {
             <p className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.4rem' }}>
               Total hours per week across all clients. Shows as a progress bar on your dashboard.
             </p>
+          </div>
+        </div>
+
+        <div className="card" style={{ marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Week Start Day</h2>
+          <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+            Choose which day your week begins. Affects weekly totals and reports.
+          </p>
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <select value={weekStart} onChange={e => setWeekStart(parseInt(e.target.value))} style={{ maxWidth: '200px' }}>
+              <option value={1}>Monday</option>
+              <option value={0}>Sunday</option>
+            </select>
           </div>
         </div>
 

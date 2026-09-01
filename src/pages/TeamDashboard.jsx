@@ -54,6 +54,13 @@ export default function TeamDashboard() {
       return
     }
 
+    const { data: config } = await supabase
+      .from('config')
+      .select('week_start')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    const weekStart = config?.week_start ?? 1
+
     let ws = null
     const { data: owned } = await supabase
       .from('workspaces')
@@ -99,7 +106,7 @@ export default function TeamDashboard() {
       .select('user_id, client, hours, date')
       .in('user_id', userIds)
 
-    if (filter === 'week') sessionQuery = sessionQuery.gte('date', weekStartString())
+    if (filter === 'week') sessionQuery = sessionQuery.gte('date', weekStartString(weekStart))
     if (filter === 'month') sessionQuery = sessionQuery.gte('date', monthStartString())
     if (ws.client_name) sessionQuery = sessionQuery.eq('client', ws.client_name)
 
