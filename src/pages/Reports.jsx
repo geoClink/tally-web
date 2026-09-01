@@ -17,14 +17,17 @@ import { Bar } from 'react-chartjs-2'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
-import { formatHours, formatCurrency, weekStartString, monthStartString } from '../lib/utils'
+import { formatHours, formatCurrency, weekStartString, monthStartString, billingPeriodStart } from '../lib/utils'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Title, Tooltip, Legend)
 
 const FILTERS = [
-  { label: 'This Week',  value: 'week' },
-  { label: 'This Month', value: 'month' },
-  { label: 'All Time',   value: 'all', requiresPro: true },
+  { label: 'This Week',      value: 'week' },
+  { label: 'Last Week',      value: 'lastweek' },
+  { label: 'This Month',     value: 'month' },
+  { label: 'Billing Period', value: 'billing' },
+  { label: 'Custom Range',   value: 'custom', requiresPro: true },
+  { label: 'All Time',       value: 'all', requiresPro: true },
 ]
 
 function lastWeekRange(weekStart = 1) {
@@ -37,6 +40,24 @@ function lastWeekRange(weekStart = 1) {
   return {
     start: lastWeekStart.toISOString().split('T')[0],
     end:   lastWeekEnd.toISOString().split('T')[0],
+  }
+}
+
+function lastBillingPeriodRange(startDay) {
+  const today = new Date()
+  const day = today.getDate()
+  const year = today.getFullYear()
+  const month = today.getMonth()
+  const thisPeriodStart = day >= startDay
+    ? new Date(year, month, startDay)
+    : new Date(year, month - 1, startDay)
+  const lastPeriodEnd = new Date(thisPeriodStart)
+  lastPeriodEnd.setDate(lastPeriodEnd.getDate() - 1)
+  const lastPeriodStart = new Date(thisPeriodStart)
+  lastPeriodStart.setMonth(lastPeriodStart.getMonth() - 1)
+  return {
+    start: lastPeriodStart.toISOString().split('T')[0],
+    end:   lastPeriodEnd.toISOString().split('T')[0],
   }
 }
 
@@ -76,7 +97,11 @@ export default function Reports() {
   const [sessions, setSessions] = useState([])
   const [prevSessions, setPrevSessions] = useState([])
   const [rateMap, setRateMap] = useState({})
+  const [billingStartDays, setBillingStartDays] = useState({})
+  const [billingClient, setBillingClient] = useState('')
   const [weekStart, setWeekStart] = useState(1)
+  const [customStart, setCustomStart] = useState('')
+  const [customEnd, setCustomEnd] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -85,25 +110,54 @@ export default function Reports() {
 
   useEffect(() => {
     fetchSessions()
-  }, [filter, user, weekStart])
+  }, [filter, user, weekStart, billingClient, customStart, customEnd])
 
   async function fetchRates() {
     const [{ data: rates }, { data: config }] = await Promise.all([
-      supabase.from('client_rates').select('client, hourly_rate').eq('user_id', user.id),
+      supabase.from('client_rates').select('client, hourly_rate, billing_start_day').eq('user_id', user.id),
       supabase.from('config').select('week_start').eq('user_id', user.id).maybeSingle(),
     ])
-    const map = {}
-    rates?.forEach(r => { map[r.client] = r.hourly_rate })
-    setRateMap(map)
+    const rMap = {}
+    const bMap = {}
+    rates?.forEach(r => {
+      rMap[r.client] = r.hourly_rate
+      if (r.billing_start_day != null) bMap[r.client] = r.billing_start_day
+    })
+    setRateMap(rMap)
+    setBillingStartDays(bMap)
     if (config?.week_start != null) setWeekStart(config.week_start)
   }
 
   async function fetchSessions() {
+    if (filter === 'billing' && !billingClient) {
+      setSessions([])
+      setPrevSessions([])
+      setLoading(false)
+      return
+    }
+    if (filter === 'custom' && (!customStart || !customEnd)) {
+      setSessions([])
+      setPrevSessions([])
+      setLoading(false)
+      return
+    }
+
     setLoading(true)
 
     let query = supabase.from('sessions').select('client, hours, date').eq('user_id', user.id)
-    if (filter === 'week')  query = query.gte('date', weekStartString(weekStart))
-    if (filter === 'month') query = query.gte('date', monthStartString())
+    if (filter === 'week')    query = query.gte('date', weekStartString(weekStart))
+    if (filter === 'month')   query = query.gte('date', monthStartString())
+    if (filter === 'lastweek') {
+      const { start, end } = lastWeekRange(weekStart)
+      query = query.gte('date', start).lte('date', end)
+    }
+    if (filter === 'billing') {
+      const startDay = billingStartDays[billingClient] ?? 1
+      query = query.eq('client', billingClient).gte('date', billingPeriodStart(startDay))
+    }
+    if (filter === 'custom') {
+      query = query.gte('date', customStart).lte('date', customEnd)
+    }
     const { data } = await query
     setSessions(data ?? [])
 
@@ -114,11 +168,28 @@ export default function Reports() {
         .from('sessions').select('client, hours')
         .eq('user_id', user.id).gte('date', start).lte('date', end)
       setPrevSessions(prev ?? [])
+    } else if (filter === 'lastweek') {
+      const { start: lwStart, end: lwEnd } = lastWeekRange(weekStart)
+      const prevStart = new Date(lwStart); prevStart.setDate(prevStart.getDate() - 7)
+      const prevEnd   = new Date(lwEnd);   prevEnd.setDate(prevEnd.getDate() - 7)
+      const { data: prev } = await supabase
+        .from('sessions').select('client, hours')
+        .eq('user_id', user.id)
+        .gte('date', prevStart.toISOString().split('T')[0])
+        .lte('date', prevEnd.toISOString().split('T')[0])
+      setPrevSessions(prev ?? [])
     } else if (filter === 'month') {
       const { start, end } = lastMonthRange()
       const { data: prev } = await supabase
         .from('sessions').select('client, hours')
         .eq('user_id', user.id).gte('date', start).lte('date', end)
+      setPrevSessions(prev ?? [])
+    } else if (filter === 'billing') {
+      const startDay = billingStartDays[billingClient] ?? 1
+      const { start, end } = lastBillingPeriodRange(startDay)
+      const { data: prev } = await supabase
+        .from('sessions').select('client, hours')
+        .eq('user_id', user.id).eq('client', billingClient).gte('date', start).lte('date', end)
       setPrevSessions(prev ?? [])
     } else {
       setPrevSessions([])
@@ -148,7 +219,7 @@ export default function Reports() {
   const earnings     = totalEarnings(byClient)
   const prevEarnings = totalEarnings(prevByClient)
   const hasRates     = Object.keys(rateMap).length > 0
-  const periodLabel  = filter === 'week' ? 'week' : 'month'
+  const periodLabel  = filter === 'lastweek' ? 'week' : filter === 'billing' ? 'billing period' : filter === 'month' ? 'month' : 'week'
 
   const projected        = filter === 'month' ? monthProjection(totalHours) : 0
   const projectedEarnings = filter === 'month' ? monthProjection(earnings)   : 0
@@ -202,7 +273,27 @@ export default function Reports() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
           <div>
             <h1 className="page-title">Reports</h1>
-            <p className="page-subtitle">Hours breakdown by client</p>
+            <p className="page-subtitle">
+              {(() => {
+                const fmt = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                if (filter === 'billing' && billingClient) {
+                  const startDay = billingStartDays[billingClient] ?? 1
+                  const start = new Date(billingPeriodStart(startDay))
+                  const end = new Date(start)
+                  end.setMonth(end.getMonth() + 1)
+                  end.setDate(end.getDate() - 1)
+                  return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`
+                }
+                if (filter === 'lastweek') {
+                  const { start, end } = lastWeekRange(weekStart)
+                  return `${fmt(start)} – ${fmt(end)}`
+                }
+                if (filter === 'custom' && customStart && customEnd) {
+                  return `${fmt(customStart)} – ${fmt(customEnd)}`
+                }
+                return 'Hours breakdown by client'
+              })()}
+            </p>
           </div>
           {isPro && clients.length > 0 && (
             <button className="btn btn-secondary" onClick={exportCSV}>Export CSV</button>
@@ -229,6 +320,43 @@ export default function Reports() {
         })}
       </div>
 
+      {filter === 'billing' && (
+        <div style={{ marginBottom: '1.5rem' }}>
+          <select
+            value={billingClient}
+            onChange={e => setBillingClient(e.target.value)}
+            style={{ maxWidth: '280px' }}
+          >
+            <option value="">Select a client…</option>
+            {Object.keys(billingStartDays).length === 0 && Object.keys(rateMap).length === 0 ? null :
+              [...new Set([...Object.keys(billingStartDays), ...Object.keys(rateMap)])].sort().map(c => (
+                <option key={c} value={c}>
+                  {c}{billingStartDays[c] ? ` (bills from ${billingStartDays[c]}th)` : ''}
+                </option>
+              ))
+            }
+          </select>
+          {billingClient && !billingStartDays[billingClient] && (
+            <p className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.4rem' }}>
+              No billing start day set for this client — showing from the 1st. <a href="/clients">Set one in Client Rates →</a>
+            </p>
+          )}
+        </div>
+      )}
+
+      {filter === 'custom' && (
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 500, marginBottom: '0.25rem', color: 'var(--text-muted)' }}>From</label>
+            <input type="date" value={customStart} onChange={e => setCustomStart(e.target.value)} />
+          </div>
+          <div>
+            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 500, marginBottom: '0.25rem', color: 'var(--text-muted)' }}>To</label>
+            <input type="date" value={customEnd} onChange={e => setCustomEnd(e.target.value)} />
+          </div>
+        </div>
+      )}
+
       {activeFilter?.requiresPro && !isPro && (
         <div className="alert alert-info">
           All-time reports require Pro. <Link to="/billing">Upgrade to Pro →</Link>
@@ -237,12 +365,16 @@ export default function Reports() {
 
       {loading ? (
         <div className="loading">Loading…</div>
+      ) : filter === 'billing' && !billingClient ? (
+        <div className="empty-state">Select a client above to view their billing period.</div>
+      ) : filter === 'custom' && (!customStart || !customEnd) ? (
+        <div className="empty-state">Pick a start and end date above.</div>
       ) : clients.length === 0 ? (
         <div className="empty-state">No sessions found for this period.</div>
       ) : (
         <>
           {/* Comparison + projection stats */}
-          {filter !== 'all' && (
+          {['week', 'lastweek', 'month', 'billing'].includes(filter) && (
             <div className="card-grid" style={{ marginBottom: '1.5rem' }}>
               <div className="card">
                 <div className="card-title">Hours</div>

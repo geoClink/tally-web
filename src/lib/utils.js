@@ -25,6 +25,20 @@ export function weekStartString(weekStart = 1) {
   return new Date(d.setDate(diff)).toISOString().split('T')[0]
 }
 
+// Returns the start of the current billing period as YYYY-MM-DD.
+// startDay: day of month the billing cycle begins (1–28).
+// If today >= startDay, period started this month; otherwise last month.
+export function billingPeriodStart(startDay) {
+  const today = new Date()
+  const day = today.getDate()
+  const year = today.getFullYear()
+  const month = today.getMonth()
+  if (day >= startDay) {
+    return new Date(year, month, startDay).toISOString().split('T')[0]
+  }
+  return new Date(year, month - 1, startDay).toISOString().split('T')[0]
+}
+
 // Returns the first day of the current month as YYYY-MM-DD
 export function monthStartString() {
   const d = new Date()

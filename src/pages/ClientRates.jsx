@@ -13,9 +13,11 @@ export default function ClientRates() {
   const [editingId, setEditingId] = useState(null)
   const [editRate, setEditRate] = useState('')
   const [editBudget, setEditBudget] = useState('')
+  const [editBillingStartDay, setEditBillingStartDay] = useState('')
   const [newClient, setNewClient] = useState('')
   const [newRate, setNewRate] = useState('')
   const [newBudget, setNewBudget] = useState('')
+  const [newBillingStartDay, setNewBillingStartDay] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
@@ -43,6 +45,7 @@ export default function ClientRates() {
     setEditingId(r.id)
     setEditRate(r.hourly_rate)
     setEditBudget(r.budget_hours ?? '')
+    setEditBillingStartDay(r.billing_start_day ?? '')
   }
 
   async function saveEdit(id) {
@@ -50,15 +53,17 @@ export default function ClientRates() {
     if (isNaN(rate) || rate < 0) { setError('Enter a valid rate'); return }
     const budget = editBudget !== '' ? parseFloat(editBudget) : null
     if (budget !== null && (isNaN(budget) || budget < 0)) { setError('Enter a valid budget'); return }
+    const billingDay = editBillingStartDay !== '' ? parseInt(editBillingStartDay) : null
+    if (billingDay !== null && (isNaN(billingDay) || billingDay < 1 || billingDay > 28)) { setError('Billing start day must be 1–28'); return }
     setSaving(true)
     const { error: err } = await supabase
       .from('client_rates')
-      .update({ hourly_rate: rate, budget_hours: budget })
+      .update({ hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay })
       .eq('id', id)
       .eq('user_id', user.id)
     setSaving(false)
     if (err) { setError(err.message); return }
-    setRates(prev => prev.map(r => r.id === id ? { ...r, hourly_rate: rate, budget_hours: budget } : r))
+    setRates(prev => prev.map(r => r.id === id ? { ...r, hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay } : r))
     setEditingId(null)
     setError('')
   }
@@ -71,16 +76,18 @@ export default function ClientRates() {
     if (isNaN(rate) || rate < 0) { setError('Enter a valid rate'); return }
     const budget = newBudget !== '' ? parseFloat(newBudget) : null
     if (budget !== null && (isNaN(budget) || budget < 0)) { setError('Enter a valid budget'); return }
+    const billingDay = newBillingStartDay !== '' ? parseInt(newBillingStartDay) : null
+    if (billingDay !== null && (isNaN(billingDay) || billingDay < 1 || billingDay > 28)) { setError('Billing start day must be 1–28'); return }
 
-    if (!isPro && rates.length >= 1) {
-      setError('Free tier allows 1 client. Upgrade to Pro for unlimited clients.')
+    if (!isPro && rates.length >= 5) {
+      setError('Free tier allows up to 5 clients. Upgrade to Pro for unlimited clients.')
       return
     }
 
     setSaving(true)
     const { data, error: err } = await supabase
       .from('client_rates')
-      .insert({ user_id: user.id, client: newClient.trim(), hourly_rate: rate, budget_hours: budget })
+      .insert({ user_id: user.id, client: newClient.trim(), hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay })
       .select()
       .single()
     setSaving(false)
@@ -89,6 +96,7 @@ export default function ClientRates() {
     setNewClient('')
     setNewRate('')
     setNewBudget('')
+    setNewBillingStartDay('')
   }
 
   async function deleteRate(id) {
@@ -110,7 +118,7 @@ export default function ClientRates() {
 
       {!isPro && (
         <div className="alert alert-info">
-          Free tier: 1 client. <a href="/billing">Upgrade to Pro</a> for unlimited clients.
+          Free tier: up to 5 clients. <a href="/billing">Upgrade to Pro</a> for unlimited clients.
         </div>
       )}
 
@@ -152,6 +160,17 @@ export default function ClientRates() {
                           placeholder="No limit"
                         />
                       </div>
+                      <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label>Billing Start Day <span className="add-client-optional">optional</span></label>
+                        <input
+                          type="number"
+                          value={editBillingStartDay}
+                          onChange={e => setEditBillingStartDay(e.target.value)}
+                          min="1"
+                          max="28"
+                          placeholder="1"
+                        />
+                      </div>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button className="btn btn-primary btn-sm" onClick={() => saveEdit(r.id)} disabled={saving}>Save</button>
@@ -167,6 +186,9 @@ export default function ClientRates() {
                           {formatCurrency(r.hourly_rate)}/hr
                           {hasBudget && (
                             <span> · {formatHours(used)} of {formatHours(r.budget_hours)} used</span>
+                          )}
+                          {r.billing_start_day != null && (
+                            <span> · Bills from the {r.billing_start_day}{r.billing_start_day === 1 ? 'st' : r.billing_start_day === 2 ? 'nd' : r.billing_start_day === 3 ? 'rd' : 'th'}</span>
                           )}
                         </div>
                       </div>
@@ -241,6 +263,17 @@ export default function ClientRates() {
                 placeholder="No limit"
                 step="0.5"
                 min="0"
+              />
+            </div>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label>Billing Start Day <span className="add-client-optional">optional, 1–28</span></label>
+              <input
+                type="number"
+                value={newBillingStartDay}
+                onChange={e => setNewBillingStartDay(e.target.value)}
+                placeholder="1"
+                min="1"
+                max="28"
               />
             </div>
           </div>
