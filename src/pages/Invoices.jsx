@@ -3,7 +3,34 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
-import { formatHours, formatCurrency, todayString, monthStartString } from '../lib/utils'
+import { formatHours, formatCurrency, todayString, monthStartString, lastMonthRange, billingPeriodStart } from '../lib/utils'
+import jsPDF from 'jspdf'
+import html2canvas from 'html2canvas'
+
+function lastWeekRange(weekStart = 1) {
+  const d = new Date()
+  const day = d.getDay()
+  const diff = d.getDate() - ((day - weekStart + 7) % 7)
+  const end = new Date(new Date().setDate(diff - 1))
+  const start = new Date(end)
+  start.setDate(start.getDate() - 6)
+  return {
+    start: start.toISOString().split('T')[0],
+    end: end.toISOString().split('T')[0],
+  }
+}
+
+function lastBillingPeriodRange(startDay) {
+  const currentStart = new Date(billingPeriodStart(startDay))
+  const prevEnd = new Date(currentStart)
+  prevEnd.setDate(prevEnd.getDate() - 1)
+  const prevStart = new Date(prevEnd.getFullYear(), prevEnd.getMonth(), startDay)
+  if (prevStart > prevEnd) prevStart.setMonth(prevStart.getMonth() - 1)
+  return {
+    start: prevStart.toISOString().split('T')[0],
+    end: prevEnd.toISOString().split('T')[0],
+  }
+}
 
 const STATUS_FILTERS = [
   { label: 'All', value: 'all' },
@@ -41,7 +68,9 @@ export default function Invoices() {
   const [generated, setGenerated] = useState(false)
   const [invoiceNumber, setInvoiceNumber] = useState('')
   const [clientEmail, setClientEmail] = useState('')
+  const [weekStart, setWeekStart] = useState(1)
   const [loading, setLoading] = useState(false)
+  const [downloading, setDownloading] = useState(false)
 
   // history
   const [savedInvoices, setSavedInvoices] = useState([])
@@ -54,20 +83,29 @@ export default function Invoices() {
     if (isBusiness) {
       fetchClients()
       fetchSavedInvoices()
+      fetchConfig()
     }
   }, [user, isBusiness])
 
+  async function fetchConfig() {
+    const { data } = await supabase.from('config').select('your_name, week_start').eq('user_id', user.id).maybeSingle()
+    if (data?.your_name) setYourName(data.your_name)
+    if (data?.week_start != null) setWeekStart(data.week_start)
+  }
+
   async function fetchClients() {
     const [{ data: rates }, { data: sessionData }] = await Promise.all([
-      supabase.from('client_rates').select('client, hourly_rate').eq('user_id', user.id),
+      supabase.from('client_rates').select('client, hourly_rate, client_email, billing_start_day').eq('user_id', user.id),
       supabase.from('sessions').select('client').eq('user_id', user.id),
     ])
     const rateMap = {}
-    rates?.forEach(r => { rateMap[r.client] = r.hourly_rate })
+    const emailMap = {}
+    const bsdMap = {}
+    rates?.forEach(r => { rateMap[r.client] = r.hourly_rate; emailMap[r.client] = r.client_email ?? ''; bsdMap[r.client] = r.billing_start_day ?? null })
     const allClients = [...new Set([
       ...(rates?.map(r => r.client) ?? []),
       ...(sessionData?.map(s => s.client) ?? []),
-    ])].sort().map(c => ({ client: c, hourly_rate: rateMap[c] ?? 0 }))
+    ])].sort().map(c => ({ client: c, hourly_rate: rateMap[c] ?? 0, client_email: emailMap[c] ?? '', billing_start_day: bsdMap[c] ?? null }))
     setClients(allClients)
   }
 
@@ -86,9 +124,9 @@ export default function Invoices() {
     setClientName(name)
     const found = clients.find(c => c.client === name)
     setRate(found?.hourly_rate ?? 0)
+    setClientEmail(found?.client_email ?? '')
     setGenerated(false)
     setViewingInvoice(null)
-    setClientEmail('')
   }
 
   async function generateInvoice(e) {
@@ -193,6 +231,34 @@ export default function Invoices() {
         </div>
       </div>
     )
+  }
+
+  async function downloadPDF() {
+    const el = document.getElementById('invoice-print')
+    if (!el) return
+    setDownloading(true)
+    try {
+      const canvas = await html2canvas(el, { scale: 2, useCORS: true, backgroundColor: '#ffffff' })
+      const imgData = canvas.toDataURL('image/png')
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' })
+      const pageWidth = pdf.internal.pageSize.getWidth()
+      const pageHeight = pdf.internal.pageSize.getHeight()
+      const imgWidth = pageWidth
+      const imgHeight = (canvas.height * pageWidth) / canvas.width
+      let heightLeft = imgHeight
+      let position = 0
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+      heightLeft -= pageHeight
+      while (heightLeft > 0) {
+        position -= pageHeight
+        pdf.addPage()
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight)
+        heightLeft -= pageHeight
+      }
+      pdf.save(`invoice-${previewNumber || 'draft'}.pdf`)
+    } finally {
+      setDownloading(false)
+    }
   }
 
   // What to show in the preview
@@ -334,6 +400,24 @@ export default function Invoices() {
                 step="0.01"
               />
             </div>
+            <div className="form-group" style={{ marginBottom: 0, gridColumn: '1 / -1' }}>
+              <label>Quick Period</label>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {[
+                  { label: 'Last Week',   action: () => { const r = lastWeekRange(weekStart); setStartDate(r.start); setEndDate(r.end) } },
+                  { label: 'This Month',  action: () => { setStartDate(monthStartString()); setEndDate(todayString()) } },
+                  { label: 'Last Month',  action: () => { const r = lastMonthRange(); setStartDate(r.start); setEndDate(r.end) } },
+                  ...(() => {
+                    const found = clients.find(c => c.client === selectedClient)
+                    const bsd = found?.billing_start_day
+                    if (!bsd) return []
+                    return [{ label: 'Last Billing Period', action: () => { const r = lastBillingPeriodRange(bsd); setStartDate(r.start); setEndDate(r.end) } }]
+                  })(),
+                ].map(({ label, action }) => (
+                  <button key={label} type="button" className="btn btn-secondary btn-sm" onClick={action}>{label}</button>
+                ))}
+              </div>
+            </div>
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label>Start Date</label>
               <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} required />
@@ -401,8 +485,34 @@ export default function Invoices() {
                     {previewItems.map((s, i) => (
                       <tr key={i}>
                         <td>{s.date}</td>
-                        <td>{formatHours(s.hours)}</td>
-                        <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
+                        <td>
+                          {generated ? (
+                            <input
+                              type="number"
+                              value={s.hours}
+                              min="0"
+                              step="0.25"
+                              style={{ width: '70px', padding: '0.2rem', border: '1px solid var(--border)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--text)' }}
+                              onChange={e => {
+                                const val = parseFloat(e.target.value) || 0
+                                setSessions(prev => prev.map((row, idx) => idx === i ? { ...row, hours: val } : row))
+                              }}
+                            />
+                          ) : formatHours(s.hours)}
+                        </td>
+                        <td className="hide-mobile">
+                          {generated ? (
+                            <input
+                              type="text"
+                              value={s.task_note || ''}
+                              placeholder="Description"
+                              style={{ width: '100%', padding: '0.2rem', border: '1px solid var(--border)', borderRadius: '4px', background: 'var(--bg)', color: 'var(--text)' }}
+                              onChange={e => {
+                                setSessions(prev => prev.map((row, idx) => idx === i ? { ...row, task_note: e.target.value } : row))
+                              }}
+                            />
+                          ) : <span className="text-muted">{s.task_note || '—'}</span>}
+                        </td>
                         <td style={{ textAlign: 'right' }}>{formatCurrency((s.hours ?? 0) * previewRate)}</td>
                       </tr>
                     ))}
@@ -425,13 +535,17 @@ export default function Invoices() {
           <button className="btn btn-primary" onClick={saveInvoice} disabled={saving}>
             {saving ? 'Saving…' : 'Save Invoice'}
           </button>
-          <button className="btn btn-secondary" onClick={() => window.print()}>Print / Save as PDF</button>
+          <button className="btn btn-secondary" onClick={downloadPDF} disabled={downloading}>
+            {downloading ? 'Generating PDF…' : 'Download PDF'}
+          </button>
         </div>
       )}
 
       {viewingInvoice && (
         <div className="invoice-form-actions no-print" style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem' }}>
-          <button className="btn btn-secondary" onClick={() => window.print()}>Print / Save as PDF</button>
+          <button className="btn btn-secondary" onClick={downloadPDF} disabled={downloading}>
+            {downloading ? 'Generating PDF…' : 'Download PDF'}
+          </button>
           <button className="btn btn-secondary" onClick={() => setViewingInvoice(null)}>Close</button>
         </div>
       )}

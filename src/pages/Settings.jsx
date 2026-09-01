@@ -19,6 +19,7 @@ export default function Settings() {
   const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
   const [deleting, setDeleting] = useState(false)
+  const [yourName, setYourName] = useState('')
   const [bugModalOpen, setBugModalOpen] = useState(false)
   const [resetSent, setResetSent] = useState(false)
   const [sendingReset, setSendingReset] = useState(false)
@@ -38,6 +39,7 @@ export default function Settings() {
     if (config?.weekly_goal) setWeeklyGoal(config.weekly_goal)
     if (config?.client_goals) setClientGoals(config.client_goals)
     if (config?.week_start != null) setWeekStart(config.week_start)
+    if (config?.your_name) setYourName(config.your_name)
 
     // Build unique client list from both sources
     const all = [
@@ -57,7 +59,7 @@ export default function Settings() {
     setSaving(true)
     const { error: err } = await supabase
       .from('config')
-      .upsert({ user_id: user.id, weekly_goal: goal, client_goals: clientGoals, week_start: weekStart }, { onConflict: 'user_id' })
+      .upsert({ user_id: user.id, weekly_goal: goal, client_goals: clientGoals, week_start: weekStart, your_name: yourName.trim() || null }, { onConflict: 'user_id' })
     setSaving(false)
 
     if (err) { setError(err.message); return }
@@ -133,6 +135,22 @@ export default function Settings() {
       {success && <div className="alert alert-success">{success}</div>}
 
       <form onSubmit={saveSettings}>
+        <div className="card" style={{ marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Your Name / Company</h2>
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <input
+              type="text"
+              value={yourName}
+              onChange={e => setYourName(e.target.value)}
+              placeholder="Jane Smith"
+              style={{ maxWidth: '280px' }}
+            />
+            <p className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.4rem' }}>
+              Used as the sender name on invoices you generate.
+            </p>
+          </div>
+        </div>
+
         <div className="card" style={{ marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Weekly Hour Goal</h2>
           <div className="form-group" style={{ marginBottom: 0 }}>

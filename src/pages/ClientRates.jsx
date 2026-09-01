@@ -14,10 +14,12 @@ export default function ClientRates() {
   const [editRate, setEditRate] = useState('')
   const [editBudget, setEditBudget] = useState('')
   const [editBillingStartDay, setEditBillingStartDay] = useState('')
+  const [editEmail, setEditEmail] = useState('')
   const [newClient, setNewClient] = useState('')
   const [newRate, setNewRate] = useState('')
   const [newBudget, setNewBudget] = useState('')
   const [newBillingStartDay, setNewBillingStartDay] = useState('')
+  const [newEmail, setNewEmail] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
@@ -46,6 +48,7 @@ export default function ClientRates() {
     setEditRate(r.hourly_rate)
     setEditBudget(r.budget_hours ?? '')
     setEditBillingStartDay(r.billing_start_day ?? '')
+    setEditEmail(r.client_email ?? '')
   }
 
   async function saveEdit(id) {
@@ -58,12 +61,12 @@ export default function ClientRates() {
     setSaving(true)
     const { error: err } = await supabase
       .from('client_rates')
-      .update({ hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay })
+      .update({ hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay, client_email: editEmail.trim() || null })
       .eq('id', id)
       .eq('user_id', user.id)
     setSaving(false)
     if (err) { setError(err.message); return }
-    setRates(prev => prev.map(r => r.id === id ? { ...r, hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay } : r))
+    setRates(prev => prev.map(r => r.id === id ? { ...r, hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay, client_email: editEmail.trim() || null } : r))
     setEditingId(null)
     setError('')
   }
@@ -87,7 +90,7 @@ export default function ClientRates() {
     setSaving(true)
     const { data, error: err } = await supabase
       .from('client_rates')
-      .insert({ user_id: user.id, client: newClient.trim(), hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay })
+      .insert({ user_id: user.id, client: newClient.trim(), hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay, client_email: newEmail.trim() || null })
       .select()
       .single()
     setSaving(false)
@@ -97,6 +100,7 @@ export default function ClientRates() {
     setNewRate('')
     setNewBudget('')
     setNewBillingStartDay('')
+    setNewEmail('')
   }
 
   async function deleteRate(id) {
@@ -171,6 +175,15 @@ export default function ClientRates() {
                           placeholder="1"
                         />
                       </div>
+                      <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label>Client Email <span className="add-client-optional">optional</span></label>
+                        <input
+                          type="email"
+                          value={editEmail}
+                          onChange={e => setEditEmail(e.target.value)}
+                          placeholder="client@example.com"
+                        />
+                      </div>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button className="btn btn-primary btn-sm" onClick={() => saveEdit(r.id)} disabled={saving}>Save</button>
@@ -191,6 +204,9 @@ export default function ClientRates() {
                             <span> · Bills from the {r.billing_start_day}{r.billing_start_day === 1 ? 'st' : r.billing_start_day === 2 ? 'nd' : r.billing_start_day === 3 ? 'rd' : 'th'}</span>
                           )}
                         </div>
+                        {r.client_email && (
+                          <div className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.1rem' }}>{r.client_email}</div>
+                        )}
                       </div>
                       <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
                         <button className="btn btn-secondary btn-sm" onClick={() => startEdit(r)}>Edit</button>
@@ -274,6 +290,15 @@ export default function ClientRates() {
                 placeholder="1"
                 min="1"
                 max="28"
+              />
+            </div>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label>Client Email <span className="add-client-optional">optional</span></label>
+              <input
+                type="email"
+                value={newEmail}
+                onChange={e => setNewEmail(e.target.value)}
+                placeholder="client@example.com"
               />
             </div>
           </div>

@@ -45,7 +45,28 @@ export function monthStartString() {
   return new Date(d.getFullYear(), d.getMonth(), 1).toISOString().split('T')[0]
 }
 
+// Returns the start and end of last month as YYYY-MM-DD strings
+export function lastMonthRange() {
+  const d = new Date()
+  const start = new Date(d.getFullYear(), d.getMonth() - 1, 1)
+  const end = new Date(d.getFullYear(), d.getMonth(), 0)
+  return {
+    start: start.toISOString().split('T')[0],
+    end: end.toISOString().split('T')[0],
+  }
+}
+
 // Formats a number as USD currency
 export function formatCurrency(amount) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
+}
+
+// Returns {start, end} for last month as YYYY-MM-DD strings
+export function lastMonthRange() {
+  const d = new Date()
+  const year = d.getFullYear()
+  const month = d.getMonth()
+  const start = new Date(year, month - 1, 1).toISOString().split('T')[0]
+  const end = new Date(year, month, 0).toISOString().split('T')[0]
+  return { start, end }
 }
