@@ -29,7 +29,20 @@ Deno.serve(async (req) => {
     )
 
     const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')!
-    const { return_url } = await req.json()
+    const body = await req.json()
+
+    // Separate action: just mark the account as onboarded (called after Stripe redirect)
+    if (body.action === 'mark_onboarded') {
+      await supabaseAdmin
+        .from('stripe_connect_accounts')
+        .update({ onboarded: true })
+        .eq('user_id', user.id)
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    const { return_url } = body
 
     // Check if user already has a connect account
     const { data: existing } = await supabaseAdmin
@@ -61,9 +74,11 @@ Deno.serve(async (req) => {
 
       accountId = account.id
 
-      await supabaseAdmin
+      const { error: insertError } = await supabaseAdmin
         .from('stripe_connect_accounts')
         .insert({ user_id: user.id, stripe_account_id: accountId })
+
+      if (insertError) throw new Error(`Failed to save connect account: ${insertError.message}`)
     }
 
     // Generate an onboarding link

@@ -91,6 +91,7 @@ export default function Invoices() {
       fetchConfig()
       supabase.from('stripe_connect_accounts').select('onboarded').eq('user_id', user.id).maybeSingle()
         .then(({ data }) => setStripeConnected(!!data?.onboarded))
+
     }
   }, [user, isBusiness])
 

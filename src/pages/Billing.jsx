@@ -44,21 +44,29 @@ export default function Billing() {
     if (upgradedTier === 'pro' || upgradedTier === 'business') {
       refetch().then(() => setUpgraded(true))
     }
-    if (searchParams.get('stripe_connected') === 'true') {
-      supabase.from('stripe_connect_accounts')
-        .update({ onboarded: true })
+    async function loadStripeStatus() {
+      if (searchParams.get('stripe_connected') === 'true') {
+        // Set optimistically so the UI updates immediately on return from Stripe
+        setStripeConnected(true)
+        // Persist using service role (user client lacks INSERT permission)
+        const { data: { session } } = await supabase.auth.getSession()
+        await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-connect-account`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ action: 'mark_onboarded' }),
+        })
+        return
+      }
+      const { data } = await supabase.from('stripe_connect_accounts')
+        .select('onboarded')
         .eq('user_id', user.id)
-        .then(() => setStripeConnected(true))
+        .maybeSingle()
+      setStripeConnected(!!data?.onboarded)
     }
-  }, [user])
-
-  useEffect(() => {
-    if (!user) return
-    supabase.from('stripe_connect_accounts')
-      .select('onboarded')
-      .eq('user_id', user.id)
-      .maybeSingle()
-      .then(({ data }) => setStripeConnected(!!data?.onboarded))
+    loadStripeStatus()
   }, [user])
 
   async function handleConnectStripe() {
