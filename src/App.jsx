@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { AuthProvider } from './context/AuthContext'
 import { SubscriptionProvider } from './context/SubscriptionContext'
 import { PendingInviteProvider } from './context/PendingInviteContext'
+import { AvatarProvider } from './context/AvatarContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 import Landing from './pages/Landing'
@@ -43,6 +44,7 @@ export default function App() {
       <AuthProvider>
         <SubscriptionProvider>
           <PendingInviteProvider>
+          <AvatarProvider>
           <RecoveryRedirect />
           <Routes>
             <Route path="/" element={Capacitor.isNativePlatform() ? <Navigate to="/login" replace /> : <Landing />} />
@@ -74,6 +76,7 @@ export default function App() {
               <Route path="/admin" element={<Admin />} />
             </Route>
           </Routes>
+          </AvatarProvider>
           </PendingInviteProvider>
         </SubscriptionProvider>
       </AuthProvider>

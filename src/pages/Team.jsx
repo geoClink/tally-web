@@ -1,16 +1,23 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { createAvatar } from '@dicebear/core'
+import { bottts } from '@dicebear/collection'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
+import { useAvatar } from '../context/AvatarContext'
 
 export default function Team() {
   const { user } = useAuth()
   const { isBusiness } = useSubscription()
+  const { seed: myAvatarSeed, color: myAvatarColor } = useAvatar()
   const [workspace, setWorkspace] = useState(null)
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
-  const [myAvatar, setMyAvatar] = useState({ seed: 'felix', color: '#2563eb' })
+  function makeAvatarUri(seed) {
+    const avatar = createAvatar(bottts, { seed, size: 64 })
+    return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
+  }
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteRole, setInviteRole] = useState('member')
   const [inviting, setInviting] = useState(false)
@@ -35,19 +42,7 @@ export default function Team() {
 
   useEffect(() => {
     fetchWorkspace()
-    loadMyAvatar()
   }, [user])
-
-  async function loadMyAvatar() {
-    const { data } = await supabase
-      .from('config')
-      .select('avatar_seed, avatar_color')
-      .eq('user_id', user.id)
-      .maybeSingle()
-    if (data?.avatar_seed || data?.avatar_color) {
-      setMyAvatar({ seed: data.avatar_seed ?? 'felix', color: data.avatar_color ?? '#2563eb' })
-    }
-  }
 
   async function fetchWorkspace() {
     setLoading(true)
@@ -289,11 +284,11 @@ export default function Team() {
                   {m.invited_email === user.email ? (
                     <div style={{
                       width: '2.25rem', height: '2.25rem', borderRadius: '50%',
-                      background: myAvatar.color,
+                      background: myAvatarColor,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       flexShrink: 0, overflow: 'hidden',
                     }}>
-                      <img src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${myAvatar.seed}&scale=80`} width="30" height="30" alt="avatar" style={{ display: 'block' }} />
+                      <img src={`${makeAvatarUri(myAvatarSeed)}`} width="30" height="30" alt="avatar" style={{ display: 'block' }} />
                     </div>
                   ) : (
                     <div style={{
@@ -557,12 +552,12 @@ export default function Team() {
                       {m.invited_email === user.email ? (
                         <div style={{
                           width: '2.25rem', height: '2.25rem', borderRadius: '50%',
-                          background: myAvatar.color,
+                          background: myAvatarColor,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           flexShrink: 0, overflow: 'hidden',
                         }}>
                           <img
-                            src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${myAvatar.seed}&scale=80`}
+                            src={`${makeAvatarUri(myAvatarSeed)}`}
                             width="30" height="30"
                             alt="avatar"
                             style={{ display: 'block' }}

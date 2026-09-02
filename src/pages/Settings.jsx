@@ -1,12 +1,44 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { createAvatar } from '@dicebear/core'
+import { bottts } from '@dicebear/collection'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
+import { useAvatar } from '../context/AvatarContext'
 import ClientSelect from '../components/ClientSelect'
 import BugReportModal from '../components/BugReportModal'
 
+function MonsterOption({ seed, color, selected, onSelect }) {
+  const uri = useMemo(() => {
+    const avatar = createAvatar(bottts, { seed, size: 96 })
+    return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
+  }, [seed])
+
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(seed)}
+      style={{
+        width: '48px', height: '48px', borderRadius: '50%',
+        background: color,
+        border: 'none',
+        outline: selected ? `3px solid ${color}` : '2px solid transparent',
+        outlineOffset: '2px',
+        cursor: 'pointer', padding: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        overflow: 'hidden',
+        opacity: selected ? 1 : 0.55,
+        transition: 'opacity 0.15s, outline 0.15s',
+      }}
+    >
+      <img src={uri} width="38" height="38" alt={seed} style={{ display: 'block' }} />
+    </button>
+  )
+}
+
 export default function Settings() {
   const { user, signOut } = useAuth()
+  const { refresh: refreshAvatar } = useAvatar()
   const navigate = useNavigate()
   const [weeklyGoal, setWeeklyGoal] = useState('')
   const [weekStart, setWeekStart] = useState(1)
@@ -32,6 +64,13 @@ export default function Settings() {
     '#2563eb', '#8b5cf6', '#10b981', '#0891b2',
     '#f59e0b', '#ec4899', '#ef4444', '#64748b',
   ]
+
+  function makeUri(seed) {
+    const avatar = createAvatar(bottts, { seed, size: 128 })
+    return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
+  }
+
+  const previewUri = useMemo(() => makeUri(avatarSeed), [avatarSeed])
   const [resetSent, setResetSent] = useState(false)
   const [sendingReset, setSendingReset] = useState(false)
 
@@ -78,6 +117,7 @@ export default function Settings() {
     if (err) { setError(err.message); return }
     setSuccess('Settings saved!')
     setTimeout(() => setSuccess(''), 3000)
+    refreshAvatar()
   }
 
   function addClientGoal(e) {
@@ -180,7 +220,7 @@ export default function Settings() {
               boxShadow: `0 0 0 3px ${avatarColor}40`,
             }}>
               <img
-                src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${avatarSeed}&scale=80`}
+                src={previewUri}
                 width="52" height="52"
                 alt="avatar preview"
                 style={{ display: 'block' }}
@@ -197,30 +237,13 @@ export default function Settings() {
             <div className="text-muted" style={{ fontSize: '0.78rem', fontWeight: 500, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Monster</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '8px', maxWidth: '320px' }}>
               {MONSTER_SEEDS.map(seed => (
-                <button
+                <MonsterOption
                   key={seed}
-                  type="button"
-                  onClick={() => setAvatarSeed(seed)}
-                  style={{
-                    width: '48px', height: '48px', borderRadius: '50%',
-                    background: avatarColor,
-                    border: avatarSeed === seed ? `3px solid ${avatarColor}` : '2px solid transparent',
-                    outline: avatarSeed === seed ? `2px solid ${avatarColor}` : 'none',
-                    outlineOffset: '2px',
-                    cursor: 'pointer', padding: 0,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    overflow: 'hidden',
-                    opacity: avatarSeed === seed ? 1 : 0.6,
-                    transition: 'opacity 0.15s, outline 0.15s',
-                  }}
-                >
-                  <img
-                    src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${seed}&scale=80`}
-                    width="38" height="38"
-                    alt={seed}
-                    style={{ display: 'block' }}
-                  />
-                </button>
+                  seed={seed}
+                  color={avatarColor}
+                  selected={avatarSeed === seed}
+                  onSelect={setAvatarSeed}
+                />
               ))}
             </div>
           </div>
