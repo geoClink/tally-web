@@ -60,13 +60,3 @@ export function lastMonthRange() {
 export function formatCurrency(amount) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount)
 }
-
-// Returns {start, end} for last month as YYYY-MM-DD strings
-export function lastMonthRange() {
-  const d = new Date()
-  const year = d.getFullYear()
-  const month = d.getMonth()
-  const start = new Date(year, month - 1, 1).toISOString().split('T')[0]
-  const end = new Date(year, month, 0).toISOString().split('T')[0]
-  return { start, end }
-}
