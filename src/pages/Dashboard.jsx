@@ -27,8 +27,6 @@ export default function Dashboard() {
   const [streak, setStreak] = useState(0)
   const [showEmailCapture, setShowEmailCapture] = useState(false)
 
-  const today = todayString()
-  const monthStart = monthStartString()
   const historyStart = isPro ? null : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
 
   useEffect(() => {
@@ -36,8 +34,80 @@ export default function Dashboard() {
       setLoading(true)
       setLoadError(false)
       try {
-        const ws = await fetchGoal()
-        await Promise.all([fetchTodaySessions(), fetchWeekSessions(ws), fetchRecentSessions(), fetchMonthSessions(), fetchStreak()])
+        // Two queries instead of six: config + all sessions in range
+        const [configResult, sessionsResult] = await Promise.all([
+          supabase
+            .from('config')
+            .select('weekly_goal, client_goals, contact_email, week_start')
+            .eq('user_id', user.id)
+            .maybeSingle(),
+          (() => {
+            let q = supabase
+              .from('sessions')
+              .select('id, date, client, hours, task_note, created_at')
+              .eq('user_id', user.id)
+              .order('date', { ascending: false })
+              .order('created_at', { ascending: false })
+            if (historyStart) q = q.gte('date', historyStart)
+            return q
+          })(),
+        ])
+
+        const config = configResult.data
+        const allSessions = sessionsResult.data ?? []
+
+        // Config
+        const ws = config?.week_start ?? 1
+        if (config?.client_goals?.length > 0) {
+          setClientGoals(config.client_goals)
+          setWeekGoal(config.client_goals.reduce((sum, g) => sum + (g.weekly_hours ?? 0), 0))
+        } else if (config?.weekly_goal) {
+          setWeekGoal(config.weekly_goal)
+        }
+        if (!config?.contact_email) setShowEmailCapture(true)
+
+        const today = todayString()
+        const weekStartDate = weekStartString(ws)
+        const monthStart = monthStartString()
+
+        // Today
+        setTodayHours(
+          allSessions.filter(s => s.date === today).reduce((sum, s) => sum + (s.hours ?? 0), 0)
+        )
+
+        // This week
+        const weekSessions = allSessions.filter(s => s.date >= weekStartDate)
+        setWeekHours(weekSessions.reduce((sum, s) => sum + (s.hours ?? 0), 0))
+        const byClient = {}
+        weekSessions.forEach(s => { byClient[s.client] = (byClient[s.client] ?? 0) + (s.hours ?? 0) })
+        setWeekByClient(byClient)
+
+        // This month (for invoice nudges)
+        const byClientMonth = {}
+        allSessions
+          .filter(s => s.date >= monthStart && (s.hours ?? 0) > 0)
+          .forEach(s => { byClientMonth[s.client] = (byClientMonth[s.client] ?? 0) + (s.hours ?? 0) })
+        setMonthByClient(byClientMonth)
+
+        // Recent 5 sessions
+        setRecentSessions(allSessions.slice(0, 5))
+
+        // Streak — consecutive days with logged hours
+        const workedDates = [...new Set(
+          allSessions.filter(s => (s.hours ?? 0) > 0).map(s => s.date)
+        )].sort().reverse()
+        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+        if (!workedDates.length || (workedDates[0] !== today && workedDates[0] !== yesterday)) {
+          setStreak(0)
+        } else {
+          let count = 1
+          for (let i = 1; i < workedDates.length; i++) {
+            const diff = (new Date(workedDates[i - 1]) - new Date(workedDates[i])) / 86400000
+            if (diff === 1) count++
+            else break
+          }
+          setStreak(count)
+        }
       } catch {
         setLoadError(true)
       }
@@ -45,100 +115,6 @@ export default function Dashboard() {
     }
     load()
   }, [user, isPro])
-
-  async function fetchTodaySessions() {
-    const { data } = await supabase
-      .from('sessions')
-      .select('hours')
-      .eq('user_id', user.id)
-      .eq('date', today)
-    setTodayHours(data?.reduce((sum, s) => sum + (s.hours ?? 0), 0) ?? 0)
-  }
-
-  async function fetchWeekSessions(ws) {
-    const weekStartDate = weekStartString(ws)
-    let query = supabase
-      .from('sessions')
-      .select('hours, client')
-      .eq('user_id', user.id)
-      .gte('date', weekStartDate)
-    if (historyStart && historyStart > weekStartDate) {
-      query = query.gte('date', historyStart)
-    }
-    const { data } = await query
-    setWeekHours(data?.reduce((sum, s) => sum + (s.hours ?? 0), 0) ?? 0)
-
-    // Group by client for per-client progress
-    const byClient = {}
-    data?.forEach(s => {
-      byClient[s.client] = (byClient[s.client] ?? 0) + (s.hours ?? 0)
-    })
-    setWeekByClient(byClient)
-  }
-
-  async function fetchGoal() {
-    const { data } = await supabase
-      .from('config')
-      .select('weekly_goal, client_goals, contact_email, week_start')
-      .eq('user_id', user.id)
-      .maybeSingle()
-    if (data?.client_goals?.length > 0) {
-      setClientGoals(data.client_goals)
-      setWeekGoal(data.client_goals.reduce((sum, g) => sum + (g.weekly_hours ?? 0), 0))
-    } else if (data?.weekly_goal) {
-      setWeekGoal(data.weekly_goal)
-    }
-    if (!data?.contact_email) setShowEmailCapture(true)
-    return data?.week_start ?? 1
-  }
-
-  async function fetchMonthSessions() {
-    const { data } = await supabase
-      .from('sessions')
-      .select('client, hours')
-      .eq('user_id', user.id)
-      .gte('date', monthStart)
-      .gt('hours', 0)
-    const byClient = {}
-    data?.forEach(s => {
-      byClient[s.client] = (byClient[s.client] ?? 0) + (s.hours ?? 0)
-    })
-    setMonthByClient(byClient)
-  }
-
-  async function fetchStreak() {
-    const { data } = await supabase
-      .from('sessions')
-      .select('date')
-      .eq('user_id', user.id)
-      .gt('hours', 0)
-      .order('date', { ascending: false })
-    if (!data?.length) { setStreak(0); return }
-    const dates = [...new Set(data.map(s => s.date))].sort().reverse()
-    const today = todayString()
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
-    if (dates[0] !== today && dates[0] !== yesterday) { setStreak(0); return }
-    let count = 1
-    for (let i = 1; i < dates.length; i++) {
-      const diff = (new Date(dates[i - 1]) - new Date(dates[i])) / 86400000
-      if (diff === 1) count++
-      else break
-    }
-    setStreak(count)
-  }
-
-  async function fetchRecentSessions() {
-    let query = supabase
-      .from('sessions')
-      .select('id, date, client, hours, task_note')
-      .eq('user_id', user.id)
-      .order('date', { ascending: false })
-      .order('created_at', { ascending: false })
-      .limit(5)
-    if (historyStart) query = query.gte('date', historyStart)
-    const { data } = await query
-    setRecentSessions(data ?? [])
-  }
 
   const weekProgress = weekGoal > 0 ? Math.min((weekHours / weekGoal) * 100, 100) : 0
 
@@ -158,6 +134,10 @@ export default function Dashboard() {
     setDismissedNudges(updated)
     try { localStorage.setItem('tally_nudge_dismissed', JSON.stringify(updated)) } catch {}
   }
+
+  // Daily reminder nudge — show after 3pm if nothing logged today
+  const hour = new Date().getHours()
+  const showDailyNudge = !loading && !loadError && hour >= 15 && todayHours === 0
 
   const animatedToday = useCountUp(todayHours, 700, !loading)
   const animatedWeek = useCountUp(weekHours, 700, !loading)
@@ -211,6 +191,12 @@ export default function Dashboard() {
           <Link to="/team" onClick={dismiss} className="btn btn-primary btn-sm" style={{ flexShrink: 0 }}>
             View Invite →
           </Link>
+        </div>
+      )}
+
+      {showDailyNudge && (
+        <div className="alert alert-info" style={{ marginBottom: '1.5rem' }}>
+          No time tracked today yet — don't forget to log your hours. <Link to="/track" className="alert-link">Start tracking →</Link>
         </div>
       )}
 

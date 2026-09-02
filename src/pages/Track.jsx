@@ -6,6 +6,7 @@ import { useSubscription } from '../context/SubscriptionContext'
 import { todayString } from '../lib/utils'
 import ClientSelect from '../components/ClientSelect'
 import UpgradeModal from '../components/UpgradeModal'
+import { scheduleDailyReminder } from '../lib/notifications'
 
 const STORAGE_KEY = 'tally_active_timer'
 
@@ -106,6 +107,18 @@ export default function Track() {
     }
     return () => clearInterval(intervalRef.current)
   }, [running, startTime, paused])
+
+  // Resync elapsed when the tab comes back into view — browsers throttle timers
+  // in hidden tabs, so the display can fall behind. We just recalculate from startTime.
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (!document.hidden && runningRef.current && startTimeRef.current && !pausedRef.current) {
+        setElapsed(Math.floor((Date.now() - startTimeRef.current.getTime()) / 1000))
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [])
 
   async function fetchClients() {
     const [{ data: rates }, { data: sessions }, { data: ownedWs }] = await Promise.all([
@@ -286,6 +299,7 @@ export default function Track() {
     setTimerNote('')
     fetchClients()
     showSuccess('Session saved!')
+    scheduleDailyReminder()
   }
 
   function discardTimer() {
@@ -337,6 +351,7 @@ export default function Track() {
     setManualNote('')
     fetchClients()
     showSuccess('Session saved!')
+    scheduleDailyReminder()
   }
 
   function showSuccess(msg) {

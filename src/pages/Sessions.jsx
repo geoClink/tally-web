@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
@@ -7,6 +7,15 @@ import { formatHours } from '../lib/utils'
 import { Capacitor } from '@capacitor/core'
 import { Filesystem, Directory } from '@capacitor/filesystem'
 import { Share } from '@capacitor/share'
+import ClientSelect from '../components/ClientSelect'
+
+function escapeCSV(value) {
+  const str = String(value ?? '')
+  if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+    return `"${str.replace(/"/g, '""')}"`
+  }
+  return str
+}
 
 export default function Sessions() {
   const { user } = useAuth()
@@ -14,6 +23,18 @@ export default function Sessions() {
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
   const [deletingId, setDeletingId] = useState(null)
+  const [deleteError, setDeleteError] = useState('')
+
+  // Filter state
+  const [filterClient, setFilterClient] = useState('')
+  const [filterStart, setFilterStart] = useState('')
+  const [filterEnd, setFilterEnd] = useState('')
+
+  // Edit state
+  const [editingId, setEditingId] = useState(null)
+  const [editFields, setEditFields] = useState({ date: '', client: '', hours: '', task_note: '' })
+  const [editSaving, setEditSaving] = useState(false)
+  const [editError, setEditError] = useState('')
 
   const historyStart = isPro
     ? null
@@ -39,22 +60,89 @@ export default function Sessions() {
     setLoading(false)
   }
 
+  const allClients = useMemo(
+    () => [...new Set(sessions.map(s => s.client))].sort(),
+    [sessions]
+  )
+
+  const filtered = useMemo(() => {
+    return sessions.filter(s => {
+      if (filterClient && s.client !== filterClient) return false
+      if (filterStart && s.date < filterStart) return false
+      if (filterEnd && s.date > filterEnd) return false
+      return true
+    })
+  }, [sessions, filterClient, filterStart, filterEnd])
+
+  const hasFilters = filterClient || filterStart || filterEnd
+
   async function deleteSession(id) {
     if (!confirm('Delete this session? This cannot be undone.')) return
     setDeletingId(id)
+    setDeleteError('')
     const { error } = await supabase.from('sessions').delete().eq('id', id).eq('user_id', user.id)
     setDeletingId(null)
-    if (!error) setSessions(prev => prev.filter(s => s.id !== id))
+    if (error) {
+      setDeleteError('Failed to delete session. Please try again.')
+    } else {
+      setSessions(prev => prev.filter(s => s.id !== id))
+    }
+  }
+
+  function startEdit(session) {
+    setEditingId(session.id)
+    setEditError('')
+    setEditFields({
+      date: session.date,
+      client: session.client,
+      hours: String(session.hours),
+      task_note: session.task_note ?? '',
+    })
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+    setEditError('')
+  }
+
+  async function saveEdit(id) {
+    const hours = parseFloat(editFields.hours)
+    if (!editFields.client.trim()) { setEditError('Client is required'); return }
+    if (isNaN(hours) || hours <= 0) { setEditError('Enter valid hours (e.g. 1.5)'); return }
+
+    setEditSaving(true)
+    setEditError('')
+    const { error } = await supabase
+      .from('sessions')
+      .update({
+        date: editFields.date,
+        client: editFields.client.trim(),
+        hours: parseFloat(hours.toFixed(4)),
+        task_note: editFields.task_note.trim() || null,
+      })
+      .eq('id', id)
+      .eq('user_id', user.id)
+    setEditSaving(false)
+
+    if (error) {
+      setEditError('Failed to save changes. Please try again.')
+    } else {
+      setSessions(prev => prev.map(s =>
+        s.id === id
+          ? { ...s, date: editFields.date, client: editFields.client.trim(), hours: parseFloat(hours.toFixed(4)), task_note: editFields.task_note.trim() || null }
+          : s
+      ))
+      setEditingId(null)
+    }
   }
 
   async function exportCSV() {
-    const header = 'Date,Client,Hours,Minutes,Task Note'
-    const rows = sessions.map(s => {
-      const mins = Math.round((s.hours ?? 0) * 60)
-      const h = Math.floor(mins / 60)
-      const m = mins % 60
-      const note = (s.task_note ?? '').replace(/,/g, ' ')
-      return `${s.date},${s.client},${h},${m},${note}`
+    const header = ['Date', 'Client', 'Hours', 'Minutes', 'Task Note'].map(escapeCSV).join(',')
+    const rows = filtered.map(s => {
+      const totalMins = Math.round((s.hours ?? 0) * 60)
+      const h = Math.floor(totalMins / 60)
+      const m = totalMins % 60
+      return [s.date, s.client, h, m, s.task_note ?? ''].map(escapeCSV).join(',')
     })
     const csv = [header, ...rows].join('\n')
     const fileName = `tally-sessions-${new Date().toISOString().split('T')[0]}.csv`
@@ -84,7 +172,7 @@ export default function Sessions() {
           <div>
             <h1 className="page-title">Sessions</h1>
             <p className="page-subtitle">
-              {sessions.length} session{sessions.length !== 1 ? 's' : ''}
+              {hasFilters ? `${filtered.length} of ${sessions.length}` : sessions.length} session{sessions.length !== 1 ? 's' : ''}
               {!isPro && ' (last 7 days)'}
             </p>
           </div>
@@ -96,14 +184,50 @@ export default function Sessions() {
         </div>
       </div>
 
+      {/* Filter bar */}
+      <div className="card" style={{ padding: '0.875rem 1rem', marginBottom: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem', alignItems: 'end' }}>
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label style={{ fontSize: '0.78rem' }}>Client</label>
+            <select value={filterClient} onChange={e => setFilterClient(e.target.value)}>
+              <option value="">All clients</option>
+              {allClients.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label style={{ fontSize: '0.78rem' }}>From</label>
+            <input type="date" value={filterStart} onChange={e => setFilterStart(e.target.value)} />
+          </div>
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label style={{ fontSize: '0.78rem' }}>To</label>
+            <input type="date" value={filterEnd} onChange={e => setFilterEnd(e.target.value)} />
+          </div>
+          {hasFilters && (
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => { setFilterClient(''); setFilterStart(''); setFilterEnd('') }}
+              style={{ alignSelf: 'flex-end' }}
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      </div>
+
       {!isPro && (
         <div className="alert alert-info">
           Free tier shows the last 7 days. <Link to="/billing">Upgrade to Pro</Link> for full history and CSV export.
         </div>
       )}
 
-      {sessions.length === 0 ? (
-        <div className="empty-state">No sessions found. Track time in the Tally app.</div>
+      {deleteError && (
+        <div className="alert alert-danger" style={{ marginBottom: '1rem' }}>{deleteError}</div>
+      )}
+
+      {filtered.length === 0 ? (
+        <div className="empty-state">
+          {hasFilters ? 'No sessions match your filters.' : 'No sessions found. Track time in the Tally app.'}
+        </div>
       ) : (
         <div className="table-wrapper dashboard-sessions">
           <table>
@@ -118,24 +242,99 @@ export default function Sessions() {
               </tr>
             </thead>
             <tbody>
-              {sessions.map(s => (
-                <tr key={s.id}>
-                  <td data-label="Date" style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
-                  <td data-label="Client">{s.client}</td>
-                  <td data-label="Hours" style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
-                  <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
-                  <td className="text-muted hide-mobile">{s.is_manual ? 'Manual' : 'Timer'}</td>
-                  <td className="session-action-cell">
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => deleteSession(s.id)}
-                      disabled={deletingId === s.id}
-                    >
-                      {deletingId === s.id ? '…' : 'Delete'}
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {filtered.map(s => {
+                if (editingId === s.id) {
+                  return (
+                    <tr key={s.id} style={{ background: 'var(--color-bg-alt, var(--bg-alt, rgba(0,0,0,0.03)))' }}>
+                      <td data-label="Date">
+                        <input
+                          type="date"
+                          value={editFields.date}
+                          onChange={e => setEditFields(f => ({ ...f, date: e.target.value }))}
+                          style={{ minWidth: '130px' }}
+                        />
+                      </td>
+                      <td data-label="Client">
+                        <ClientSelect
+                          clients={allClients}
+                          value={editFields.client}
+                          onChange={v => setEditFields(f => ({ ...f, client: v }))}
+                        />
+                      </td>
+                      <td data-label="Hours">
+                        <input
+                          type="number"
+                          value={editFields.hours}
+                          onChange={e => setEditFields(f => ({ ...f, hours: e.target.value }))}
+                          step="0.01"
+                          min="0.01"
+                          style={{ width: '80px' }}
+                        />
+                      </td>
+                      <td className="hide-mobile">
+                        <input
+                          type="text"
+                          value={editFields.task_note}
+                          onChange={e => setEditFields(f => ({ ...f, task_note: e.target.value }))}
+                          placeholder="Note"
+                        />
+                      </td>
+                      <td className="hide-mobile" />
+                      <td className="session-action-cell">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', alignItems: 'flex-start' }}>
+                          {editError && (
+                            <span style={{ fontSize: '0.73rem', color: 'var(--danger, #dc2626)' }}>{editError}</span>
+                          )}
+                          <div style={{ display: 'flex', gap: '0.4rem' }}>
+                            <button
+                              className="btn btn-primary btn-sm"
+                              onClick={() => saveEdit(s.id)}
+                              disabled={editSaving}
+                            >
+                              {editSaving ? '…' : 'Save'}
+                            </button>
+                            <button
+                              className="btn btn-secondary btn-sm"
+                              onClick={cancelEdit}
+                              disabled={editSaving}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                }
+
+                return (
+                  <tr key={s.id}>
+                    <td data-label="Date" style={{ whiteSpace: 'nowrap' }}>{s.date}</td>
+                    <td data-label="Client">{s.client}</td>
+                    <td data-label="Hours" style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
+                    <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
+                    <td className="text-muted hide-mobile">{s.is_manual ? 'Manual' : 'Timer'}</td>
+                    <td className="session-action-cell">
+                      <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        <button
+                          className="btn btn-secondary btn-sm"
+                          onClick={() => startEdit(s)}
+                          disabled={!!editingId || !!deletingId}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="btn btn-danger btn-sm"
+                          onClick={() => deleteSession(s.id)}
+                          disabled={deletingId === s.id || !!editingId}
+                        >
+                          {deletingId === s.id ? '…' : 'Delete'}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
