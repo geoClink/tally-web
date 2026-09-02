@@ -36,6 +36,9 @@ export default function Sessions() {
   const [editSaving, setEditSaving] = useState(false)
   const [editError, setEditError] = useState('')
 
+  // Inline delete confirmation — replaces confirm() which is blocked on Android Capacitor
+  const [confirmingDeleteId, setConfirmingDeleteId] = useState(null)
+
   const historyStart = isPro
     ? null
     : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
@@ -77,7 +80,7 @@ export default function Sessions() {
   const hasFilters = filterClient || filterStart || filterEnd
 
   async function deleteSession(id) {
-    if (!confirm('Delete this session? This cannot be undone.')) return
+    setConfirmingDeleteId(null)
     setDeletingId(id)
     setDeleteError('')
     const { error } = await supabase.from('sessions').delete().eq('id', id).eq('user_id', user.id)
@@ -91,6 +94,7 @@ export default function Sessions() {
 
   function startEdit(session) {
     setEditingId(session.id)
+    setConfirmingDeleteId(null)
     setEditError('')
     setEditFields({
       date: session.date,
@@ -315,22 +319,40 @@ export default function Sessions() {
                     <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
                     <td className="text-muted hide-mobile">{s.is_manual ? 'Manual' : 'Timer'}</td>
                     <td className="session-action-cell">
-                      <div style={{ display: 'flex', gap: '0.4rem' }}>
-                        <button
-                          className="btn btn-secondary btn-sm"
-                          onClick={() => startEdit(s)}
-                          disabled={!!editingId || !!deletingId}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => deleteSession(s.id)}
-                          disabled={deletingId === s.id || !!editingId}
-                        >
-                          {deletingId === s.id ? '…' : 'Delete'}
-                        </button>
-                      </div>
+                      {confirmingDeleteId === s.id ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>Delete?</span>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => deleteSession(s.id)}
+                          >
+                            Yes
+                          </button>
+                          <button
+                            className="btn btn-secondary btn-sm"
+                            onClick={() => setConfirmingDeleteId(null)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+                          <button
+                            className="btn btn-secondary btn-sm"
+                            onClick={() => startEdit(s)}
+                            disabled={!!editingId || !!deletingId}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={() => setConfirmingDeleteId(s.id)}
+                            disabled={deletingId === s.id || !!editingId}
+                          >
+                            {deletingId === s.id ? '…' : 'Delete'}
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 )
