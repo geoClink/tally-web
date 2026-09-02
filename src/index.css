@@ -1958,3 +1958,46 @@ select:focus {
   gap: 0.75rem;
   flex-wrap: wrap;
 }
+
+/* Icon-only action button — used for trash/delete actions */
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 4px 6px;
+  border-radius: 4px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.btn-icon:hover:not(:disabled) {
+  color: var(--danger, #dc2626);
+}
+.btn-icon:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Pending member card — visually distinct from accepted */
+.member-card-pending {
+  border: 1.5px dashed var(--border, #e5e7eb) !important;
+  background: var(--bg-alt, #f9fafb) !important;
+}
+
+/* Copy-invite button / text link style */
+.btn-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.82rem;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.btn-link:hover {
+  opacity: 0.75;
+}

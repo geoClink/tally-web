@@ -22,6 +22,7 @@ export default function ClientRates() {
   const [newEmail, setNewEmail] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [confirmingDeleteId, setConfirmingDeleteId] = useState(null)
 
   useEffect(() => {
     fetchAll()
@@ -104,7 +105,7 @@ export default function ClientRates() {
   }
 
   async function deleteRate(id) {
-    if (!confirm('Remove this client rate?')) return
+    setConfirmingDeleteId(null)
     await supabase.from('client_rates').delete().eq('id', id).eq('user_id', user.id)
     setRates(prev => prev.filter(r => r.id !== id))
   }
@@ -208,9 +209,30 @@ export default function ClientRates() {
                           <div className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.1rem' }}>{r.client_email}</div>
                         )}
                       </div>
-                      <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
-                        <button className="btn btn-secondary btn-sm" onClick={() => startEdit(r)}>Edit</button>
-                        <button className="btn btn-danger btn-sm" onClick={() => deleteRate(r.id)}>Delete</button>
+                      <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center', flexShrink: 0 }}>
+                        {confirmingDeleteId === r.id ? (
+                          <>
+                            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Remove?</span>
+                            <button className="btn btn-danger btn-sm" onClick={() => deleteRate(r.id)}>Yes</button>
+                            <button className="btn btn-secondary btn-sm" onClick={() => setConfirmingDeleteId(null)}>No</button>
+                          </>
+                        ) : (
+                          <>
+                            <button className="btn btn-secondary btn-sm" onClick={() => startEdit(r)}>Edit</button>
+                            <button
+                              className="btn-icon"
+                              onClick={() => setConfirmingDeleteId(r.id)}
+                              title="Remove client"
+                            >
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                                <path d="M10 11v6M14 11v6"/>
+                                <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                              </svg>
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
 

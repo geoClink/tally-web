@@ -317,26 +317,20 @@ export default function Sessions() {
                     <td data-label="Client">{s.client}</td>
                     <td data-label="Hours" style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
                     <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
-                    <td className="text-muted hide-mobile">{s.is_manual ? 'Manual' : 'Timer'}</td>
+                    <td className="text-muted hide-mobile">
+                      <span style={{ fontSize: '0.75rem', padding: '2px 6px', borderRadius: '4px', background: s.is_manual ? 'var(--bg-alt, #f3f4f6)' : 'transparent', color: 'var(--text-muted)' }}>
+                        {s.is_manual ? 'Manual' : 'Timer'}
+                      </span>
+                    </td>
                     <td className="session-action-cell">
                       {confirmingDeleteId === s.id ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', whiteSpace: 'nowrap' }}>Delete?</span>
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={() => deleteSession(s.id)}
-                          >
-                            Yes
-                          </button>
-                          <button
-                            className="btn btn-secondary btn-sm"
-                            onClick={() => setConfirmingDeleteId(null)}
-                          >
-                            Cancel
-                          </button>
+                          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Delete?</span>
+                          <button className="btn btn-danger btn-sm" onClick={() => deleteSession(s.id)}>Yes</button>
+                          <button className="btn btn-secondary btn-sm" onClick={() => setConfirmingDeleteId(null)}>No</button>
                         </div>
                       ) : (
-                        <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
                           <button
                             className="btn btn-secondary btn-sm"
                             onClick={() => startEdit(s)}
@@ -345,11 +339,19 @@ export default function Sessions() {
                             Edit
                           </button>
                           <button
-                            className="btn btn-danger btn-sm"
+                            className="btn-icon"
                             onClick={() => setConfirmingDeleteId(s.id)}
-                            disabled={deletingId === s.id || !!editingId}
+                            disabled={!!deletingId || !!editingId}
+                            title="Delete session"
                           >
-                            {deletingId === s.id ? '…' : 'Delete'}
+                            {deletingId === s.id ? '…' : (
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                                <path d="M10 11v6M14 11v6"/>
+                                <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                              </svg>
+                            )}
                           </button>
                         </div>
                       )}

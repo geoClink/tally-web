@@ -20,7 +20,18 @@ export default function Settings() {
   const [error, setError] = useState('')
   const [deleting, setDeleting] = useState(false)
   const [yourName, setYourName] = useState('')
+  const [avatarSeed, setAvatarSeed] = useState('felix')
+  const [avatarColor, setAvatarColor] = useState('#2563eb')
   const [bugModalOpen, setBugModalOpen] = useState(false)
+
+  const MONSTER_SEEDS = [
+    'felix', 'luna', 'pixel', 'ghost', 'nova', 'blaze',
+    'turbo', 'chip', 'byte', 'glitch', 'spark', 'zap',
+  ]
+  const AVATAR_COLORS = [
+    '#2563eb', '#8b5cf6', '#10b981', '#0891b2',
+    '#f59e0b', '#ec4899', '#ef4444', '#64748b',
+  ]
   const [resetSent, setResetSent] = useState(false)
   const [sendingReset, setSendingReset] = useState(false)
 
@@ -40,6 +51,8 @@ export default function Settings() {
     if (config?.client_goals) setClientGoals(config.client_goals)
     if (config?.week_start != null) setWeekStart(config.week_start)
     if (config?.your_name) setYourName(config.your_name)
+    if (config?.avatar_seed) setAvatarSeed(config.avatar_seed)
+    if (config?.avatar_color) setAvatarColor(config.avatar_color)
 
     // Build unique client list from both sources
     const all = [
@@ -59,7 +72,7 @@ export default function Settings() {
     setSaving(true)
     const { error: err } = await supabase
       .from('config')
-      .upsert({ user_id: user.id, weekly_goal: goal, client_goals: clientGoals, week_start: weekStart, your_name: yourName.trim() || null }, { onConflict: 'user_id' })
+      .upsert({ user_id: user.id, weekly_goal: goal, client_goals: clientGoals, week_start: weekStart, your_name: yourName.trim() || null, avatar_seed: avatarSeed, avatar_color: avatarColor }, { onConflict: 'user_id' })
     setSaving(false)
 
     if (err) { setError(err.message); return }
@@ -152,6 +165,90 @@ export default function Settings() {
         </div>
 
         <div className="card" style={{ marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Your Avatar</h2>
+          <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1.25rem' }}>
+            Choose a monster and a color — it shows on your team page.
+          </p>
+
+          {/* Preview */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+            <div style={{
+              width: '64px', height: '64px', borderRadius: '50%',
+              background: avatarColor,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0, overflow: 'hidden',
+              boxShadow: `0 0 0 3px ${avatarColor}40`,
+            }}>
+              <img
+                src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${avatarSeed}&scale=80`}
+                width="52" height="52"
+                alt="avatar preview"
+                style={{ display: 'block' }}
+              />
+            </div>
+            <div>
+              <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{yourName || user.email}</div>
+              <div className="text-muted" style={{ fontSize: '0.8rem' }}>Your profile</div>
+            </div>
+          </div>
+
+          {/* Monster grid */}
+          <div style={{ marginBottom: '1rem' }}>
+            <div className="text-muted" style={{ fontSize: '0.78rem', fontWeight: 500, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Monster</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '8px', maxWidth: '320px' }}>
+              {MONSTER_SEEDS.map(seed => (
+                <button
+                  key={seed}
+                  type="button"
+                  onClick={() => setAvatarSeed(seed)}
+                  style={{
+                    width: '48px', height: '48px', borderRadius: '50%',
+                    background: avatarColor,
+                    border: avatarSeed === seed ? `3px solid ${avatarColor}` : '2px solid transparent',
+                    outline: avatarSeed === seed ? `2px solid ${avatarColor}` : 'none',
+                    outlineOffset: '2px',
+                    cursor: 'pointer', padding: 0,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    overflow: 'hidden',
+                    opacity: avatarSeed === seed ? 1 : 0.6,
+                    transition: 'opacity 0.15s, outline 0.15s',
+                  }}
+                >
+                  <img
+                    src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${seed}&scale=80`}
+                    width="38" height="38"
+                    alt={seed}
+                    style={{ display: 'block' }}
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Color swatches */}
+          <div>
+            <div className="text-muted" style={{ fontSize: '0.78rem', fontWeight: 500, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Color</div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {AVATAR_COLORS.map(color => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setAvatarColor(color)}
+                  title={color}
+                  style={{
+                    width: '28px', height: '28px', borderRadius: '50%',
+                    background: color, border: 'none', cursor: 'pointer',
+                    outline: avatarColor === color ? `3px solid ${color}` : '2px solid transparent',
+                    outlineOffset: '2px',
+                    transition: 'outline 0.15s',
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="card" style={{ marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Weekly Hour Goal</h2>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <input
@@ -203,13 +300,19 @@ export default function Settings() {
                     <tr key={g.client}>
                       <td>{g.client}</td>
                       <td>{g.weekly_hours}h</td>
-                      <td>
+                      <td style={{ textAlign: 'right' }}>
                         <button
                           type="button"
-                          className="btn btn-danger btn-sm"
+                          className="btn-icon"
                           onClick={() => removeClientGoal(g.client)}
+                          title="Remove goal"
                         >
-                          Remove
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                            <path d="M10 11v6M14 11v6"/>
+                            <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                          </svg>
                         </button>
                       </td>
                     </tr>

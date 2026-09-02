@@ -10,12 +10,14 @@ export default function Team() {
   const [workspace, setWorkspace] = useState(null)
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
+  const [myAvatar, setMyAvatar] = useState({ seed: 'felix', color: '#2563eb' })
   const [inviteEmail, setInviteEmail] = useState('')
   const [inviteRole, setInviteRole] = useState('member')
   const [inviting, setInviting] = useState(false)
   const [resending, setResending] = useState(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [copiedInvite, setCopiedInvite] = useState(false)
   const [teamWeekHours, setTeamWeekHours] = useState(null)
 
   // Create workspace
@@ -33,7 +35,19 @@ export default function Team() {
 
   useEffect(() => {
     fetchWorkspace()
+    loadMyAvatar()
   }, [user])
+
+  async function loadMyAvatar() {
+    const { data } = await supabase
+      .from('config')
+      .select('avatar_seed, avatar_color')
+      .eq('user_id', user.id)
+      .maybeSingle()
+    if (data?.avatar_seed || data?.avatar_color) {
+      setMyAvatar({ seed: data.avatar_seed ?? 'felix', color: data.avatar_color ?? '#2563eb' })
+    }
+  }
 
   async function fetchWorkspace() {
     setLoading(true)
@@ -183,9 +197,17 @@ export default function Team() {
     if (fnError) console.error('Edge Function error:', fnError)
 
     setInviting(false)
-    showSuccess(`Invite created for ${inviteEmail}. Ask them to sign up using that email address.`)
+    showSuccess(`Invite sent to ${inviteEmail}!`)
     setInviteEmail('')
     await fetchMembers(workspace.id)
+  }
+
+  function copyInviteMessage(email) {
+    const msg = `Hey! I've invited you to join the "${workspace.name}" workspace on Tally (time tracker).\n\nTo accept:\n1. Sign up at https://www.tallytimetracker.com using this email address: ${email}\n2. Go to the Team page — you'll be added automatically.\n\nLet me know if you have any trouble!`
+    navigator.clipboard.writeText(msg).then(() => {
+      setCopiedInvite(true)
+      setTimeout(() => setCopiedInvite(false), 2000)
+    })
   }
 
   async function resendInvite(member) {
@@ -264,14 +286,25 @@ export default function Team() {
             {members.map(m => (
               <div key={m.id} className="card" style={{ padding: '1rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <div style={{
-                    width: '2.25rem', height: '2.25rem', borderRadius: '50%',
-                    background: 'var(--accent)', color: '#fff',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontWeight: 600, fontSize: '0.875rem', flexShrink: 0,
-                  }}>
-                    {m.invited_email.charAt(0).toUpperCase()}
-                  </div>
+                  {m.invited_email === user.email ? (
+                    <div style={{
+                      width: '2.25rem', height: '2.25rem', borderRadius: '50%',
+                      background: myAvatar.color,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0, overflow: 'hidden',
+                    }}>
+                      <img src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${myAvatar.seed}&scale=80`} width="30" height="30" alt="avatar" style={{ display: 'block' }} />
+                    </div>
+                  ) : (
+                    <div style={{
+                      width: '2.25rem', height: '2.25rem', borderRadius: '50%',
+                      background: 'var(--accent)', color: '#fff',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontWeight: 600, fontSize: '0.875rem', flexShrink: 0,
+                    }}>
+                      {m.invited_email.charAt(0).toUpperCase()}
+                    </div>
+                  )}
                   <div>
                     <div style={{ fontWeight: 500, fontSize: '0.875rem' }}>{m.invited_email}</div>
                     <div style={{ marginTop: '0.25rem' }}>
@@ -505,40 +538,67 @@ export default function Team() {
                   </button>
                 </div>
               </form>
+              <p className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.75rem', lineHeight: 1.5 }}>
+                They'll get an invite email. They need to sign up at tallytimetracker.com using that exact email address, then visit the Team page to join automatically.
+              </p>
             </div>
           )}
 
           {members.length === 0 ? (
-            <div className="empty-state">No members yet. Invite someone above.</div>
+            <div className="empty-state">No members yet. Invite your first teammate above.</div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {members.map(m => (
-                <div key={m.id} className="card" style={{ padding: '1rem' }}>
+              {members.map(m => {
+                const isPending = !m.accepted_at
+                return (
+                <div key={m.id} className={`card${isPending ? ' member-card-pending' : ''}`} style={{ padding: '1rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', overflow: 'hidden' }}>
-                      <div style={{
-                        width: '2.25rem', height: '2.25rem', borderRadius: '50%',
-                        background: 'var(--accent)', color: '#fff',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontWeight: 600, fontSize: '0.875rem', flexShrink: 0,
-                      }}>
-                        {m.invited_email.charAt(0).toUpperCase()}
-                      </div>
+                      {m.invited_email === user.email ? (
+                        <div style={{
+                          width: '2.25rem', height: '2.25rem', borderRadius: '50%',
+                          background: myAvatar.color,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          flexShrink: 0, overflow: 'hidden',
+                        }}>
+                          <img
+                            src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${myAvatar.seed}&scale=80`}
+                            width="30" height="30"
+                            alt="avatar"
+                            style={{ display: 'block' }}
+                          />
+                        </div>
+                      ) : (
+                        <div style={{
+                          width: '2.25rem', height: '2.25rem', borderRadius: '50%',
+                          background: isPending ? 'var(--border, #e5e7eb)' : 'var(--accent)',
+                          color: isPending ? 'var(--text-muted)' : '#fff',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontWeight: 600, fontSize: '0.875rem', flexShrink: 0,
+                        }}>
+                          {m.invited_email.charAt(0).toUpperCase()}
+                        </div>
+                      )}
                       <div style={{ overflow: 'hidden' }}>
                         <div style={{ fontWeight: 500, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {m.invited_email}
                         </div>
-                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem', alignItems: 'center', flexWrap: 'wrap' }}>
                           <span className={m.accepted_at ? 'badge-success' : 'badge-pending'}>
-                            {m.accepted_at ? 'Accepted' : 'Pending'}
+                            {m.accepted_at ? 'Accepted' : 'Invite pending'}
                           </span>
+                          {isPending && isAdmin && (
+                            <button className="btn-link" onClick={() => copyInviteMessage(m.invited_email)}>
+                              {copiedInvite ? 'Copied!' : 'Copy invite message'}
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexShrink: 0 }}>
-                      {isAdmin && !m.accepted_at && m.invited_email !== user.email && (
+                      {isAdmin && isPending && m.invited_email !== user.email && (
                         <button
-                          className="btn btn-secondary btn-sm"
+                          className="btn btn-primary btn-sm"
                           disabled={resending === m.id}
                           onClick={() => resendInvite(m)}
                         >
@@ -558,14 +618,20 @@ export default function Team() {
                         <span style={{ textTransform: 'capitalize', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{m.role}</span>
                       )}
                       {isAdmin && m.invited_email !== user.email && (
-                        <button className="btn btn-danger btn-sm" onClick={() => removeMember(m.id, m.invited_email)}>
-                          {m.accepted_at ? 'Remove' : 'Cancel invite'}
+                        <button className="btn-icon" onClick={() => removeMember(m.id, m.invited_email)} title={isPending ? 'Cancel invite' : 'Remove member'}>
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                            <path d="M10 11v6M14 11v6"/>
+                            <path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                          </svg>
                         </button>
                       )}
                     </div>
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </div>
           )}
 

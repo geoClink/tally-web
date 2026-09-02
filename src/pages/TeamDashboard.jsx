@@ -171,15 +171,23 @@ export default function TeamDashboard() {
 
   const totalHours = memberSessions.reduce((sum, m) => sum + m.hours, 0)
 
+  const MEMBER_COLORS = [
+    { bg: 'rgba(37, 99, 235, 0.75)',  border: 'rgba(37, 99, 235, 1)',  avatar: '#2563eb' },
+    { bg: 'rgba(16, 185, 129, 0.75)', border: 'rgba(16, 185, 129, 1)', avatar: '#10b981' },
+    { bg: 'rgba(245, 158, 11, 0.75)', border: 'rgba(245, 158, 11, 1)', avatar: '#f59e0b' },
+    { bg: 'rgba(139, 92, 246, 0.75)', border: 'rgba(139, 92, 246, 1)', avatar: '#8b5cf6' },
+    { bg: 'rgba(239, 68, 68, 0.75)',  border: 'rgba(239, 68, 68, 1)',  avatar: '#ef4444' },
+  ]
+
   const chartData = {
     labels: memberSessions.map(m => m.email.split('@')[0]),
     datasets: [{
       label: 'Hours',
       data: memberSessions.map(m => parseFloat(m.hours.toFixed(2))),
-      backgroundColor: 'rgba(37, 99, 235, 0.7)',
-      borderColor: 'rgba(37, 99, 235, 1)',
+      backgroundColor: memberSessions.map((_, i) => MEMBER_COLORS[i % MEMBER_COLORS.length].bg),
+      borderColor: memberSessions.map((_, i) => MEMBER_COLORS[i % MEMBER_COLORS.length].border),
       borderWidth: 1,
-      borderRadius: 4,
+      borderRadius: 6,
     }],
   }
 
@@ -253,17 +261,38 @@ export default function TeamDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {memberSessions.map(m => (
-                  <tr key={m.userId}>
-                    <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {m.email}
-                    </td>
-                    <td>{formatHours(m.hours)}</td>
-                    <td className="hide-mobile text-muted">
-                      {totalHours > 0 ? `${Math.round((m.hours / totalHours) * 100)}%` : '—'}
-                    </td>
-                  </tr>
-                ))}
+                {memberSessions.map((m, i) => {
+                  const color = MEMBER_COLORS[i % MEMBER_COLORS.length].avatar
+                  const pct = totalHours > 0 ? Math.round((m.hours / totalHours) * 100) : 0
+                  return (
+                    <tr key={m.userId}>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                          <div style={{
+                            width: '1.75rem', height: '1.75rem', borderRadius: '50%',
+                            background: color, color: '#fff',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontWeight: 600, fontSize: '0.75rem', flexShrink: 0,
+                          }}>
+                            {m.email.charAt(0).toUpperCase()}
+                          </div>
+                          <span style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {m.email}
+                          </span>
+                        </div>
+                      </td>
+                      <td style={{ fontWeight: 500 }}>{formatHours(m.hours)}</td>
+                      <td className="hide-mobile">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <div style={{ height: '6px', width: '60px', borderRadius: '3px', background: 'var(--border, #e5e7eb)', overflow: 'hidden' }}>
+                            <div style={{ height: '100%', width: `${pct}%`, background: color, borderRadius: '3px' }} />
+                          </div>
+                          <span className="text-muted" style={{ fontSize: '0.82rem', minWidth: '2rem' }}>{pct}%</span>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
