@@ -42,6 +42,17 @@ Deno.serve(async (req) => {
       })
     }
 
+    // Disconnect: remove the row so the user can reconnect fresh
+    if (body.action === 'disconnect') {
+      await supabaseAdmin
+        .from('stripe_connect_accounts')
+        .delete()
+        .eq('user_id', user.id)
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
     const { return_url } = body
 
     // Check if user already has a connect account

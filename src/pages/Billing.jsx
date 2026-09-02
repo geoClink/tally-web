@@ -5,6 +5,7 @@ import { useSubscription } from '../context/SubscriptionContext'
 import { supabase } from '../lib/supabase'
 import { Capacitor } from '@capacitor/core'
 import { isAndroid, initPlayBilling, purchaseProduct, restorePurchases, setOnPurchaseSuccess } from '../lib/playBilling'
+import StripeConnectedBanner from '../components/StripeConnectedBanner'
 
 const isNative = Capacitor.isNativePlatform()
 
@@ -37,6 +38,8 @@ export default function Billing() {
   const [purchaseError, setPurchaseError] = useState('')
   const [stripeConnected, setStripeConnected] = useState(false)
   const [connectLoading, setConnectLoading] = useState(false)
+  const [stripeJustConnected, setStripeJustConnected] = useState(false)
+  const [disconnecting, setDisconnecting] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -46,9 +49,8 @@ export default function Billing() {
     }
     async function loadStripeStatus() {
       if (searchParams.get('stripe_connected') === 'true') {
-        // Set optimistically so the UI updates immediately on return from Stripe
         setStripeConnected(true)
-        // Persist using service role (user client lacks INSERT permission)
+        setStripeJustConnected(true)
         const { data: { session } } = await supabase.auth.getSession()
         await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-connect-account`, {
           method: 'POST',
@@ -68,6 +70,23 @@ export default function Billing() {
     }
     loadStripeStatus()
   }, [user])
+
+  async function handleDisconnectStripe() {
+    if (!window.confirm('Disconnect your Stripe account? You can reconnect at any time.')) return
+    setDisconnecting(true)
+    const { data: { session } } = await supabase.auth.getSession()
+    await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-connect-account`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ action: 'disconnect' }),
+    })
+    setStripeConnected(false)
+    setStripeJustConnected(false)
+    setDisconnecting(false)
+  }
 
   async function handleConnectStripe() {
     setConnectLoading(true)
@@ -285,12 +304,29 @@ export default function Billing() {
       {tier === 'business' && !isAndroid && (
         <div className="card" style={{ marginTop: '1.5rem' }}>
           <div className="card-title">Payment collection</div>
-          <p className="text-muted" style={{ fontSize: '0.875rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
-            Connect your Stripe account to let clients pay your invoices directly online.
-          </p>
+          {stripeJustConnected && <StripeConnectedBanner />}
+          {!stripeJustConnected && (
+            <p className="text-muted" style={{ fontSize: '0.875rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+              Connect your Stripe account to let clients pay your invoices directly online.
+            </p>
+          )}
           {stripeConnected ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success)', fontWeight: 500 }}>
-              <span>✓</span> Stripe account connected
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success)', fontWeight: 500 }}>
+                  <span>✓</span> Stripe account connected
+                </div>
+                <button
+                  onClick={handleDisconnectStripe}
+                  disabled={disconnecting}
+                  style={{ background: 'none', border: 'none', fontSize: '0.8rem', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.25rem 0' }}
+                >
+                  {disconnecting ? 'Disconnecting…' : 'Disconnect'}
+                </button>
+              </div>
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                <strong style={{ color: 'var(--text)' }}>How to use it:</strong> Go to <strong style={{ color: 'var(--text)' }}>Invoices</strong>, create an invoice, and click <strong style={{ color: 'var(--text)' }}>Save &amp; Send</strong>. Your client receives a Stripe email with a Pay Now link — payments deposit directly to your connected bank account. Stripe sends automatic reminders for unpaid invoices.
+              </div>
             </div>
           ) : (
             <button

@@ -39,6 +39,7 @@ export default function Help() {
                 <li>Unlimited clients</li>
                 <li>Full session history</li>
                 <li>CSV export from Reports and Sessions</li>
+                <li>Per-client hourly rates</li>
               </ul>
             </div>
             <div>
@@ -46,10 +47,51 @@ export default function Help() {
               <ul style={{ paddingLeft: '1.25rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.3rem' }}>
                 <li>Everything in Pro</li>
                 <li>Team workspaces — invite members and track their hours</li>
-                <li>Invoice generation</li>
+                <li>Invoice generation with tax and memo fields</li>
+                <li>Online payment collection via Stripe (connect your account in Billing)</li>
               </ul>
             </div>
           </div>
+        </div>
+
+        <div className="card">
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Invoices</h2>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
+            Business accounts can generate invoices from the <strong>Invoices</strong> page. Pick a date range and client — Tally pulls your tracked sessions and builds a line-item invoice automatically.
+          </p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
+            You can add a <strong>Tax Rate %</strong> and a <strong>Memo / Notes</strong> field (e.g. payment terms). The preview updates live as you type.
+          </p>
+          <ul style={{ fontSize: '0.875rem', paddingLeft: '1.25rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '0.6rem' }}>
+            <li><strong>Save Draft</strong> — saves the invoice without sending it.</li>
+            <li><strong>Save &amp; Send</strong> — saves and immediately sends to the client's email.</li>
+          </ul>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+            Past invoices appear in the Invoice History section at the bottom of the page.
+          </p>
+        </div>
+
+        <div className="card">
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Collecting payments online</h2>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
+            Business accounts can connect a Stripe account to collect payments directly from clients. Go to <strong>Billing → Payment collection</strong> and click <strong>Connect Stripe account</strong>.
+          </p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
+            Once connected, clicking <strong>Save &amp; Send</strong> on an invoice sends a Stripe-powered email to your client with a <strong>Pay Now</strong> button. They pay by card — the money goes directly to your connected bank account. Stripe automatically sends reminders for unpaid invoices.
+          </p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+            A small platform fee (1%, minimum $0.50) is deducted per invoice to cover Stripe Connect costs. Standard Stripe card processing fees also apply.
+          </p>
+        </div>
+
+        <div className="card">
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Client rates</h2>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
+            Pro and Business accounts can set a default hourly rate per client on the <strong>Client Rates</strong> page. When you generate an invoice, Tally pre-fills the rate for each client automatically.
+          </p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+            You can override the rate for any individual invoice on the invoice form.
+          </p>
         </div>
 
         <div className="card">
@@ -62,6 +104,33 @@ export default function Help() {
           </div>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
             The Track Time page shows workspace client names at the top of the client dropdown as a reminder.
+          </p>
+        </div>
+
+        <div className="card">
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Goals and dashboard</h2>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
+            Set a weekly hour goal in <strong>Settings</strong> to see a progress bar on your dashboard. You can also set per-client goals to track how many hours per week you want to work for each client.
+          </p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+            The dashboard resets progress at the start of each week (Monday).
+          </p>
+        </div>
+
+        <div className="card">
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Daily reminders</h2>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
+            Enable daily reminders in <strong>Settings</strong> to get a notification at a time you choose. Useful if you forget to log time at the end of the day.
+          </p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+            On iOS and Android, reminders are delivered as push notifications. On the web, they require notification permission in your browser.
+          </p>
+        </div>
+
+        <div className="card">
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Exporting data</h2>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+            Pro and Business accounts can export sessions as a CSV file from both the <strong>Reports</strong> and <strong>Sessions</strong> pages. The export includes all sessions matching your current filters — date range, client, etc.
           </p>
         </div>
 
@@ -79,25 +148,12 @@ export default function Help() {
         </div>
 
         <div className="card">
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Exporting data</h2>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-            Pro and Business accounts can export sessions as a CSV file from both the <strong>Reports</strong> and <strong>Sessions</strong> pages. The export includes all sessions matching your current filters — date range, client, etc.
-          </p>
-        </div>
-
-        <div className="card">
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Goals and dashboard</h2>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
-            Set a weekly hour goal in <strong>Settings</strong> to see a progress bar on your dashboard. You can also set per-client goals to track how many hours per week you want to work for each client.
-          </p>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-            The dashboard resets progress at the start of each week (Monday).
-          </p>
-        </div>
-
-        <div className="card">
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Common questions</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.875rem' }}>
+            <div>
+              <p style={{ fontWeight: 500, marginBottom: '0.2rem' }}>How does payment collection work?</p>
+              <p style={{ color: 'var(--text-muted)' }}>Connect your Stripe account in Billing. Then create an invoice and click Save &amp; Send — your client gets an email with a Pay Now link and pays by card. The money goes straight to your bank account minus Stripe's card fee and a 1% platform fee.</p>
+            </div>
             <div>
               <p style={{ fontWeight: 500, marginBottom: '0.2rem' }}>My team hours aren't showing up on the Team Dashboard.</p>
               <p style={{ color: 'var(--text-muted)' }}>Check that the workspace's Client Name exactly matches what your members log time under — including capitalization and spacing. This is the most common cause.</p>
@@ -113,6 +169,10 @@ export default function Help() {
             <div>
               <p style={{ fontWeight: 500, marginBottom: '0.2rem' }}>How do I delete a session?</p>
               <p style={{ color: 'var(--text-muted)' }}>Go to <strong>Sessions</strong> — each session has a delete button on the right.</p>
+            </div>
+            <div>
+              <p style={{ fontWeight: 500, marginBottom: '0.2rem' }}>How do I delete my account?</p>
+              <p style={{ color: 'var(--text-muted)' }}>Go to <strong>Settings → Delete Account</strong>. This permanently removes all your data. If you have an active Business subscription, cancel it first through Stripe or the App Store to avoid future charges.</p>
             </div>
           </div>
         </div>
