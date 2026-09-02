@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
+import { supabase } from '../lib/supabase'
 import { Capacitor } from '@capacitor/core'
 import { isAndroid, initPlayBilling, purchaseProduct, restorePurchases, setOnPurchaseSuccess } from '../lib/playBilling'
 
@@ -34,6 +35,8 @@ export default function Billing() {
   const [upgraded, setUpgraded] = useState(false)
   const [purchasing, setPurchasing] = useState(false)
   const [purchaseError, setPurchaseError] = useState('')
+  const [stripeConnected, setStripeConnected] = useState(false)
+  const [connectLoading, setConnectLoading] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -41,7 +44,43 @@ export default function Billing() {
     if (upgradedTier === 'pro' || upgradedTier === 'business') {
       refetch().then(() => setUpgraded(true))
     }
+    if (searchParams.get('stripe_connected') === 'true') {
+      supabase.from('stripe_connect_accounts')
+        .update({ onboarded: true })
+        .eq('user_id', user.id)
+        .then(() => setStripeConnected(true))
+    }
   }, [user])
+
+  useEffect(() => {
+    if (!user) return
+    supabase.from('stripe_connect_accounts')
+      .select('onboarded')
+      .eq('user_id', user.id)
+      .maybeSingle()
+      .then(({ data }) => setStripeConnected(!!data?.onboarded))
+  }, [user])
+
+  async function handleConnectStripe() {
+    setConnectLoading(true)
+    const returnUrl = `${window.location.origin}/billing?stripe_connected=true`
+    const { data: { session } } = await supabase.auth.getSession()
+    const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-connect-account`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ return_url: returnUrl }),
+    })
+    const data = await res.json()
+    setConnectLoading(false)
+    if (data.url) {
+      window.location.href = data.url
+    } else {
+      alert(data.error ?? 'Failed to connect Stripe account')
+    }
+  }
 
   useEffect(() => {
     if (!isAndroid) return
@@ -235,6 +274,27 @@ export default function Billing() {
         </>
       )}
 
+      {tier === 'business' && !isAndroid && (
+        <div className="card" style={{ marginTop: '1.5rem' }}>
+          <div className="card-title">Payment collection</div>
+          <p className="text-muted" style={{ fontSize: '0.875rem', marginTop: '0.5rem', marginBottom: '1rem' }}>
+            Connect your Stripe account to let clients pay your invoices directly online.
+          </p>
+          {stripeConnected ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success)', fontWeight: 500 }}>
+              <span>✓</span> Stripe account connected
+            </div>
+          ) : (
+            <button
+              className="btn btn-primary"
+              onClick={handleConnectStripe}
+              disabled={connectLoading}
+            >
+              {connectLoading ? 'Redirecting to Stripe…' : 'Connect Stripe account'}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   )
 }
