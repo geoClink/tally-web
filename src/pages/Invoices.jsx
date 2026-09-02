@@ -69,6 +69,8 @@ export default function Invoices() {
   const [invoiceNumber, setInvoiceNumber] = useState('')
   const [clientEmail, setClientEmail] = useState('')
   const [weekStart, setWeekStart] = useState(1)
+  const [taxRate, setTaxRate] = useState(0)
+  const [memo, setMemo] = useState('')
   const [loading, setLoading] = useState(false)
   const [downloading, setDownloading] = useState(false)
 
@@ -80,6 +82,7 @@ export default function Invoices() {
   const [sendingStripe, setSendingStripe] = useState(null)
   const [viewingInvoice, setViewingInvoice] = useState(null)
   const [stripeConnected, setStripeConnected] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
 
   useEffect(() => {
     if (isBusiness) {
@@ -155,6 +158,9 @@ export default function Invoices() {
   async function saveInvoice() {
     setSaving(true)
     const totalHours = sessions.reduce((sum, s) => sum + (s.hours ?? 0), 0)
+    const subtotal = totalHours * rate
+    const taxAmount = subtotal * (taxRate / 100)
+    const totalAmount = subtotal + taxAmount
     const { error } = await supabase.from('invoices').insert({
       user_id: user.id,
       invoice_number: invoiceNumber,
@@ -165,7 +171,10 @@ export default function Invoices() {
       end_date: endDate,
       total_hours: totalHours,
       hourly_rate: rate,
-      total_amount: totalHours * rate,
+      total_amount: totalAmount,
+      tax_rate: taxRate,
+      tax_amount: taxAmount,
+      memo: memo.trim() || null,
       status: 'draft',
       line_items: sessions.map(s => ({
         date: s.date,
@@ -179,7 +188,12 @@ export default function Invoices() {
     setGenerated(false)
     setSessions([])
     setClientEmail('')
+    setMemo('')
+    setTaxRate(0)
     await fetchSavedInvoices()
+    setSaveSuccess(true)
+    setTimeout(() => setSaveSuccess(false), 3000)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   async function sendInvoice(inv) {
@@ -207,6 +221,55 @@ export default function Invoices() {
     setSending(null)
   }
 
+  async function saveAndSend() {
+    if (!clientEmail.trim()) {
+      alert('Add a client email before sending.')
+      return
+    }
+    setSaving(true)
+    const totalHours = sessions.reduce((sum, s) => sum + (s.hours ?? 0), 0)
+    const subtotal = totalHours * rate
+    const taxAmount = subtotal * (taxRate / 100)
+    const totalAmount = subtotal + taxAmount
+    const invData = {
+      user_id: user.id,
+      invoice_number: invoiceNumber,
+      your_name: yourName || null,
+      client: selectedClient,
+      client_email: clientEmail.trim() || null,
+      start_date: startDate,
+      end_date: endDate,
+      total_hours: totalHours,
+      hourly_rate: rate,
+      total_amount: totalAmount,
+      tax_rate: taxRate,
+      tax_amount: taxAmount,
+      memo: memo.trim() || null,
+      status: 'draft',
+      line_items: sessions.map(s => ({
+        date: s.date,
+        hours: s.hours,
+        task_note: s.task_note,
+        amount: (s.hours ?? 0) * rate,
+      })),
+    }
+    const { data: saved, error } = await supabase.from('invoices').insert(invData).select().single()
+    setSaving(false)
+    if (error || !saved) { console.error(error); return }
+    setGenerated(false)
+    setSessions([])
+    setClientEmail('')
+    setMemo('')
+    setTaxRate(0)
+    await fetchSavedInvoices()
+    // Send immediately
+    if (stripeConnected) {
+      await sendStripeInvoice(saved)
+    } else {
+      await sendInvoice(saved)
+    }
+  }
+
   async function sendStripeInvoice(inv) {
     if (!inv.client_email) {
       alert('No client email on this invoice. Edit it to add one.')
@@ -229,6 +292,7 @@ export default function Invoices() {
         clientEmail: inv.client_email,
         clientName: inv.client,
         lineItems,
+        memo: inv.memo || null,
       }),
     })
     const data = await res.json()
@@ -315,7 +379,11 @@ export default function Invoices() {
   const previewStart     = viewingInvoice ? viewingInvoice.start_date    : startDate
   const previewEnd       = viewingInvoice ? viewingInvoice.end_date      : endDate
   const previewTotal     = previewItems.reduce((sum, s) => sum + (s.hours ?? 0), 0)
-  const previewAmount    = viewingInvoice ? viewingInvoice.total_amount  : previewTotal * previewRate
+  const previewTaxRate   = viewingInvoice ? (viewingInvoice.tax_rate ?? 0) : taxRate
+  const previewMemo      = viewingInvoice ? (viewingInvoice.memo ?? '') : memo
+  const previewSubtotal  = previewTotal * previewRate
+  const previewTaxAmount = previewSubtotal * (previewTaxRate / 100)
+  const previewAmount    = viewingInvoice ? viewingInvoice.total_amount : previewSubtotal + previewTaxAmount
 
   const showPreview = generated || viewingInvoice
 
@@ -336,6 +404,12 @@ export default function Invoices() {
         <p className="page-subtitle">Generate invoices from tracked sessions</p>
       </div>
 
+      {saveSuccess && (
+        <div className="alert alert-success" style={{ marginBottom: '1rem' }}>
+          Invoice saved! Find it in Invoice History above.
+        </div>
+      )}
+
       {outstandingTotal > 0 && (
         <div className="card" style={{ marginBottom: '1.5rem', borderColor: 'var(--accent)' }}>
           <div className="card-title">Outstanding Balance</div>
@@ -349,7 +423,14 @@ export default function Invoices() {
       {savedInvoices.length > 0 && (
         <div style={{ marginBottom: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-            <h2 className="section-title" style={{ margin: 0 }}>Invoice History</h2>
+            <div>
+              <h2 className="section-title" style={{ margin: 0 }}>Invoice History</h2>
+              {stripeConnected && (
+                <div className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.2rem' }}>
+                  Stripe automatically sends payment reminders for overdue invoices.
+                </div>
+              )}
+            </div>
             <div className="filter-bar" style={{ margin: 0 }}>
               {STATUS_FILTERS.map(f => (
                 <button
@@ -380,24 +461,18 @@ export default function Invoices() {
                     </div>
                     <div className="invoice-actions" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', flexShrink: 0 }}>
                       {statusBadge(inv.status)}
-                      {inv.status !== 'paid' && stripeConnected && (
+                      {inv.status !== 'paid' && (
                         <button
                           className="btn btn-primary btn-sm"
-                          onClick={() => sendStripeInvoice(inv)}
-                          disabled={sendingStripe === inv.id}
-                          title={inv.client_email ? `Send Stripe invoice to ${inv.client_email}` : 'No client email'}
+                          onClick={() => stripeConnected ? sendStripeInvoice(inv) : sendInvoice(inv)}
+                          disabled={sendingStripe === inv.id || sending === inv.id}
+                          title={inv.client_email ? `Send to ${inv.client_email}` : 'No client email'}
                         >
-                          {sendingStripe === inv.id ? 'Sending…' : 'Send via Stripe'}
-                        </button>
-                      )}
-                      {inv.status !== 'paid' && !stripeConnected && (
-                        <button
-                          className="btn btn-primary btn-sm"
-                          onClick={() => sendInvoice(inv)}
-                          disabled={sending === inv.id}
-                          title={inv.client_email ? `Send to ${inv.client_email}` : 'No client email — add one when generating'}
-                        >
-                          {sending === inv.id ? 'Sending…' : inv.client_email ? 'Send Email' : 'Send Email ⚠'}
+                          {(sendingStripe === inv.id || sending === inv.id)
+                            ? 'Sending…'
+                            : stripeConnected
+                              ? 'Send Invoice'
+                              : inv.client_email ? 'Send Invoice' : 'Send Invoice ⚠'}
                         </button>
                       )}
                       {inv.stripe_invoice_url && (
@@ -500,6 +575,28 @@ export default function Invoices() {
                 placeholder="client@example.com"
               />
             </div>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label>Tax Rate % (optional)</label>
+              <input
+                type="number"
+                value={taxRate || ''}
+                onChange={e => setTaxRate(parseFloat(e.target.value) || 0)}
+                placeholder="0"
+                min="0"
+                max="100"
+                step="0.1"
+              />
+            </div>
+            <div className="form-group" style={{ marginBottom: 0, gridColumn: '1 / -1' }}>
+              <label>Memo / Notes (optional)</label>
+              <input
+                type="text"
+                value={memo}
+                onChange={e => setMemo(e.target.value)}
+                placeholder="Payment due within 14 days. Thank you!"
+                maxLength={300}
+              />
+            </div>
           </div>
           <div className="invoice-form-actions" style={{ marginTop: '1rem' }}>
             <button type="submit" className="btn btn-primary" disabled={loading || !selectedClient}>
@@ -588,17 +685,35 @@ export default function Invoices() {
                 <div className="text-muted" style={{ fontSize: '0.85rem' }}>
                   {formatHours(previewTotal)} @ {formatCurrency(previewRate)}/hr
                 </div>
+                {previewTaxRate > 0 && (
+                  <>
+                    <div className="text-muted" style={{ fontSize: '0.85rem' }}>
+                      Subtotal: {formatCurrency(previewSubtotal)}
+                    </div>
+                    <div className="text-muted" style={{ fontSize: '0.85rem' }}>
+                      Tax ({previewTaxRate}%): {formatCurrency(previewTaxAmount)}
+                    </div>
+                  </>
+                )}
                 <div className="invoice-total">{formatCurrency(previewAmount)}</div>
               </div>
+              {previewMemo && (
+                <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'var(--bg-secondary)', borderRadius: 'var(--radius)', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                  {previewMemo}
+                </div>
+              )}
             </>
           )}
         </div>
       )}
 
       {generated && sessions.length > 0 && (
-        <div className="invoice-form-actions no-print" style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem' }}>
-          <button className="btn btn-primary" onClick={saveInvoice} disabled={saving}>
-            {saving ? 'Saving…' : 'Save Invoice'}
+        <div className="invoice-form-actions no-print" style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          <button className="btn btn-primary" onClick={saveAndSend} disabled={saving}>
+            {saving ? 'Saving…' : 'Save & Send'}
+          </button>
+          <button className="btn btn-secondary" onClick={saveInvoice} disabled={saving}>
+            {saving ? 'Saving…' : 'Save Draft'}
           </button>
           <button className="btn btn-secondary" onClick={downloadPDF} disabled={downloading}>
             {downloading ? 'Generating PDF…' : 'Download PDF'}

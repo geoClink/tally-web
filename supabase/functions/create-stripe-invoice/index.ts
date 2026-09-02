@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
     }
 
     const stripeAccountId = connectAccount.stripe_account_id
-    const { clientEmail, clientName, lineItems } = await req.json()
+    const { clientEmail, clientName, lineItems, memo } = await req.json()
 
     if (!clientEmail || !clientName || !lineItems?.length) {
       throw new Error('clientEmail, clientName, and lineItems are required')
@@ -79,7 +79,7 @@ Deno.serve(async (req) => {
     // Calculate total in cents to determine the platform fee (0.5%)
     const totalCents = lineItems.reduce((sum: number, item: { hours: number; rate: number }) =>
       sum + Math.round(item.hours * item.rate * 100), 0)
-    const applicationFeeCents = Math.max(50, Math.round(totalCents * 0.005)) // 0.5%, minimum $0.50
+    const applicationFeeCents = Math.max(50, Math.round(totalCents * 0.01)) // 1%, minimum $0.50
 
     // Create the invoice
     const invoiceRes = await fetch('https://api.stripe.com/v1/invoices', {
@@ -94,6 +94,7 @@ Deno.serve(async (req) => {
         collection_method: 'send_invoice',
         days_until_due: '14',
         'application_fee_amount': String(applicationFeeCents),
+        ...(memo ? { footer: memo } : {}),
       }),
     })
     const invoice = await invoiceRes.json()
