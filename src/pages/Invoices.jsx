@@ -77,13 +77,17 @@ export default function Invoices() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [saving, setSaving] = useState(false)
   const [sending, setSending] = useState(null)
+  const [sendingStripe, setSendingStripe] = useState(null)
   const [viewingInvoice, setViewingInvoice] = useState(null)
+  const [stripeConnected, setStripeConnected] = useState(false)
 
   useEffect(() => {
     if (isBusiness) {
       fetchClients()
       fetchSavedInvoices()
       fetchConfig()
+      supabase.from('stripe_connect_accounts').select('onboarded').eq('user_id', user.id).maybeSingle()
+        .then(({ data }) => setStripeConnected(!!data?.onboarded))
     }
   }, [user, isBusiness])
 
@@ -201,6 +205,47 @@ export default function Invoices() {
     if (error) { setSending(null); alert('Failed to send: ' + error.message); return }
     await updateStatus(inv.id, 'sent')
     setSending(null)
+  }
+
+  async function sendStripeInvoice(inv) {
+    if (!inv.client_email) {
+      alert('No client email on this invoice. Edit it to add one.')
+      return
+    }
+    setSendingStripe(inv.id)
+    const { data: { session } } = await supabase.auth.getSession()
+    const lineItems = (inv.line_items ?? []).map(item => ({
+      description: item.task_note || item.date || 'Work',
+      hours: item.hours,
+      rate: inv.hourly_rate,
+    }))
+    const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-stripe-invoice`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        clientEmail: inv.client_email,
+        clientName: inv.client,
+        lineItems,
+      }),
+    })
+    const data = await res.json()
+    setSendingStripe(null)
+    if (!res.ok || data.error) {
+      alert(data.error ?? 'Failed to send Stripe invoice')
+      return
+    }
+    await supabase.from('invoices').update({
+      stripe_invoice_id: data.invoiceId,
+      stripe_invoice_url: data.invoiceUrl,
+      status: 'sent',
+    }).eq('id', inv.id)
+    setSavedInvoices(prev => prev.map(i => i.id === inv.id
+      ? { ...i, stripe_invoice_id: data.invoiceId, stripe_invoice_url: data.invoiceUrl, status: 'sent' }
+      : i
+    ))
   }
 
   async function updateStatus(id, status) {
@@ -335,7 +380,17 @@ export default function Invoices() {
                     </div>
                     <div className="invoice-actions" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', flexShrink: 0 }}>
                       {statusBadge(inv.status)}
-                      {inv.status !== 'paid' && (
+                      {inv.status !== 'paid' && stripeConnected && (
+                        <button
+                          className="btn btn-primary btn-sm"
+                          onClick={() => sendStripeInvoice(inv)}
+                          disabled={sendingStripe === inv.id}
+                          title={inv.client_email ? `Send Stripe invoice to ${inv.client_email}` : 'No client email'}
+                        >
+                          {sendingStripe === inv.id ? 'Sending…' : 'Send via Stripe'}
+                        </button>
+                      )}
+                      {inv.status !== 'paid' && !stripeConnected && (
                         <button
                           className="btn btn-primary btn-sm"
                           onClick={() => sendInvoice(inv)}
@@ -344,6 +399,16 @@ export default function Invoices() {
                         >
                           {sending === inv.id ? 'Sending…' : inv.client_email ? 'Send Email' : 'Send Email ⚠'}
                         </button>
+                      )}
+                      {inv.stripe_invoice_url && (
+                        <a
+                          href={inv.stripe_invoice_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-secondary btn-sm"
+                        >
+                          View Pay Link
+                        </a>
                       )}
                       {inv.status === 'draft' && (
                         <button className="btn btn-secondary btn-sm" onClick={() => updateStatus(inv.id, 'sent')}>Mark Sent</button>

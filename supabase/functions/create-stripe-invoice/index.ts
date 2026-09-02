@@ -76,6 +76,11 @@ Deno.serve(async (req) => {
       customerId = customer.id
     }
 
+    // Calculate total in cents to determine the platform fee (0.5%)
+    const totalCents = lineItems.reduce((sum: number, item: { hours: number; rate: number }) =>
+      sum + Math.round(item.hours * item.rate * 100), 0)
+    const applicationFeeCents = Math.max(50, Math.round(totalCents * 0.005)) // 0.5%, minimum $0.50
+
     // Create the invoice
     const invoiceRes = await fetch('https://api.stripe.com/v1/invoices', {
       method: 'POST',
@@ -88,7 +93,7 @@ Deno.serve(async (req) => {
         customer: customerId,
         collection_method: 'send_invoice',
         days_until_due: '14',
-        'application_fee_amount': '0', // set your fee here in cents, e.g. '50' = $0.50
+        'application_fee_amount': String(applicationFeeCents),
       }),
     })
     const invoice = await invoiceRes.json()
