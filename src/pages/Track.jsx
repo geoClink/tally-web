@@ -482,30 +482,71 @@ export default function Track() {
             </p>
           )}
 
-          <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+          <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
             <button
-              className={`btn ${listening ? 'btn-danger' : 'btn-secondary'}`}
               onClick={toggleVoice}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}
-              title="Say: start, pause, resume, save, stop, discard"
+              title="Voice control"
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: '50%',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: listening ? '#dc2626' : 'var(--bg-secondary)',
+                color: listening ? '#fff' : 'var(--text-muted)',
+                transition: 'background 0.2s, color 0.2s',
+                animation: listening ? 'micPulse 1.4s ease-out infinite' : 'none',
+                flexShrink: 0,
+              }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
                 <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
                 <line x1="12" y1="19" x2="12" y2="23"/>
                 <line x1="8" y1="23" x2="16" y2="23"/>
               </svg>
-              {listening ? 'Stop Listening' : 'Voice Control'}
             </button>
-            {voiceStatus && (
-              <p className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>
-                {voiceStatus}
-              </p>
-            )}
-            {!listening && (
-              <p className="text-muted" style={{ fontSize: '0.75rem', marginTop: '0.4rem' }}>
-                Say: "start", "pause", "resume", "save", "stop", or "discard"
-              </p>
+
+            {listening ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', height: 20 }}>
+                  {[0, 0.15, 0.3, 0.15, 0].map((delay, i) => (
+                    <span key={i} style={{
+                      display: 'inline-block',
+                      width: 3,
+                      height: '100%',
+                      background: '#dc2626',
+                      borderRadius: 2,
+                      animation: `voiceDot 1s ${delay}s ease-in-out infinite`,
+                      transformOrigin: 'bottom',
+                    }} />
+                  ))}
+                </div>
+                {voiceStatus !== 'Listening…' && voiceStatus && (
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                    {voiceStatus}
+                  </span>
+                )}
+                <span style={{ fontSize: '0.75rem', color: '#dc2626', fontWeight: 500 }}>Listening</span>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                {['start', 'pause', 'resume', 'stop', 'save', 'discard'].map(cmd => (
+                  <span key={cmd} style={{
+                    fontSize: '0.7rem',
+                    padding: '0.2rem 0.5rem',
+                    borderRadius: 99,
+                    background: 'var(--bg-secondary)',
+                    color: 'var(--text-muted)',
+                    fontFamily: 'monospace',
+                  }}>
+                    {cmd}
+                  </span>
+                ))}
+              </div>
             )}
           </div>
         </div>

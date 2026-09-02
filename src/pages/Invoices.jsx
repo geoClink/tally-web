@@ -450,56 +450,72 @@ export default function Invoices() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               {filteredInvoices.map(inv => (
-                <div key={inv.id} className="card" style={{ padding: '1rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.5rem' }}>
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                        {inv.invoice_number} · {inv.client}
-                      </div>
-                      <div className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>
-                        {inv.start_date} — {inv.end_date} · {formatHours(inv.total_hours)} · {formatCurrency(inv.total_amount)}
-                      </div>
+                <div key={inv.id} className="card" style={{ padding: '1rem 1.1rem' }}>
+                  {/* Top row: number + client / status badge */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.75rem', marginBottom: '0.35rem' }}>
+                    <div style={{ fontWeight: 600, fontSize: '0.9rem', lineHeight: 1.3 }}>
+                      <span style={{ color: 'var(--text-muted)', fontWeight: 400, fontSize: '0.78rem' }}>{inv.invoice_number}</span>
+                      <span style={{ color: 'var(--text-muted)', margin: '0 0.3rem' }}>·</span>
+                      {inv.client}
                     </div>
-                    <div className="invoice-actions" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap', flexShrink: 0 }}>
-                      {statusBadge(inv.status)}
-                      {inv.status !== 'paid' && (
-                        <button
-                          className="btn btn-primary btn-sm"
-                          onClick={() => stripeConnected ? sendStripeInvoice(inv) : sendInvoice(inv)}
-                          disabled={sendingStripe === inv.id || sending === inv.id}
-                          title={inv.client_email ? `Send to ${inv.client_email}` : 'No client email'}
-                        >
-                          {(sendingStripe === inv.id || sending === inv.id)
-                            ? 'Sending…'
-                            : stripeConnected
-                              ? 'Send Invoice'
-                              : inv.client_email ? 'Send Invoice' : 'Send Invoice ⚠'}
-                        </button>
-                      )}
-                      {inv.stripe_invoice_url && (
-                        <a
-                          href={inv.stripe_invoice_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn btn-secondary btn-sm"
-                        >
-                          View Pay Link
-                        </a>
-                      )}
-                      {inv.status === 'draft' && (
-                        <button className="btn btn-secondary btn-sm" onClick={() => updateStatus(inv.id, 'sent')}>Mark Sent</button>
-                      )}
-                      {inv.status === 'sent' && (
-                        <button className="btn btn-secondary btn-sm" onClick={() => updateStatus(inv.id, 'paid')}>Mark Paid</button>
-                      )}
+                    {statusBadge(inv.status)}
+                  </div>
+
+                  {/* Amount + meta */}
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.75rem', marginBottom: '0.9rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '1.4rem', fontWeight: 700, letterSpacing: '-0.5px' }}>
+                      {formatCurrency(inv.total_amount)}
+                    </span>
+                    <span className="text-muted" style={{ fontSize: '0.78rem' }}>
+                      {inv.start_date} — {inv.end_date} · {formatHours(inv.total_hours)}
+                    </span>
+                  </div>
+
+                  {/* Action row */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', borderTop: '1px solid var(--border)', paddingTop: '0.75rem' }}>
+                    {inv.status !== 'paid' && (
                       <button
-                        className="btn btn-secondary btn-sm"
-                        onClick={() => { setViewingInvoice(inv); setGenerated(false) }}
+                        className="btn btn-primary btn-sm"
+                        onClick={() => stripeConnected ? sendStripeInvoice(inv) : sendInvoice(inv)}
+                        disabled={sendingStripe === inv.id || sending === inv.id}
+                        title={inv.client_email ? `Send to ${inv.client_email}` : 'No client email — add one to send'}
                       >
-                        View
+                        {(sendingStripe === inv.id || sending === inv.id) ? 'Sending…' : 'Send Invoice'}
                       </button>
-                      <button className="btn btn-danger btn-sm" onClick={() => deleteInvoice(inv.id)}>Delete</button>
-                    </div>
+                    )}
+                    {inv.stripe_invoice_url && (
+                      <a href={inv.stripe_invoice_url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-sm">
+                        Pay Link
+                      </a>
+                    )}
+                    {inv.status === 'draft' && (
+                      <button className="btn btn-secondary btn-sm" onClick={() => updateStatus(inv.id, 'sent')}>Mark Sent</button>
+                    )}
+                    {inv.status === 'sent' && (
+                      <button className="btn btn-secondary btn-sm" onClick={() => updateStatus(inv.id, 'paid')}>Mark Paid</button>
+                    )}
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => { setViewingInvoice(inv); setGenerated(false) }}
+                    >
+                      View
+                    </button>
+
+                    {/* Trash icon — pushed to far right */}
+                    <button
+                      onClick={() => deleteInvoice(inv.id)}
+                      title="Delete invoice"
+                      style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '0.25rem', borderRadius: '4px', display: 'flex', alignItems: 'center' }}
+                      onMouseEnter={e => e.currentTarget.style.color = 'var(--danger)'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6l-1 14H6L5 6"/>
+                        <path d="M10 11v6M14 11v6"/>
+                        <path d="M9 6V4h6v2"/>
+                      </svg>
+                    </button>
                   </div>
                 </div>
               ))}
