@@ -286,6 +286,7 @@ export default function Track() {
       date: startTime.toISOString().split('T')[0],
       task_note: timerNote.trim() || null,
       is_manual: false,
+      platform: 'web',
     })
     setSaving(false)
 
@@ -342,6 +343,7 @@ export default function Track() {
       date: manualDate,
       task_note: manualNote.trim() || null,
       is_manual: true,
+      platform: 'web',
     })
     setSaving(false)
 
