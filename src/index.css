@@ -1077,7 +1077,8 @@ select:focus {
 
 @media (prefers-color-scheme: dark) {
   .tier-business {
-    background: rgba(124, 58, 237, 0.15);
+    background: rgba(124, 58, 237, 0.18);
+    color: #c4b5fd;
   }
 }
 
@@ -2165,6 +2166,9 @@ select:focus {
 @media (prefers-reduced-motion: reduce) {
   [data-bg="dynamic"] body::before { animation: none; }
 }
+@media (max-width: 720px) {
+  [data-bg="dynamic"] body::before { display: none; }
+}
 
 /* History gate — free tier upsell below sessions table */
 .history-gate {
@@ -2221,7 +2225,7 @@ select:focus {
 }
 [data-theme="dark"] .alert-success { background: rgba(22, 163, 74, 0.1); }
 [data-theme="dark"] .alert-warning { background: rgba(217, 119, 6, 0.1); }
-[data-theme="dark"] .tier-business { background: rgba(124, 58, 237, 0.15); }
+[data-theme="dark"] .tier-business { background: rgba(124, 58, 237, 0.18); color: #c4b5fd; }
 [data-theme="dark"] .badge-success  { background: rgba(22, 163, 74, 0.12); }
 
 @media (prefers-color-scheme: dark) {

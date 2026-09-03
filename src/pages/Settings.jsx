@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createAvatar } from '@dicebear/core'
-import { bottts } from '@dicebear/collection'
+import { funEmoji } from '@dicebear/collection'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useAvatar } from '../context/AvatarContext'
@@ -10,7 +10,7 @@ import BugReportModal from '../components/BugReportModal'
 
 function MonsterOption({ seed, color, selected, onSelect }) {
   const uri = useMemo(() => {
-    const avatar = createAvatar(bottts, { seed, size: 96 })
+    const avatar = createAvatar(funEmoji, { seed, size: 96 })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }, [seed])
 
@@ -19,7 +19,7 @@ function MonsterOption({ seed, color, selected, onSelect }) {
       type="button"
       onClick={() => onSelect(seed)}
       style={{
-        width: '48px', height: '48px', borderRadius: '50%',
+        width: '100%', aspectRatio: '1', borderRadius: '50%',
         background: color,
         border: 'none',
         outline: selected ? `3px solid ${color}` : '2px solid transparent',
@@ -40,6 +40,7 @@ export default function Settings() {
   const { user, signOut } = useAuth()
   const { refresh: refreshAvatar } = useAvatar()
   const navigate = useNavigate()
+  const isDemo = user.email === import.meta.env.VITE_DEMO_EMAIL
   const [weeklyGoal, setWeeklyGoal] = useState('')
   const [weekStart, setWeekStart] = useState(1)
   const [clientGoals, setClientGoals] = useState([]) // [{ client, weekly_hours }]
@@ -55,7 +56,7 @@ export default function Settings() {
   const [avatarColor, setAvatarColor] = useState('#2563eb')
   const [bugModalOpen, setBugModalOpen] = useState(false)
   const [theme, setTheme] = useState(() => localStorage.getItem('tally_theme') ?? 'system')
-  const [bgEffect, setBgEffect] = useState(() => localStorage.getItem('tally_bg') === 'dynamic')
+  const [bgEffect, setBgEffect] = useState(() => localStorage.getItem('tally_bg') !== 'off')
   const [saved, setSaved] = useState(false)
   const [savingAvatar, setSavingAvatar] = useState(false)
   const [savedAvatar, setSavedAvatar] = useState(false)
@@ -70,7 +71,7 @@ export default function Settings() {
   ]
 
   function makeUri(seed) {
-    const avatar = createAvatar(bottts, { seed, size: 128 })
+    const avatar = createAvatar(funEmoji, { seed, size: 128 })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }
 
@@ -109,6 +110,7 @@ export default function Settings() {
   async function saveSettings(e) {
     e.preventDefault()
     setError('')
+    if (isDemo) { setError('Settings changes are disabled in demo mode.'); return }
 
     const upsertData = {
       user_id: user.id,
@@ -132,6 +134,7 @@ export default function Settings() {
   }
 
   async function saveAvatar() {
+    if (isDemo) { setError('Settings changes are disabled in demo mode.'); return }
     setSavingAvatar(true)
     const { error: err } = await supabase
       .from('config')
@@ -163,10 +166,10 @@ export default function Settings() {
   function applyBg(enabled) {
     setBgEffect(enabled)
     if (enabled) {
-      localStorage.setItem('tally_bg', 'dynamic')
+      localStorage.removeItem('tally_bg')
       document.documentElement.setAttribute('data-bg', 'dynamic')
     } else {
-      localStorage.removeItem('tally_bg')
+      localStorage.setItem('tally_bg', 'off')
       document.documentElement.removeAttribute('data-bg')
     }
   }

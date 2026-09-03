@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { createAvatar } from '@dicebear/core'
-import { bottts } from '@dicebear/collection'
+import { funEmoji } from '@dicebear/collection'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
@@ -15,7 +15,7 @@ export default function Team() {
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   function makeAvatarUri(seed) {
-    const avatar = createAvatar(bottts, { seed, size: 64 })
+    const avatar = createAvatar(funEmoji, { seed, size: 64 })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }
   const [inviteEmail, setInviteEmail] = useState('')

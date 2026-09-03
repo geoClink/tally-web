@@ -405,6 +405,18 @@ export default function Reports() {
                   </div>
                 </div>
               )}
+
+              <div className="card">
+                <div className="card-title">Top Client</div>
+                <div className="card-value" style={{ fontSize: '1.05rem', lineHeight: 1.3 }}>{clients[0]}</div>
+                <div className="card-subtitle">{formatHours(byClient[clients[0]])} logged</div>
+              </div>
+
+              <div className="card">
+                <div className="card-title">Clients</div>
+                <div className="card-value">{clients.length}</div>
+                <div className="card-subtitle">active this period</div>
+              </div>
             </div>
           )}
 
@@ -420,6 +432,16 @@ export default function Reports() {
                   <div className="card-value">{formatCurrency(earnings)}</div>
                 </div>
               )}
+              <div className="card">
+                <div className="card-title">Top Client</div>
+                <div className="card-value" style={{ fontSize: '1.05rem', lineHeight: 1.3 }}>{clients[0]}</div>
+                <div className="card-subtitle">{formatHours(byClient[clients[0]])} logged</div>
+              </div>
+              <div className="card">
+                <div className="card-title">Clients</div>
+                <div className="card-value">{clients.length}</div>
+                <div className="card-subtitle">tracked all time</div>
+              </div>
             </div>
           )}
 

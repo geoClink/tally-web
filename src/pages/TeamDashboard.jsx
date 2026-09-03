@@ -241,6 +241,24 @@ export default function TeamDashboard() {
           <div className="card-value">{memberSessions.filter(m => m.hours > 0).length}</div>
           <div className="card-subtitle">of {memberSessions.length} total</div>
         </div>
+        <div className="card">
+          <div className="card-title">Avg / Member</div>
+          <div className="card-value">
+            {memberSessions.filter(m => m.hours > 0).length > 0
+              ? formatHours(totalHours / memberSessions.filter(m => m.hours > 0).length)
+              : '—'}
+          </div>
+          <div className="card-subtitle">per active member</div>
+        </div>
+        <div className="card">
+          <div className="card-title">Top Contributor</div>
+          <div className="card-value" style={{ fontSize: '1.1rem' }}>
+            {memberSessions[0]?.hours > 0 ? memberSessions[0].email.split('@')[0] : '—'}
+          </div>
+          <div className="card-subtitle">
+            {memberSessions[0]?.hours > 0 ? formatHours(memberSessions[0].hours) : 'no sessions yet'}
+          </div>
+        </div>
       </div>
 
       {memberSessions.length === 0 ? (

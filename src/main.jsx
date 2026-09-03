@@ -7,7 +7,7 @@ import App from './App.jsx'
 ;(function () {
   const t = localStorage.getItem('tally_theme')
   if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t)
-  if (localStorage.getItem('tally_bg') === 'dynamic') document.documentElement.setAttribute('data-bg', 'dynamic')
+  if (localStorage.getItem('tally_bg') !== 'off') document.documentElement.setAttribute('data-bg', 'dynamic')
 })()
 
 // Register service worker for PWA install prompt on Android

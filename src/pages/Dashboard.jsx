@@ -11,6 +11,7 @@ import EmailCaptureCard from '../components/EmailCaptureCard'
 export default function Dashboard() {
   const { user } = useAuth()
   const { isPro } = useSubscription()
+  const isDemo = user.email === import.meta.env.VITE_DEMO_EMAIL
   const { pendingInvite, dismiss } = usePendingInvite()
   const [todayHours, setTodayHours] = useState(0)
   const [weekHours, setWeekHours] = useState(0)
@@ -69,7 +70,7 @@ export default function Dashboard() {
         } else if (config?.weekly_goal) {
           setWeekGoal(config.weekly_goal)
         }
-        if (!config?.contact_email) setShowEmailCapture(true)
+        if (!config?.contact_email && !isDemo) setShowEmailCapture(true)
 
         const today = todayString()
         const weekStartDate = weekStartString(ws)
