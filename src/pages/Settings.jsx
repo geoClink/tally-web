@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createAvatar } from '@dicebear/core'
-import { funEmoji } from '@dicebear/collection'
+import { micah } from '@dicebear/collection'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useAvatar } from '../context/AvatarContext'
@@ -10,7 +10,7 @@ import BugReportModal from '../components/BugReportModal'
 
 function MonsterOption({ seed, color, selected, onSelect }) {
   const uri = useMemo(() => {
-    const avatar = createAvatar(funEmoji, { seed, size: 96 })
+    const avatar = createAvatar(micah, { seed, size: 96 })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }, [seed])
 
@@ -71,7 +71,7 @@ export default function Settings() {
   ]
 
   function makeUri(seed) {
-    const avatar = createAvatar(funEmoji, { seed, size: 128 })
+    const avatar = createAvatar(micah, { seed, size: 128 })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }
 
@@ -291,7 +291,7 @@ export default function Settings() {
         <div className="card" style={{ marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Your Avatar</h2>
           <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1.25rem' }}>
-            Choose a monster and a color — it shows on your team page.
+            Choose an avatar and a color — it shows on your team page.
           </p>
 
           {/* Preview */}
@@ -318,7 +318,7 @@ export default function Settings() {
 
           {/* Monster grid */}
           <div style={{ marginBottom: '1rem' }}>
-            <div className="text-muted" style={{ fontSize: '0.78rem', fontWeight: 500, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Monster</div>
+            <div className="text-muted" style={{ fontSize: '0.78rem', fontWeight: 500, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Avatar</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '8px', maxWidth: '320px' }}>
               {MONSTER_SEEDS.map(seed => (
                 <MonsterOption

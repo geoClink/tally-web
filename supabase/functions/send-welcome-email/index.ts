@@ -135,7 +135,6 @@ Deno.serve(async (req) => {
               </table>
 
               <p style="margin:0;font-size:13px;color:#9ca3af;line-height:1.6;">
-                Also on iPhone:&nbsp;
                 <a href="https://apps.apple.com/us/app/tally-time-tracker/id6775275483" style="color:#6b7280;text-decoration:underline;">Download on the App Store</a>
               </p>
             </td>

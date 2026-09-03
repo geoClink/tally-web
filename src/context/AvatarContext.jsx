@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react'
 import { createAvatar } from '@dicebear/core'
-import { funEmoji } from '@dicebear/collection'
+import { micah } from '@dicebear/collection'
 import { supabase } from '../lib/supabase'
 import { useAuth } from './AuthContext'
 
@@ -32,7 +32,7 @@ export function AvatarProvider({ children }) {
   useEffect(() => { load() }, [user])
 
   const dataUri = useMemo(() => {
-    const avatar = createAvatar(funEmoji, { seed, size: 128 })
+    const avatar = createAvatar(micah, { seed, size: 128 })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }, [seed])
 
@@ -48,6 +48,6 @@ export function useAvatar() {
 }
 
 export function makeAvatarUri(seed, size = 128) {
-  const avatar = createAvatar(funEmoji, { seed, size })
+  const avatar = createAvatar(micah, { seed, size })
   return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
 }
