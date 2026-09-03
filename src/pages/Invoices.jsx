@@ -494,6 +494,9 @@ export default function Invoices() {
                     {inv.status === 'sent' && (
                       <button className="btn btn-secondary btn-sm" onClick={() => updateStatus(inv.id, 'paid')}>Mark Paid</button>
                     )}
+                    {inv.status === 'paid' && (
+                      <button className="btn btn-secondary btn-sm" onClick={() => updateStatus(inv.id, 'sent')}>Mark Unpaid</button>
+                    )}
                     <button
                       className="btn btn-secondary btn-sm"
                       onClick={() => { setViewingInvoice(inv); setGenerated(false) }}
