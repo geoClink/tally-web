@@ -218,12 +218,6 @@ export default function Sessions() {
         </div>
       </div>
 
-      {!isPro && (
-        <div className="alert alert-info">
-          Free tier shows the last 7 days. <Link to="/billing">Upgrade to Pro</Link> for full history and CSV export.
-        </div>
-      )}
-
       {deleteError && (
         <div className="alert alert-danger" style={{ marginBottom: '1rem' }}>{deleteError}</div>
       )}
@@ -361,6 +355,27 @@ export default function Sessions() {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {!isPro && (
+        <div className="history-gate">
+          <div className="history-gate-fade" />
+          <div className="history-gate-content">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: 'var(--text-muted)' }}>
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>Older sessions are hidden</div>
+              <div style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginTop: '0.2rem' }}>
+                Free plan shows the last 7 days. Upgrade to unlock your complete history and CSV export.
+              </div>
+            </div>
+            <Link to="/billing" className="btn btn-primary btn-sm" style={{ flexShrink: 0 }}>
+              Unlock full history →
+            </Link>
+          </div>
         </div>
       )}
     </div>

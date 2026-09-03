@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export default function Help() {
   return (
     <div>
@@ -34,7 +36,10 @@ export default function Help() {
               </ul>
             </div>
             <div>
-              <span className="current-tier tier-pro" style={{ marginBottom: '0.35rem', display: 'inline-flex' }}>Pro — $9.99 one-time</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem' }}>
+                <span className="current-tier tier-pro" style={{ display: 'inline-flex' }}>Pro — $9.99 one-time</span>
+                <Link to="/billing" className="btn btn-primary btn-sm">Upgrade to Pro →</Link>
+              </div>
               <ul style={{ paddingLeft: '1.25rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.3rem' }}>
                 <li>Unlimited clients</li>
                 <li>Full session history</li>
@@ -43,7 +48,10 @@ export default function Help() {
               </ul>
             </div>
             <div>
-              <span className="current-tier tier-business" style={{ marginBottom: '0.35rem', display: 'inline-flex' }}>Business — $4.99/month</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.35rem' }}>
+                <span className="current-tier tier-business" style={{ display: 'inline-flex' }}>Business — $4.99/month</span>
+                <Link to="/billing" className="btn btn-primary btn-sm">Upgrade to Business →</Link>
+              </div>
               <ul style={{ paddingLeft: '1.25rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.3rem' }}>
                 <li>Everything in Pro</li>
                 <li>Team workspaces — invite members and track their hours</li>

@@ -267,8 +267,9 @@ export default function Dashboard() {
       </div>
 
       {!isPro && (
-        <div className="alert alert-info" style={{ marginBottom: '1.5rem' }}>
-          Free tier shows the last 7 days only. <Link to="/billing" className="alert-link">Upgrade to Pro</Link> for full history.
+        <div className="alert alert-info" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <span>Showing last 7 days — older sessions and earnings are hidden.</span>
+          <Link to="/billing" className="btn btn-primary btn-sm" style={{ flexShrink: 0 }}>Unlock full history →</Link>
         </div>
       )}
 

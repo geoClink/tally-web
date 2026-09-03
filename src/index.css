@@ -487,8 +487,8 @@ button:focus-visible {
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  max-width: 860px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  max-width: 1000px;
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -2140,6 +2140,28 @@ select:focus {
 }
 .btn-link:hover {
   opacity: 0.75;
+}
+
+/* History gate — free tier upsell below sessions table */
+.history-gate {
+  position: relative;
+  margin-top: -0.5rem;
+}
+.history-gate-fade {
+  height: 48px;
+  background: linear-gradient(to bottom, transparent, var(--bg));
+  pointer-events: none;
+}
+.history-gate-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: 2px dashed var(--border);
+  border-radius: 0 0 var(--radius) var(--radius);
+  flex-wrap: wrap;
 }
 
 /* =============================================

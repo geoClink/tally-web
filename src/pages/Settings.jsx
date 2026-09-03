@@ -309,6 +309,11 @@ export default function Settings() {
           <div className="form-group" style={{ marginBottom: 0 }}>
             <select value={weekStart} onChange={e => setWeekStart(parseInt(e.target.value))} style={{ maxWidth: '200px' }}>
               <option value={1}>Monday</option>
+              <option value={2}>Tuesday</option>
+              <option value={3}>Wednesday</option>
+              <option value={4}>Thursday</option>
+              <option value={5}>Friday</option>
+              <option value={6}>Saturday</option>
               <option value={0}>Sunday</option>
             </select>
           </div>
