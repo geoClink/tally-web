@@ -49,8 +49,20 @@ const features = [
 
 const versions = [
   {
-    version: '1.4.5',
+    version: '1.5.0',
     label: 'Latest',
+    items: [
+      'Invoices — generate PDF invoices from tracked sessions, collect payment via Stripe, and mark invoices paid or unpaid',
+      'Connect Stripe directly from the iOS app — no web login needed',
+      'Billing period reporting — filter Reports and CSV exports by your billing cycle, not just calendar week',
+      'Custom billing start day — set the day your billing period begins on each client rate',
+      'Reports overhaul — new filters: This Week, Last Week, This Month, Billing Period, Custom Range, All Time',
+      'Estimated weekly earnings on the Home screen',
+      'Manual entry accepts hours in decimal (1.5) or hours:minutes (1:30) format',
+    ],
+  },
+  {
+    version: '1.4.5',
     items: [
       'Change Password — update your password directly from Settings',
       'Activity calendar — tap any day to see a breakdown of hours by client',
