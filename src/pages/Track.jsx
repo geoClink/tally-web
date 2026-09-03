@@ -65,6 +65,11 @@ export default function Track() {
   const [manualHours, setManualHours] = useState('')
   const [manualNote, setManualNote] = useState('')
 
+  // --- Idle detection ---
+  const [showIdleBanner, setShowIdleBanner] = useState(false)
+  const lastActivityRef = useRef(Date.now())
+  const IDLE_MS = 30 * 60 * 1000
+
   useEffect(() => {
     fetchClients()
 
@@ -325,12 +330,42 @@ export default function Track() {
     }
   }
 
+  // Accepts "1.5" or "1:30" (HH:MM)
+  function parseHoursInput(str) {
+    const trimmed = str.trim()
+    if (trimmed.includes(':')) {
+      const [h, m] = trimmed.split(':').map(v => parseFloat(v) || 0)
+      return h + m / 60
+    }
+    return parseFloat(trimmed)
+  }
+
+  useEffect(() => {
+    function resetIdle() { lastActivityRef.current = Date.now() }
+    window.addEventListener('mousemove', resetIdle, { passive: true })
+    window.addEventListener('keydown', resetIdle, { passive: true })
+    window.addEventListener('click', resetIdle, { passive: true })
+    return () => {
+      window.removeEventListener('mousemove', resetIdle)
+      window.removeEventListener('keydown', resetIdle)
+      window.removeEventListener('click', resetIdle)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!running || paused) { setShowIdleBanner(false); return }
+    const id = setInterval(() => {
+      if (Date.now() - lastActivityRef.current >= IDLE_MS) setShowIdleBanner(true)
+    }, 60_000)
+    return () => clearInterval(id)
+  }, [running, paused])
+
   async function saveManual(e) {
     e.preventDefault()
     setError('')
     if (!manualClient.trim()) { setError('Enter a client name'); return }
-    const hours = parseFloat(manualHours)
-    if (isNaN(hours) || hours <= 0) { setError('Enter valid hours (e.g. 1.5)'); return }
+    const hours = parseHoursInput(manualHours)
+    if (isNaN(hours) || hours <= 0) { setError('Enter valid hours — use 1.5 or 1:30 format'); return }
 
     setSaving(true)
     const limitErr = checkClientLimit(manualClient)
@@ -392,6 +427,26 @@ export default function Track() {
 
       {error && <div className="auth-error" style={{ marginTop: '0.5rem' }}>{error}</div>}
       {success && <div className="alert alert-success">{success}</div>}
+
+      {showIdleBanner && running && (
+        <div className="idle-banner">
+          <span>Still working? Your timer is still running.</span>
+          <div className="idle-banner-actions">
+            <button className="btn btn-primary btn-sm" onClick={() => {
+              lastActivityRef.current = Date.now()
+              setShowIdleBanner(false)
+            }}>
+              Still working
+            </button>
+            <button className="btn btn-secondary btn-sm" onClick={() => {
+              stopTimer()
+              setShowIdleBanner(false)
+            }}>
+              Stop timer
+            </button>
+          </div>
+        </div>
+      )}
 
       {tab === 'timer' && (
         <div className="card">
@@ -576,12 +631,11 @@ export default function Track() {
               <div className="form-group" style={{ marginBottom: 0 }}>
                 <label>Hours</label>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   value={manualHours}
                   onChange={e => setManualHours(e.target.value)}
-                  placeholder="1.5"
-                  step="0.01"
-                  min="0.01"
+                  placeholder="1.5 or 1:30"
                   required
                 />
               </div>

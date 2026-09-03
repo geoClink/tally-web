@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
 import { usePendingInvite } from '../context/PendingInviteContext'
-import { formatHours, todayString, weekStartString, monthStartString } from '../lib/utils'
+import { formatHours, formatCurrency, todayString, weekStartString, monthStartString } from '../lib/utils'
 import { useCountUp } from '../hooks/useCountUp'
 import EmailCaptureCard from '../components/EmailCaptureCard'
 
@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [dismissedNudges, setDismissedNudges] = useState(() => {
     try { return JSON.parse(localStorage.getItem('tally_nudge_dismissed') ?? '{}') } catch { return {} }
   })
+  const [weekEarnings, setWeekEarnings] = useState(0)
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [streak, setStreak] = useState(0)
@@ -34,8 +35,7 @@ export default function Dashboard() {
       setLoading(true)
       setLoadError(false)
       try {
-        // Two queries instead of six: config + all sessions in range
-        const [configResult, sessionsResult] = await Promise.all([
+        const [configResult, sessionsResult, ratesResult] = await Promise.all([
           supabase
             .from('config')
             .select('weekly_goal, client_goals, contact_email, week_start')
@@ -51,10 +51,13 @@ export default function Dashboard() {
             if (historyStart) q = q.gte('date', historyStart)
             return q
           })(),
+          supabase.from('client_rates').select('client, hourly_rate').eq('user_id', user.id),
         ])
 
         const config = configResult.data
         const allSessions = sessionsResult.data ?? []
+        const rateMap = {}
+        ;(ratesResult.data ?? []).forEach(r => { rateMap[r.client] = r.hourly_rate ?? 0 })
 
         // Config
         const ws = config?.week_start ?? 1
@@ -81,6 +84,9 @@ export default function Dashboard() {
         const byClient = {}
         weekSessions.forEach(s => { byClient[s.client] = (byClient[s.client] ?? 0) + (s.hours ?? 0) })
         setWeekByClient(byClient)
+        setWeekEarnings(
+          Object.entries(byClient).reduce((sum, [client, hours]) => sum + hours * (rateMap[client] ?? 0), 0)
+        )
 
         // This month (for invoice nudges)
         const byClientMonth = {}
@@ -150,7 +156,7 @@ export default function Dashboard() {
         <p className="page-subtitle" style={{ background: 'var(--color-border)', borderRadius: 4, width: 160, height: 16, display: 'inline-block' }} />
       </div>
       <div className="card-grid">
-        {[1, 2, 3, 4].map(i => (
+        {[1, 2, 3, 4, 5].map(i => (
           <div key={i} className="card" style={{ minHeight: 90 }}>
             <div style={{ background: 'var(--color-border)', borderRadius: 4, height: 12, width: '50%', marginBottom: '0.75rem' }} />
             <div style={{ background: 'var(--color-border)', borderRadius: 4, height: 28, width: '40%', marginBottom: '0.5rem' }} />
@@ -243,6 +249,16 @@ export default function Dashboard() {
             {streak} {streak === 1 ? 'day' : 'days'}
           </div>
           <div className="card-subtitle">{streak === 0 ? 'Track today to start' : streak >= 7 ? 'On fire!' : 'Keep it up'}</div>
+        </div>
+
+        <div className="card">
+          <div className="card-title">Est. Earnings</div>
+          <div className="card-value" style={{ color: weekEarnings > 0 ? 'var(--color-primary)' : undefined }}>
+            {weekEarnings > 0 ? formatCurrency(weekEarnings) : '—'}
+          </div>
+          <div className="card-subtitle">
+            {weekEarnings > 0 ? 'this week' : 'add rates in Client Rates'}
+          </div>
         </div>
       </div>
 

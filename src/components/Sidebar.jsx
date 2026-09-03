@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
@@ -87,6 +87,15 @@ const NAV_GROUPS = [
   },
 ]
 
+function formatElapsed(secs) {
+  const h = Math.floor(secs / 3600)
+  const m = Math.floor((secs % 3600) / 60)
+  const s = secs % 60
+  return h > 0
+    ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+    : `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
+}
+
 export default function Sidebar({ onClose }) {
   const { user, signOut } = useAuth()
   const { tier, isBusiness } = useSubscription()
@@ -94,6 +103,27 @@ export default function Sidebar({ onClose }) {
   const { dataUri, color } = useAvatar()
   const navigate = useNavigate()
   const [androidModalOpen, setAndroidModalOpen] = useState(false)
+  const [activeTimer, setActiveTimer] = useState(null)
+  const [timerElapsed, setTimerElapsed] = useState(0)
+
+  useEffect(() => {
+    function readTimer() {
+      try {
+        const raw = localStorage.getItem('tally_active_timer')
+        if (!raw) { setActiveTimer(null); setTimerElapsed(0); return }
+        const data = JSON.parse(raw)
+        setActiveTimer(data)
+        if (data.paused && data.pausedElapsed !== undefined) {
+          setTimerElapsed(data.pausedElapsed)
+        } else if (data.start) {
+          setTimerElapsed(Math.floor((Date.now() - new Date(data.start).getTime()) / 1000))
+        }
+      } catch { setActiveTimer(null) }
+    }
+    readTimer()
+    const id = setInterval(readTimer, 1000)
+    return () => clearInterval(id)
+  }, [])
 
   async function handleSignOut() {
     await signOut()
@@ -120,6 +150,19 @@ export default function Sidebar({ onClose }) {
           <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '1px' }}>Edit profile</div>
         </div>
       </NavLink>
+
+      {activeTimer && (
+        <NavLink
+          to="/track"
+          onClick={onClose}
+          className="sidebar-timer-pill"
+          title="Timer running — click to manage"
+        >
+          <span className={`sidebar-timer-dot${activeTimer.paused ? ' paused' : ''}`} />
+          <span className="sidebar-timer-client">{activeTimer.client || 'Timer'}</span>
+          <span className="sidebar-timer-elapsed">{formatElapsed(timerElapsed)}</span>
+        </NavLink>
+      )}
 
       <ul className="sidebar-nav">
         {NAV_GROUPS.map((group, gi) => {
