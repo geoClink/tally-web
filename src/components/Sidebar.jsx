@@ -21,6 +21,16 @@ function Icon({ d, viewBox = '0 0 24 24' }) {
   )
 }
 
+function LockIcon() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0110 0v4"/>
+    </svg>
+  )
+}
+
 const ICONS = {
   dashboard: <Icon d={['M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z', 'M9 22V12h6v10']} />,
   track:     <Icon d={['M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z', 'M12 6v6l4 2']} />,
@@ -113,18 +123,42 @@ export default function Sidebar({ onClose }) {
 
       <ul className="sidebar-nav">
         {NAV_GROUPS.map((group, gi) => {
-          // Hide entire Business group for non-business users
-          if (group.tier === 'business' && !isBusiness) return null
+          const groupLocked = group.tier === 'business' && !isBusiness
 
           return (
             <li key={gi} className="sidebar-group">
               {group.label && (
-                <div className="sidebar-group-label">{group.label}</div>
+                <div className="sidebar-group-label" style={groupLocked ? { opacity: 0.55 } : undefined}>
+                  {group.label}
+                  {groupLocked && (
+                    <span style={{ marginLeft: '5px', verticalAlign: 'middle', opacity: 0.7 }}>
+                      <LockIcon />
+                    </span>
+                  )}
+                </div>
               )}
               <ul className="sidebar-group-items">
                 {group.items.map(item => {
-                  // Hide business-only items for non-business users
-                  if (item.tier === 'business' && !isBusiness) return null
+                  const itemLocked = (item.tier === 'business' || groupLocked) && !isBusiness
+
+                  if (itemLocked) {
+                    return (
+                      <li key={item.to}>
+                        <NavLink
+                          to="/billing"
+                          className="sidebar-link sidebar-link-locked"
+                          onClick={onClose}
+                          title="Upgrade to Business"
+                        >
+                          <span className="sidebar-link-inner">
+                            <span className="sidebar-icon">{item.icon}</span>
+                            {item.label}
+                          </span>
+                          <LockIcon />
+                        </NavLink>
+                      </li>
+                    )
+                  }
 
                   return (
                     <li key={item.to}>

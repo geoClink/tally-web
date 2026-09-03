@@ -295,6 +295,20 @@ button:focus-visible {
   color: var(--accent);
 }
 
+.sidebar-link-locked {
+  opacity: 0.5;
+  cursor: pointer;
+}
+.sidebar-link-locked:hover {
+  opacity: 0.75;
+  background: var(--bg-secondary);
+}
+.sidebar-link-locked.active {
+  background: none;
+  color: var(--text);
+  font-weight: normal;
+}
+
 .tier-badge {
   font-size: 0.62rem;
   background: var(--warning);
