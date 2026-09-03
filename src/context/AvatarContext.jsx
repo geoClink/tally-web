@@ -4,6 +4,8 @@ import { micah } from '@dicebear/collection'
 import { supabase } from '../lib/supabase'
 import { useAuth } from './AuthContext'
 
+const SKIN_TONES = ['fbe5d0', 'f0c27f', 'e0ac69', 'c68642', 'a0522d', '7d3c1a', '4a1c0a', '2d1208']
+
 const AvatarContext = createContext({
   seed: 'felix',
   color: '#2563eb',
@@ -32,7 +34,7 @@ export function AvatarProvider({ children }) {
   useEffect(() => { load() }, [user])
 
   const dataUri = useMemo(() => {
-    const avatar = createAvatar(micah, { seed, size: 128 })
+    const avatar = createAvatar(micah, { seed, size: 128, baseColor: SKIN_TONES })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }, [seed])
 
@@ -48,6 +50,6 @@ export function useAvatar() {
 }
 
 export function makeAvatarUri(seed, size = 128) {
-  const avatar = createAvatar(micah, { seed, size })
+  const avatar = createAvatar(micah, { seed, size, baseColor: SKIN_TONES })
   return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
 }

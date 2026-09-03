@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { createAvatar } from '@dicebear/core'
 import { micah } from '@dicebear/collection'
+
+const SKIN_TONES = ['fbe5d0', 'f0c27f', 'e0ac69', 'c68642', 'a0522d', '7d3c1a', '4a1c0a', '2d1208']
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
@@ -15,7 +17,7 @@ export default function Team() {
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   function makeAvatarUri(seed) {
-    const avatar = createAvatar(micah, { seed, size: 64 })
+    const avatar = createAvatar(micah, { seed, size: 64, baseColor: SKIN_TONES })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }
   const [inviteEmail, setInviteEmail] = useState('')

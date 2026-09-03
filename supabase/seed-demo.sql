@@ -43,4 +43,9 @@ BEGIN
   INSERT INTO sessions (user_id, client, start_time, end_time, note) VALUES
     (demo_id, 'Blue Sky Studio', '2026-07-18 10:00:00+00', '2026-07-18 12:00:00+00', 'Final deliverables review');
 
+  -- Config
+  INSERT INTO config (user_id, your_name)
+  VALUES (demo_id, 'Jane Smith, LLC.')
+  ON CONFLICT (user_id) DO UPDATE SET your_name = 'Jane Smith, LLC.';
+
 END $$;

@@ -2,6 +2,8 @@ import { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createAvatar } from '@dicebear/core'
 import { micah } from '@dicebear/collection'
+
+const SKIN_TONES = ['fbe5d0', 'f0c27f', 'e0ac69', 'c68642', 'a0522d', '7d3c1a', '4a1c0a', '2d1208']
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useAvatar } from '../context/AvatarContext'
@@ -10,7 +12,7 @@ import BugReportModal from '../components/BugReportModal'
 
 function MonsterOption({ seed, color, selected, onSelect }) {
   const uri = useMemo(() => {
-    const avatar = createAvatar(micah, { seed, size: 96 })
+    const avatar = createAvatar(micah, { seed, size: 96, baseColor: SKIN_TONES })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }, [seed])
 
@@ -71,7 +73,7 @@ export default function Settings() {
   ]
 
   function makeUri(seed) {
-    const avatar = createAvatar(micah, { seed, size: 128 })
+    const avatar = createAvatar(micah, { seed, size: 128, baseColor: SKIN_TONES })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }
 
