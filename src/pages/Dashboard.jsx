@@ -232,20 +232,30 @@ export default function Dashboard() {
         <div className="card">
           <div className="card-title">This Week</div>
           <div className="card-value">{formatHours(animatedWeek)}</div>
-          <div className="card-subtitle">of {formatHours(weekGoal)} goal</div>
-          <div className="progress-bar">
-            <div
-              className={`progress-fill progress-fill--anim${weekProgress >= 100 ? ' complete' : ''}`}
-              style={{ '--fill': `${weekProgress}%` }}
-            />
+          <div className="card-subtitle">
+            {weekGoal > 0
+              ? clientGoals.length > 0
+                ? `across ${Object.keys(weekByClient).length || 0} client${Object.keys(weekByClient).length !== 1 ? 's' : ''}`
+                : `of ${formatHours(weekGoal)} goal`
+              : 'tracked this week'}
           </div>
+          {weekGoal > 0 && clientGoals.length === 0 && (
+            <div className="progress-bar">
+              <div
+                className={`progress-fill progress-fill--anim${weekProgress >= 100 ? ' complete' : ''}`}
+                style={{ '--fill': `${weekProgress}%` }}
+              />
+            </div>
+          )}
         </div>
 
-        <div className="card">
-          <div className="card-title">Weekly Goal</div>
-          <div className="card-value">{Math.round(animatedProgress)}%</div>
-          <div className="card-subtitle">{weekProgress >= 100 ? 'Goal reached!' : `${formatHours(Math.max(weekGoal - weekHours, 0))} remaining`}</div>
-        </div>
+        {clientGoals.length === 0 && (
+          <div className="card">
+            <div className="card-title">Weekly Goal</div>
+            <div className="card-value">{Math.round(animatedProgress)}%</div>
+            <div className="card-subtitle">{weekProgress >= 100 ? 'Goal reached!' : `${formatHours(Math.max(weekGoal - weekHours, 0))} remaining`}</div>
+          </div>
+        )}
 
         <div className="card">
           <div className="card-title">Streak</div>

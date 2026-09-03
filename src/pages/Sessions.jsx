@@ -312,7 +312,7 @@ export default function Sessions() {
                     <td data-label="Hours" style={{ whiteSpace: 'nowrap' }}>{formatHours(s.hours)}</td>
                     <td className="text-muted hide-mobile">{s.task_note || '—'}</td>
                     <td className="text-muted hide-mobile">
-                      <span style={{ fontSize: '0.75rem', padding: '2px 6px', borderRadius: '4px', background: s.is_manual ? 'var(--bg-alt, #f3f4f6)' : 'transparent', color: 'var(--text-muted)' }}>
+                      <span style={{ fontSize: '0.75rem', padding: '2px 6px', borderRadius: '4px', background: s.is_manual ? 'var(--bg-secondary)' : 'transparent', color: 'var(--text-muted)' }}>
                         {s.is_manual ? 'Manual' : 'Timer'}
                       </span>
                     </td>

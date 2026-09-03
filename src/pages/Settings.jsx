@@ -48,7 +48,6 @@ export default function Settings() {
   const [newClientGoalHours, setNewClientGoalHours] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [success, setSuccess] = useState('')
   const [error, setError] = useState('')
   const [deleting, setDeleting] = useState(false)
   const [yourName, setYourName] = useState('')
@@ -57,6 +56,9 @@ export default function Settings() {
   const [bugModalOpen, setBugModalOpen] = useState(false)
   const [theme, setTheme] = useState(() => localStorage.getItem('tally_theme') ?? 'system')
   const [bgEffect, setBgEffect] = useState(() => localStorage.getItem('tally_bg') === 'dynamic')
+  const [saved, setSaved] = useState(false)
+  const [savingAvatar, setSavingAvatar] = useState(false)
+  const [savedAvatar, setSavedAvatar] = useState(false)
 
   const MONSTER_SEEDS = [
     'felix', 'luna', 'pixel', 'ghost', 'nova', 'blaze',
@@ -107,18 +109,37 @@ export default function Settings() {
   async function saveSettings(e) {
     e.preventDefault()
     setError('')
+
+    const upsertData = {
+      user_id: user.id,
+      client_goals: clientGoals,
+      week_start: weekStart,
+      your_name: yourName.trim() || null,
+      avatar_seed: avatarSeed,
+      avatar_color: avatarColor,
+    }
     const goal = parseFloat(weeklyGoal)
-    if (isNaN(goal) || goal <= 0) { setError('Enter a valid number of hours'); return }
+    if (!isNaN(goal) && goal > 0) upsertData.weekly_goal = goal
 
     setSaving(true)
-    const { error: err } = await supabase
-      .from('config')
-      .upsert({ user_id: user.id, weekly_goal: goal, client_goals: clientGoals, week_start: weekStart, your_name: yourName.trim() || null, avatar_seed: avatarSeed, avatar_color: avatarColor }, { onConflict: 'user_id' })
+    const { error: err } = await supabase.from('config').upsert(upsertData, { onConflict: 'user_id' })
     setSaving(false)
 
     if (err) { setError(err.message); return }
-    setSuccess('Settings saved!')
-    setTimeout(() => setSuccess(''), 3000)
+    setSaved(true)
+    setTimeout(() => setSaved(false), 2000)
+    refreshAvatar()
+  }
+
+  async function saveAvatar() {
+    setSavingAvatar(true)
+    const { error: err } = await supabase
+      .from('config')
+      .upsert({ user_id: user.id, your_name: yourName.trim() || null, avatar_seed: avatarSeed, avatar_color: avatarColor }, { onConflict: 'user_id' })
+    setSavingAvatar(false)
+    if (err) return
+    setSavedAvatar(true)
+    setTimeout(() => setSavedAvatar(false), 2000)
     refreshAvatar()
   }
 
@@ -209,7 +230,43 @@ export default function Settings() {
       </div>
 
       {error && <div className="auth-error">{error}</div>}
-      {success && <div className="alert alert-success">{success}</div>}
+
+      <div className="card" style={{ marginBottom: '1.5rem' }}>
+        <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Appearance</h2>
+        <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+          Changes apply instantly — no Save needed.
+        </p>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {[
+            { value: 'system', label: 'System' },
+            { value: 'light', label: 'Light' },
+            { value: 'dark', label: 'Dark' },
+          ].map(opt => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => applyTheme(opt.value)}
+              className={theme === opt.value ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ fontSize: '0.875rem', fontWeight: 500 }}>Dynamic background</div>
+            <div className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.1rem' }}>Subtle animated gradient behind the page</div>
+          </div>
+          <button
+            type="button"
+            onClick={() => applyBg(!bgEffect)}
+            className={bgEffect ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'}
+          >
+            {bgEffect ? 'On' : 'Off'}
+          </button>
+        </div>
+      </div>
 
       <form onSubmit={saveSettings}>
         <div className="card" style={{ marginBottom: '1.5rem' }}>
@@ -273,7 +330,7 @@ export default function Settings() {
           </div>
 
           {/* Color swatches */}
-          <div>
+          <div style={{ marginBottom: '1.25rem' }}>
             <div className="text-muted" style={{ fontSize: '0.78rem', fontWeight: 500, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Color</div>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {AVATAR_COLORS.map(color => (
@@ -293,25 +350,37 @@ export default function Settings() {
               ))}
             </div>
           </div>
+
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            onClick={saveAvatar}
+            disabled={savingAvatar || savedAvatar}
+            style={savedAvatar ? { color: 'var(--success)', borderColor: 'var(--success)' } : {}}
+          >
+            {savedAvatar ? 'Saved ✓' : savingAvatar ? 'Saving…' : 'Save Avatar'}
+          </button>
         </div>
 
-        <div className="card" style={{ marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Weekly Hour Goal</h2>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <input
-              type="number"
-              value={weeklyGoal}
-              onChange={e => setWeeklyGoal(e.target.value)}
-              placeholder="40"
-              step="0.5"
-              min="1"
-              style={{ maxWidth: '160px' }}
-            />
-            <p className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.4rem' }}>
-              Total hours per week across all clients. Shows as a progress bar on your dashboard.
-            </p>
+        {clientGoals.length === 0 && (
+          <div className="card" style={{ marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>Weekly Hour Goal <span className="text-muted" style={{ fontWeight: 400, fontSize: '0.85rem' }}>(optional)</span></h2>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <input
+                type="number"
+                value={weeklyGoal}
+                onChange={e => setWeeklyGoal(e.target.value)}
+                placeholder="e.g. 40"
+                step="0.5"
+                min="1"
+                style={{ maxWidth: '160px' }}
+              />
+              <p className="text-muted" style={{ fontSize: '0.8rem', marginTop: '0.4rem' }}>
+                Target total hours per week — shows as a progress bar on your dashboard. If you set per-client goals below, this is calculated automatically.
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="card" style={{ marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Week Start Day</h2>
@@ -328,43 +397,6 @@ export default function Settings() {
               <option value={6}>Saturday</option>
               <option value={0}>Sunday</option>
             </select>
-          </div>
-        </div>
-
-        <div className="card" style={{ marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Appearance</h2>
-          <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
-            Choose how Tally looks. System follows your device setting.
-          </p>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            {[
-              { value: 'system', label: 'System' },
-              { value: 'light', label: 'Light' },
-              { value: 'dark', label: 'Dark' },
-            ].map(opt => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => applyTheme(opt.value)}
-                className={theme === opt.value ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-
-          <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div>
-              <div style={{ fontSize: '0.875rem', fontWeight: 500 }}>Dynamic background</div>
-              <div className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.1rem' }}>Subtle animated gradient behind the page</div>
-            </div>
-            <button
-              type="button"
-              onClick={() => applyBg(!bgEffect)}
-              className={bgEffect ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'}
-            >
-              {bgEffect ? 'On' : 'Off'}
-            </button>
           </div>
         </div>
 
@@ -435,8 +467,13 @@ export default function Settings() {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary" disabled={saving}>
-          {saving ? 'Saving…' : 'Save Settings'}
+        <button
+          type="submit"
+          className="btn btn-primary"
+          disabled={saving || saved}
+          style={saved ? { background: 'var(--success)', borderColor: 'var(--success)' } : {}}
+        >
+          {saved ? 'Saved ✓' : saving ? 'Saving…' : 'Save Settings'}
         </button>
       </form>
 

@@ -8,7 +8,7 @@ export default function Help() {
         <p className="page-subtitle">How Tally works and answers to common questions</p>
       </div>
 
-      <div style={{ maxWidth: '720px', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+      <div style={{ maxWidth: '960px', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
         <div className="card">
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Logging time</h2>

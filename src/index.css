@@ -2231,3 +2231,57 @@ select:focus {
   [data-theme="light"] .tier-business { background: rgba(109, 40, 217, 0.08); }
   [data-theme="light"] .badge-success  { background: #dcfce7; }
 }
+
+/* =============================================
+   DARK MODE — additional overrides
+   ============================================= */
+
+/* Sidebar active link: white text (blue-on-blue is unreadable in dark mode) */
+@media (prefers-color-scheme: dark) {
+  .sidebar-link.active { color: #fff; background: rgba(37, 99, 235, 0.35); }
+  .sidebar-link.active .sidebar-icon { color: #fff; }
+}
+[data-theme="dark"] .sidebar-link.active { color: #fff; background: rgba(37, 99, 235, 0.35); }
+[data-theme="dark"] .sidebar-link.active .sidebar-icon { color: #fff; }
+@media (prefers-color-scheme: dark) {
+  [data-theme="light"] .sidebar-link.active { color: var(--accent); background: var(--accent-light); }
+  [data-theme="light"] .sidebar-link.active .sidebar-icon { color: var(--accent); }
+}
+
+/* Alert-info: readable text in dark mode */
+@media (prefers-color-scheme: dark) {
+  .alert-info { color: #bfdbfe; }
+}
+[data-theme="dark"] .alert-info { color: #bfdbfe; }
+@media (prefers-color-scheme: dark) {
+  [data-theme="light"] .alert-info { color: var(--accent); }
+}
+
+/* Badge-pending: warm tint, no white background */
+@media (prefers-color-scheme: dark) {
+  .badge-pending { background: rgba(217, 119, 6, 0.12); }
+}
+[data-theme="dark"] .badge-pending { background: rgba(217, 119, 6, 0.12); }
+@media (prefers-color-scheme: dark) {
+  [data-theme="light"] .badge-pending { background: #fffbeb; }
+}
+
+/* Member-card-pending: no white card in dark mode */
+@media (prefers-color-scheme: dark) {
+  .member-card-pending { background: rgba(255, 255, 255, 0.03) !important; }
+}
+[data-theme="dark"] .member-card-pending { background: rgba(255, 255, 255, 0.03) !important; }
+@media (prefers-color-scheme: dark) {
+  [data-theme="light"] .member-card-pending { background: var(--bg-secondary, #f9fafb) !important; }
+}
+
+/* Trash icon — lid lifts on hover */
+.btn-icon svg { overflow: visible; }
+.btn-icon svg > *:first-child {
+  transition: transform 0.2s ease;
+  transform-origin: left center;
+  transform-box: fill-box;
+}
+.btn-icon:hover:not(:disabled) svg > *:first-child {
+  transform: rotate(-30deg) translateY(-1px);
+}
