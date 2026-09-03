@@ -34,7 +34,7 @@ export function AvatarProvider({ children }) {
   useEffect(() => { load() }, [user])
 
   const dataUri = useMemo(() => {
-    const avatar = createAvatar(micah, { seed, size: 128, baseColor: SKIN_TONES })
+    const avatar = createAvatar(lorelei, { seed, size: 128 })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }, [seed])
 
@@ -50,6 +50,6 @@ export function useAvatar() {
 }
 
 export function makeAvatarUri(seed, size = 128) {
-  const avatar = createAvatar(micah, { seed, size, baseColor: SKIN_TONES })
+  const avatar = createAvatar(lorelei, { seed, size, baseColor: SKIN_TONES })
   return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
 }

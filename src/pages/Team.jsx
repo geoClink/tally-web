@@ -18,7 +18,7 @@ export default function Team() {
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   function makeAvatarUri(seed) {
-    const avatar = createAvatar(micah, { seed, size: 64, baseColor: SKIN_TONES })
+    const avatar = createAvatar(lorelei, { seed, size: 64 })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }
   const [inviteEmail, setInviteEmail] = useState('')

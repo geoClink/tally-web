@@ -13,7 +13,7 @@ import BugReportModal from '../components/BugReportModal'
 
 function MonsterOption({ seed, color, selected, onSelect }) {
   const uri = useMemo(() => {
-    const avatar = createAvatar(micah, { seed, size: 96, baseColor: SKIN_TONES })
+    const avatar = createAvatar(lorelei, { seed, size: 96 })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }, [seed])
 
@@ -74,7 +74,7 @@ export default function Settings() {
   ]
 
   function makeUri(seed) {
-    const avatar = createAvatar(micah, { seed, size: 128, baseColor: SKIN_TONES })
+    const avatar = createAvatar(lorelei, { seed, size: 128 })
     return `data:image/svg+xml;utf8,${encodeURIComponent(avatar.toString())}`
   }
 
