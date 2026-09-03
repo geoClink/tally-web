@@ -136,6 +136,7 @@ const tiers = [
     name: 'Business',
     price: '$4.99',
     period: 'per user / month',
+    badge: 'Best Value',
     features: ['Team workspaces', 'Client invoicing via email', '7-day free trial (iOS)', 'All Pro features'],
     cta: 'Start free trial on iOS',
     note: 'Secure checkout via Stripe · Cards & Apple Pay accepted',

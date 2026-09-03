@@ -1220,6 +1220,19 @@ button:hover .trash-icon .trash-lid {
   box-shadow: 0 0 0 1px var(--accent), var(--shadow);
 }
 
+.plan-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+}
+
 .plan-name {
   font-weight: 600;
   font-size: 1rem;

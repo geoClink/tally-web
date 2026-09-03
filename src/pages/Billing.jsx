@@ -177,7 +177,9 @@ export default function Billing() {
       <div className="card" style={{ marginBottom: '1.5rem' }}>
         <div className="card-title">Current Plan</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem' }}>
-          <span className={`current-tier tier-${tier}`}>{tier}</span>
+          <span className={`current-tier tier-${tier}`}>
+            {tier === 'business' ? 'Business (includes Pro)' : tier}
+          </span>
           {subscription?.source && (
             <span className="text-muted" style={{ fontSize: '0.85rem' }}>
               via {subscription.source === 'ios' ? 'iOS App' : 'Stripe'}
@@ -216,6 +218,7 @@ export default function Billing() {
               <div className="plan-grid">
                 {PLANS.map(plan => (
                   <div key={plan.id} className={`plan-card${plan.featured ? ' featured' : ''}`}>
+                    {plan.featured && <div className="plan-badge">Best Value</div>}
                     <div className="plan-name">{plan.name}</div>
                     <div className="plan-price">{plan.price}</div>
                     <div className="plan-period">{plan.period}</div>
@@ -262,6 +265,7 @@ export default function Billing() {
               <div className="plan-grid">
                 {PLANS.map(plan => (
                   <div key={plan.id} className={`plan-card${plan.featured ? ' featured' : ''}`}>
+                    {plan.featured && <div className="plan-badge">Best Value</div>}
                     <div className="plan-name">{plan.name}</div>
                     <div className="plan-price">{plan.price}</div>
                     <div className="plan-period">{plan.period}</div>

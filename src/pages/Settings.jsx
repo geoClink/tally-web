@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import TrashIcon from '../components/TrashIcon'
 import { createAvatar } from '@dicebear/core'
-import { micah } from '@dicebear/collection'
+import { lorelei } from '@dicebear/collection'
 
 const SKIN_TONES = ['fbe5d0', 'f0c27f', 'e0ac69', 'c68642', 'a0522d', '7d3c1a', '4a1c0a', '2d1208']
 import { supabase } from '../lib/supabase'

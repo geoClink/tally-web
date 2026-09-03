@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react'
 import { createAvatar } from '@dicebear/core'
-import { micah } from '@dicebear/collection'
+import { lorelei } from '@dicebear/collection'
 import { supabase } from '../lib/supabase'
 import { useAuth } from './AuthContext'
 
