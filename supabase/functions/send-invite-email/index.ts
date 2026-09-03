@@ -67,15 +67,27 @@ Deno.serve(async (req) => {
               <p style="margin:0 0 20px;font-size:15px;color:#6b7280;line-height:1.6;">
                 Tally is a time tracking app available on the web and on iPhone. Use whichever works best for you — your data syncs across both.
               </p>
-              <p style="margin:0 0 28px;font-size:15px;color:#6b7280;line-height:1.6;">
-                Click the button below to create your account at <a href="https://tallytimetracker.com" style="color:#1d4ed8;">tallytimetracker.com</a>. Make sure to sign up using the email address this was sent to so the invite links correctly.
+              <p style="margin:0 0 20px;font-size:15px;color:#6b7280;line-height:1.6;">
+                Click the button below to create your account — your email address will be pre-filled, and you'll be taken straight into the team workspace once you're signed in.
               </p>
+
+              <!-- Steps -->
+              <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 0 28px;width:100%;">
+                <tr>
+                  <td style="padding:12px 16px;background:#f9fafb;border-radius:8px;font-size:14px;color:#374151;line-height:1.7;">
+                    <strong style="color:#111827;">How it works:</strong><br>
+                    1. Click Accept Invitation<br>
+                    2. Create your free account (your email is pre-filled)<br>
+                    3. You'll land directly in the <strong style="color:#111827;">${workspaceName}</strong> workspace
+                  </td>
+                </tr>
+              </table>
 
               <!-- CTA Button -->
               <table cellpadding="0" cellspacing="0" role="presentation" style="margin:0 0 32px;">
                 <tr>
                   <td style="background:#1d4ed8;border-radius:8px;">
-                    <a href="https://tallytimetracker.com" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;letter-spacing:0.1px;">
+                    <a href="https://tallytimetracker.com/login?mode=signup&redirect=/team&email=${encodeURIComponent(invitedEmail)}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;letter-spacing:0.1px;">
                       Accept Invitation →
                     </a>
                   </td>
@@ -83,8 +95,8 @@ Deno.serve(async (req) => {
               </table>
 
               <p style="margin:0 0 16px;font-size:13px;color:#9ca3af;line-height:1.6;">
-                Or open this link in your browser:<br>
-                <a href="https://tallytimetracker.com" style="color:#6b7280;text-decoration:underline;">https://tallytimetracker.com</a>
+                Already have an account? <a href="https://tallytimetracker.com/login?redirect=/team" style="color:#6b7280;text-decoration:underline;">Sign in here</a>
+                and you'll be added to the workspace automatically.
               </p>
               <p style="margin:0;font-size:13px;color:#9ca3af;line-height:1.6;">
                 Also available on iPhone:&nbsp;

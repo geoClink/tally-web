@@ -198,7 +198,8 @@ export default function Team() {
   }
 
   function copyInviteMessage(email) {
-    const msg = `Hey! I've invited you to join the "${workspace.name}" workspace on Tally (time tracker).\n\nTo accept:\n1. Sign up at https://www.tallytimetracker.com using this email address: ${email}\n2. Go to the Team page — you'll be added automatically.\n\nLet me know if you have any trouble!`
+    const link = `https://www.tallytimetracker.com/login?mode=signup&redirect=/team&email=${encodeURIComponent(email)}`
+    const msg = `Hey! I've invited you to join the "${workspace.name}" workspace on Tally — a time tracking app.\n\nClick this link to accept:\n${link}\n\nIt'll create your account and drop you straight into our team workspace. Let me know if you have any trouble!`
     navigator.clipboard.writeText(msg).then(() => {
       setCopiedInvite(true)
       setTimeout(() => setCopiedInvite(false), 2000)

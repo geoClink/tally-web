@@ -10,8 +10,9 @@ const isNative = Capacitor.isNativePlatform()
 export default function Login() {
   const [searchParams] = useSearchParams()
   const [mode, setMode] = useState(searchParams.get('mode') === 'signup' ? 'signup' : 'signin')
+  const redirectTo = searchParams.get('redirect') || '/dashboard'
   const [bugModalOpen, setBugModalOpen] = useState(false)
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(searchParams.get('email') || '')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -43,7 +44,7 @@ export default function Login() {
       if (mode === 'signup') {
         window.gtag?.('event', 'sign_up', { method: 'email' })
       }
-      navigate('/dashboard')
+      navigate(redirectTo)
     }
   }
 
