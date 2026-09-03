@@ -3,6 +3,19 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
+// Apply saved theme before first render to avoid flash
+;(function () {
+  const t = localStorage.getItem('tally_theme')
+  if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t)
+})()
+
+// Register service worker for PWA install prompt on Android
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {})
+  })
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />

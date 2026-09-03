@@ -55,6 +55,7 @@ export default function Settings() {
   const [avatarSeed, setAvatarSeed] = useState('felix')
   const [avatarColor, setAvatarColor] = useState('#2563eb')
   const [bugModalOpen, setBugModalOpen] = useState(false)
+  const [theme, setTheme] = useState(() => localStorage.getItem('tally_theme') ?? 'system')
 
   const MONSTER_SEEDS = [
     'felix', 'luna', 'pixel', 'ghost', 'nova', 'blaze',
@@ -135,6 +136,17 @@ export default function Settings() {
 
   function removeClientGoal(client) {
     setClientGoals(prev => prev.filter(g => g.client !== client))
+  }
+
+  function applyTheme(value) {
+    setTheme(value)
+    if (value === 'system') {
+      localStorage.removeItem('tally_theme')
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      localStorage.setItem('tally_theme', value)
+      document.documentElement.setAttribute('data-theme', value)
+    }
   }
 
   async function handleChangePassword() {
@@ -299,6 +311,29 @@ export default function Settings() {
               <option value={1}>Monday</option>
               <option value={0}>Sunday</option>
             </select>
+          </div>
+        </div>
+
+        <div className="card" style={{ marginBottom: '1.5rem' }}>
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Appearance</h2>
+          <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+            Choose how Tally looks. System follows your device setting.
+          </p>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            {[
+              { value: 'system', label: 'System' },
+              { value: 'light', label: 'Light' },
+              { value: 'dark', label: 'Dark' },
+            ].map(opt => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => applyTheme(opt.value)}
+                className={theme === opt.value ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
         </div>
 

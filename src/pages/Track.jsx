@@ -226,6 +226,36 @@ export default function Track() {
   useEffect(() => { startTimeRef.current = startTime }, [startTime])
   useEffect(() => { pausedRef.current = paused }, [paused])
 
+  // Warn before tab close / reload while timer is running
+  useEffect(() => {
+    function onBeforeUnload(e) {
+      if (runningRef.current) { e.preventDefault(); return '' }
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => window.removeEventListener('beforeunload', onBeforeUnload)
+  }, [])
+
+  // Keyboard shortcuts: Space = start/pause/resume, S = stop
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return
+      if (tab !== 'timer') return
+      if (e.key === ' ') {
+        e.preventDefault()
+        if (!running && elapsed === 0 && timerClient.trim()) startTimer()
+        else if (running && !paused) pauseTimer()
+        else if (paused) resumeFromPause()
+        else if (!running && elapsed > 0) resumeTimer()
+      }
+      if ((e.key === 's' || e.key === 'S') && running && !e.metaKey && !e.ctrlKey) {
+        e.preventDefault()
+        stopTimer()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [running, paused, elapsed, timerClient, tab])
+
   // Keep voice command handler fresh so it always sees current state
   useEffect(() => {
     voiceCommandRef.current = (transcript) => {

@@ -23,6 +23,7 @@ export default function Dashboard() {
     try { return JSON.parse(localStorage.getItem('tally_nudge_dismissed') ?? '{}') } catch { return {} }
   })
   const [weekEarnings, setWeekEarnings] = useState(0)
+  const [clientRateMap, setClientRateMap] = useState({})
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [streak, setStreak] = useState(0)
@@ -58,6 +59,7 @@ export default function Dashboard() {
         const allSessions = sessionsResult.data ?? []
         const rateMap = {}
         ;(ratesResult.data ?? []).forEach(r => { rateMap[r.client] = r.hourly_rate ?? 0 })
+        setClientRateMap(rateMap)
 
         // Config
         const ws = config?.week_start ?? 1
@@ -209,7 +211,9 @@ export default function Dashboard() {
       {invoiceNudges.map(([client, hours]) => (
         <div key={client} className="alert alert-info" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           <span>
-            You have <strong>{formatHours(hours)}</strong> logged for <strong>{client}</strong> this month — ready to invoice?
+            You have <strong>{formatHours(hours)}</strong>
+            {clientRateMap[client] ? <> ({formatCurrency(hours * clientRateMap[client])})</> : null}
+            {' '}logged for <strong>{client}</strong> this month — ready to invoice?
           </span>
           <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
             <Link to="/invoices" className="btn btn-primary btn-sm">Create Invoice →</Link>
@@ -245,7 +249,7 @@ export default function Dashboard() {
 
         <div className="card">
           <div className="card-title">Streak</div>
-          <div className="card-value" style={{ color: streak >= 3 ? 'var(--color-primary)' : undefined }}>
+          <div className="card-value" style={{ color: streak >= 3 ? 'var(--accent)' : undefined }}>
             {streak} {streak === 1 ? 'day' : 'days'}
           </div>
           <div className="card-subtitle">{streak === 0 ? 'Track today to start' : streak >= 7 ? 'On fire!' : 'Keep it up'}</div>
@@ -253,7 +257,7 @@ export default function Dashboard() {
 
         <div className="card">
           <div className="card-title">Est. Earnings</div>
-          <div className="card-value" style={{ color: weekEarnings > 0 ? 'var(--color-primary)' : undefined }}>
+          <div className="card-value" style={{ color: weekEarnings > 0 ? 'var(--accent)' : undefined }}>
             {weekEarnings > 0 ? formatCurrency(weekEarnings) : '—'}
           </div>
           <div className="card-subtitle">
