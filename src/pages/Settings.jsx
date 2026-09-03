@@ -56,6 +56,7 @@ export default function Settings() {
   const [avatarColor, setAvatarColor] = useState('#2563eb')
   const [bugModalOpen, setBugModalOpen] = useState(false)
   const [theme, setTheme] = useState(() => localStorage.getItem('tally_theme') ?? 'system')
+  const [bgEffect, setBgEffect] = useState(() => localStorage.getItem('tally_bg') === 'dynamic')
 
   const MONSTER_SEEDS = [
     'felix', 'luna', 'pixel', 'ghost', 'nova', 'blaze',
@@ -136,6 +137,17 @@ export default function Settings() {
 
   function removeClientGoal(client) {
     setClientGoals(prev => prev.filter(g => g.client !== client))
+  }
+
+  function applyBg(enabled) {
+    setBgEffect(enabled)
+    if (enabled) {
+      localStorage.setItem('tally_bg', 'dynamic')
+      document.documentElement.setAttribute('data-bg', 'dynamic')
+    } else {
+      localStorage.removeItem('tally_bg')
+      document.documentElement.removeAttribute('data-bg')
+    }
   }
 
   function applyTheme(value) {
@@ -339,6 +351,20 @@ export default function Settings() {
                 {opt.label}
               </button>
             ))}
+          </div>
+
+          <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ fontSize: '0.875rem', fontWeight: 500 }}>Dynamic background</div>
+              <div className="text-muted" style={{ fontSize: '0.78rem', marginTop: '0.1rem' }}>Subtle animated gradient behind the page</div>
+            </div>
+            <button
+              type="button"
+              onClick={() => applyBg(!bgEffect)}
+              className={bgEffect ? 'btn btn-primary btn-sm' : 'btn btn-secondary btn-sm'}
+            >
+              {bgEffect ? 'On' : 'Off'}
+            </button>
           </div>
         </div>
 

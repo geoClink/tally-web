@@ -2142,6 +2142,30 @@ select:focus {
   opacity: 0.75;
 }
 
+/* Dynamic background — slow drifting gradient blobs */
+[data-bg="dynamic"] body::before {
+  content: '';
+  position: fixed;
+  inset: -25%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 50% at 20% 30%, rgba(37, 99, 235, 0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 55% at 78% 68%, rgba(124, 58, 237, 0.10) 0%, transparent 70%),
+    radial-gradient(ellipse 45% 40% at 55% 88%, rgba(16, 185, 129, 0.07) 0%, transparent 70%);
+  animation: bgDrift 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes bgDrift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(2.5%, 2%) scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-bg="dynamic"] body::before { animation: none; }
+}
+
 /* History gate — free tier upsell below sessions table */
 .history-gate {
   position: relative;
