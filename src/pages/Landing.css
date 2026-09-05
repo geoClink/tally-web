@@ -920,9 +920,11 @@
   visibility: hidden;
 }
 
-.landing-tier .landing-btn-primary {
+.landing-tier .landing-btn-primary,
+.landing-tier .landing-btn-outline {
   width: 100%;
   text-align: center;
+  border-radius: 4px;
 }
 
 /* ── Email capture ── */
