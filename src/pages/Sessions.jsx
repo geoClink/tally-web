@@ -84,9 +84,14 @@ export default function Sessions() {
     setConfirmingDeleteId(null)
     setDeletingId(id)
     setDeleteError('')
-    const { error } = await supabase.from('sessions').delete().eq('id', id).eq('user_id', user.id)
+    const { data: deleted, error } = await supabase
+      .from('sessions')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .select('id')
     setDeletingId(null)
-    if (error) {
+    if (error || !deleted?.length) {
       setDeleteError('Failed to delete session. Please try again.')
     } else {
       setSessions(prev => prev.filter(s => s.id !== id))
