@@ -278,6 +278,28 @@ export default function Landing() {
         </a>
       </section>
 
+      <section className="landing-mac fade-up">
+        <div className="landing-mac-header">
+          <span className="landing-platform-badge">Now on Mac</span>
+          <h2 className="landing-section-title">Tally for Mac</h2>
+          <p className="landing-mac-sub">A full native macOS app — not a web wrapper. Your clients, sessions, and billing dashboard live in the Mac sidebar you already know. Syncs instantly with your iPhone.</p>
+        </div>
+        <div className="landing-mac-mockup-wrap">
+          <img
+            src="/images/macbook-bezel.png"
+            alt="Tally running on macOS — client list, live timer, and billing dashboard in a native Mac app"
+            className="landing-mac-mockup"
+            loading="lazy"
+          />
+        </div>
+        <div className="landing-mac-pills">
+          <span className="landing-mac-pill">Native macOS app</span>
+          <span className="landing-mac-pill">Syncs with iPhone &amp; iPad</span>
+          <span className="landing-mac-pill">Menu bar timer</span>
+          <span className="landing-mac-pill">Push notifications</span>
+        </div>
+      </section>
+
       <section className="landing-how fade-up">
         <div className="landing-how-header">
           <h2 className="landing-section-title">How it works</h2>
@@ -336,32 +358,10 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-mac fade-up">
-        <div className="landing-mac-header">
-          <span className="landing-platform-badge">Now on Mac</span>
-          <h2 className="landing-section-title">Tally for Mac</h2>
-          <p className="landing-mac-sub">A full native macOS app — not a web wrapper. Your clients, sessions, and billing dashboard live in the Mac sidebar you already know. Syncs instantly with your iPhone.</p>
-        </div>
-        <div className="landing-mac-mockup-wrap">
-          <img
-            src="/images/macbook-bezel.png"
-            alt="Tally running on macOS — client list, live timer, and billing dashboard in a native Mac app"
-            className="landing-mac-mockup"
-            loading="lazy"
-          />
-        </div>
-        <div className="landing-mac-pills">
-          <span className="landing-mac-pill">Native macOS app</span>
-          <span className="landing-mac-pill">Syncs with iPhone &amp; iPad</span>
-          <span className="landing-mac-pill">Menu bar timer</span>
-          <span className="landing-mac-pill">Push notifications</span>
-        </div>
-      </section>
-
       <section className="landing-features-section fade-up">
         <div className="landing-features-header">
           <h2 className="landing-section-title">Built for how freelancers actually work</h2>
-          <p className="landing-features-sub">Not just a timer — a complete billing workflow for iPhone, iPad, Apple Watch, and web.</p>
+          <p className="landing-features-sub">Not just a timer — a complete billing workflow for iPhone, iPad, Apple Watch, Mac, and web.</p>
         </div>
         <div className="landing-features">
           {features.map((f) => (
