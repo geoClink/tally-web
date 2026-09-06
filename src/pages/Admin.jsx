@@ -29,7 +29,7 @@ export default function Admin() {
   const [sort, setSort] = useState({ key: 'last_seen', dir: 'desc' })
   const [compose, setCompose] = useState(null) // { email, subject, body }
   const [filter, setFilter] = useState('all') // all | reachable
-  const [push, setPush] = useState({ title: '', body: '' })
+  const [push, setPush] = useState({ title: '', body: '', target: 'all' })
   const [pushStatus, setPushStatus] = useState(null) // null | 'sending' | { sent, failed, total } | { error }
 
 
@@ -88,6 +88,7 @@ export default function Admin() {
   const usersWithSessions = users.filter(u => u.sessions_count > 0).length
   const paidUsers = users.filter(u => u.plan && u.plan !== 'free' && u.plan !== null).length
   const conversionRate = usersWithSessions > 0 ? ((paidUsers / usersWithSessions) * 100).toFixed(1) : '0.0'
+  const pushEnabled = users.filter(u => u.has_push).length
   const totalSessions = users.reduce((sum, u) => sum + Number(u.sessions_count), 0)
   const totalHours = users.reduce((sum, u) => sum + Number(u.hours_tracked), 0)
 
@@ -107,7 +108,7 @@ export default function Admin() {
     if (!push.title.trim() || !push.body.trim()) return
     setPushStatus('sending')
     const { data, error } = await supabase.functions.invoke('send-push-notification', {
-      body: { title: push.title.trim(), body: push.body.trim() },
+      body: { title: push.title.trim(), body: push.body.trim(), target: push.target },
     })
     if (error) {
       setPushStatus({ error: error.message || 'Unknown error' })
@@ -179,6 +180,7 @@ export default function Admin() {
           { label: 'Ever logged time', value: usersWithSessions },
           { label: 'Paid users', value: paidUsers, highlight: true },
           { label: 'Conversion rate', value: `${conversionRate}%`, highlight: true },
+          { label: 'Push enabled', value: pushEnabled },
           { label: 'Total sessions', value: totalSessions },
           { label: 'Total hours', value: totalHours.toFixed(1) },
         ].map(({ label, value, highlight }) => (
@@ -230,6 +232,17 @@ export default function Admin() {
               maxLength={300}
             />
           </div>
+          <div>
+            <label style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.25rem' }}>Audience</label>
+            <select
+              value={push.target}
+              onChange={e => { setPush(p => ({ ...p, target: e.target.value })); setPushStatus(null) }}
+              style={{ padding: '0.5rem 0.75rem', borderRadius: 6, border: '1px solid var(--color-border)', fontSize: '0.875rem', background: 'var(--color-surface)', color: 'var(--color-text)', cursor: 'pointer' }}
+            >
+              <option value="all">All users</option>
+              <option value="paid_inactive">Paid · never logged a session</option>
+            </select>
+          </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <button
               className="btn-primary"
@@ -237,7 +250,7 @@ export default function Admin() {
               disabled={!push.title.trim() || !push.body.trim() || pushStatus === 'sending'}
               style={{ padding: '0.5rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, opacity: (!push.title.trim() || !push.body.trim()) ? 0.5 : 1 }}
             >
-              {pushStatus === 'sending' ? 'Sending…' : 'Send to all iOS users'}
+              {pushStatus === 'sending' ? 'Sending…' : 'Send notification'}
             </button>
             {pushStatus && pushStatus !== 'sending' && (
               pushStatus.error
@@ -293,6 +306,7 @@ export default function Admin() {
                   {label} <SortIcon col={key} />
                 </th>
               ))}
+              <th style={{ padding: '0.75rem 1rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>🔔</th>
               <th style={{ padding: '0.75rem 1rem', color: 'var(--color-text-muted)', fontWeight: 600 }}></th>
             </tr>
           </thead>
@@ -337,6 +351,9 @@ export default function Admin() {
                   </td>
                   <td style={{ padding: '0.65rem 1rem' }}>{u.sessions_count}</td>
                   <td style={{ padding: '0.65rem 1rem' }}>{Number(u.hours_tracked).toFixed(1)}</td>
+                  <td style={{ padding: '0.65rem 1rem', textAlign: 'center' }}>
+                    {u.has_push ? '🔔' : <span style={{ color: 'var(--color-text-muted)', fontSize: '0.75rem' }}>—</span>}
+                  </td>
                   <td style={{ padding: '0.65rem 1rem' }}>
                     {canEmail && (
                       <button

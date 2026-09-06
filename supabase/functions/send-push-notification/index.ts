@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
     }
 
     // Parse request body
-    const { title, body } = await req.json()
+    const { title, body, target = 'all' } = await req.json()
     if (!title || !body) {
       return new Response(JSON.stringify({ error: 'title and body are required' }), { status: 400, headers: corsHeaders })
     }
@@ -88,13 +88,16 @@ Deno.serve(async (req) => {
     const jwt = await buildApnsJwt(apnsTeamId, apnsKeyId, apnsKey)
     console.log('JWT built successfully')
 
-    // Fetch all device tokens via REST API with service role
-    console.log('Fetching device tokens...')
-    const tokensRes = await fetch(`${supabaseUrl}/rest/v1/device_tokens?select=token,environment`, {
+    // Fetch targeted device tokens via RPC
+    console.log(`Fetching device tokens (target: ${target})...`)
+    const tokensRes = await fetch(`${supabaseUrl}/rest/v1/rpc/get_targeted_device_tokens`, {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${supabaseServiceKey}`,
         apikey: supabaseServiceKey,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({ target }),
     })
     if (!tokensRes.ok) throw new Error(`Failed to fetch tokens: ${await tokensRes.text()}`)
     const tokens: { token: string; environment: string }[] = await tokensRes.json()
