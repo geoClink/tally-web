@@ -1,5 +1,4 @@
 import "@supabase/functions-js/edge-runtime.d.ts"
-import { createClient } from "@supabase/supabase-js"
 
 const ADMIN_EMAILS = ['1lclink2@att.net', 'georgeclinkscalesdev@proton.me']
 const BUNDLE_ID = 'name.GeorgeClinkscales.Tally'
@@ -50,50 +49,52 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Verify the caller is an admin
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+
+    // Verify caller is admin via Supabase auth REST API
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders })
     }
 
-    const supabaseUser = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_ANON_KEY')!,
-      { global: { headers: { Authorization: authHeader } } }
-    )
-    const { data: { user }, error: authError } = await supabaseUser.auth.getUser()
-    if (authError || !user || !ADMIN_EMAILS.includes(user.email ?? '')) {
+    const userRes = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      headers: { Authorization: authHeader, apikey: supabaseAnonKey },
+    })
+    if (!userRes.ok) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders })
+    }
+    const userData = await userRes.json()
+    if (!ADMIN_EMAILS.includes(userData.email ?? '')) {
       return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: corsHeaders })
     }
 
     // Parse request body
     const { title, body } = await req.json()
     if (!title || !body) {
-      return new Response(
-        JSON.stringify({ error: 'title and body are required' }),
-        { status: 400, headers: corsHeaders }
-      )
+      return new Response(JSON.stringify({ error: 'title and body are required' }), { status: 400, headers: corsHeaders })
     }
 
-    // Get APNs credentials from secrets
+    // Get APNs credentials
     const apnsKey = Deno.env.get('APNS_PRIVATE_KEY')
     const apnsKeyId = Deno.env.get('APNS_KEY_ID')
     const apnsTeamId = Deno.env.get('APNS_TEAM_ID')
     if (!apnsKey || !apnsKeyId || !apnsTeamId) {
-      throw new Error('APNs secrets not configured. Set APNS_PRIVATE_KEY, APNS_KEY_ID, APNS_TEAM_ID in Supabase secrets.')
+      throw new Error('APNs secrets not configured')
     }
 
     const jwt = await buildApnsJwt(apnsTeamId, apnsKeyId, apnsKey)
 
-    // Fetch all device tokens using service role (bypasses RLS)
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL')!,
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    )
-    const { data: tokens, error: tokensError } = await supabaseAdmin
-      .from('device_tokens')
-      .select('token')
-    if (tokensError) throw tokensError
+    // Fetch all device tokens via REST API with service role
+    const tokensRes = await fetch(`${supabaseUrl}/rest/v1/device_tokens?select=token`, {
+      headers: {
+        Authorization: `Bearer ${supabaseServiceKey}`,
+        apikey: supabaseServiceKey,
+      },
+    })
+    if (!tokensRes.ok) throw new Error(`Failed to fetch tokens: ${await tokensRes.text()}`)
+    const tokens: { token: string }[] = await tokensRes.json()
 
     const apnsPayload = JSON.stringify({
       aps: { alert: { title, body }, sound: 'default' },
@@ -103,7 +104,7 @@ Deno.serve(async (req) => {
     let failed = 0
     const staleTokens: string[] = []
 
-    for (const { token } of tokens ?? []) {
+    for (const { token } of tokens) {
       const res = await fetch(`${APNS_HOST}/3/device/${token}`, {
         method: 'POST',
         headers: {
@@ -120,23 +121,24 @@ Deno.serve(async (req) => {
         sent++
       } else {
         failed++
-        // 410 = device token is no longer active — remove it
-        if (res.status === 410) {
-          staleTokens.push(token)
-        }
+        if (res.status === 410) staleTokens.push(token)
       }
     }
 
-    // Clean up stale tokens
+    // Remove stale tokens
     if (staleTokens.length > 0) {
-      await supabaseAdmin
-        .from('device_tokens')
-        .delete()
-        .in('token', staleTokens)
+      const inList = staleTokens.map(t => `"${t}"`).join(',')
+      await fetch(`${supabaseUrl}/rest/v1/device_tokens?token=in.(${inList})`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${supabaseServiceKey}`,
+          apikey: supabaseServiceKey,
+        },
+      })
     }
 
     return new Response(
-      JSON.stringify({ sent, failed, total: tokens?.length ?? 0, removedStale: staleTokens.length }),
+      JSON.stringify({ sent, failed, total: tokens.length, removedStale: staleTokens.length }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (err) {
