@@ -62,7 +62,16 @@ export default function Admin() {
     setCompose({ email: u.email, subject: tpl.subject, body: tpl.body })
   }
 
-  const filtered = filter === 'reachable' ? users.filter(u => isReachable(u.email)) : users
+  const churned = users.filter(u => {
+    if (!u.last_seen || u.sessions_count < 1) return false
+    return (Date.now() - new Date(u.last_seen).getTime()) > 30 * 24 * 60 * 60 * 1000
+  })
+
+  const filtered = filter === 'reachable'
+    ? users.filter(u => isReachable(u.email))
+    : filter === 'churned'
+    ? churned
+    : users
 
   const sorted = [...filtered].sort((a, b) => {
     const av = a[sort.key] ?? ''
@@ -77,6 +86,8 @@ export default function Admin() {
     return (Date.now() - new Date(u.last_seen).getTime()) < 7 * 24 * 60 * 60 * 1000
   }).length
   const usersWithSessions = users.filter(u => u.sessions_count > 0).length
+  const paidUsers = users.filter(u => u.plan && u.plan !== 'free' && u.plan !== null).length
+  const conversionRate = usersWithSessions > 0 ? ((paidUsers / usersWithSessions) * 100).toFixed(1) : '0.0'
   const totalSessions = users.reduce((sum, u) => sum + Number(u.sessions_count), 0)
   const totalHours = users.reduce((sum, u) => sum + Number(u.hours_tracked), 0)
 
@@ -166,11 +177,13 @@ export default function Admin() {
           { label: 'Total signups', value: totalUsers },
           { label: 'Active this week', value: activeThisWeek },
           { label: 'Ever logged time', value: usersWithSessions },
+          { label: 'Paid users', value: paidUsers, highlight: true },
+          { label: 'Conversion rate', value: `${conversionRate}%`, highlight: true },
           { label: 'Total sessions', value: totalSessions },
           { label: 'Total hours', value: totalHours.toFixed(1) },
-        ].map(({ label, value }) => (
-          <div key={label} className="card" style={{ textAlign: 'center', padding: '1rem' }}>
-            <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--color-primary)' }}>{value}</div>
+        ].map(({ label, value, highlight }) => (
+          <div key={label} className="card" style={{ textAlign: 'center', padding: '1rem', borderColor: highlight ? 'var(--color-primary)' : undefined }}>
+            <div style={{ fontSize: '1.75rem', fontWeight: 700, color: highlight ? '#22c55e' : 'var(--color-primary)' }}>{value}</div>
             <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>{label}</div>
           </div>
         ))}
@@ -240,17 +253,24 @@ export default function Admin() {
 
       {/* Filter toggle */}
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
-        {['all', 'reachable'].map(f => (
+        {[
+          { key: 'all', label: `All (${users.length})` },
+          { key: 'reachable', label: `Reachable (${users.filter(u => isReachable(u.email)).length})` },
+          { key: 'churned', label: `Churned (${churned.length})`, color: '#f59e0b' },
+        ].map(({ key, label, color }) => (
           <button
-            key={f}
-            onClick={() => setFilter(f)}
+            key={key}
+            onClick={() => {
+              setFilter(key)
+              if (key === 'churned') setSort({ key: 'sessions_count', dir: 'desc' })
+            }}
             style={{
-              padding: '0.35rem 0.85rem', borderRadius: 6, border: '1px solid var(--color-border)', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 500,
-              background: filter === f ? 'var(--color-primary)' : 'transparent',
-              color: filter === f ? '#fff' : 'var(--color-text-muted)',
+              padding: '0.35rem 0.85rem', borderRadius: 6, border: `1px solid ${filter === key && color ? color : 'var(--color-border)'}`, cursor: 'pointer', fontSize: '0.8rem', fontWeight: 500,
+              background: filter === key ? (color ?? 'var(--color-primary)') : 'transparent',
+              color: filter === key ? '#fff' : (color ?? 'var(--color-text-muted)'),
             }}
           >
-            {f === 'all' ? `All (${users.length})` : `Reachable (${users.filter(u => isReachable(u.email)).length})`}
+            {label}
           </button>
         ))}
       </div>

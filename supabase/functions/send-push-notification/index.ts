@@ -84,17 +84,20 @@ Deno.serve(async (req) => {
       throw new Error('APNs secrets not configured')
     }
 
+    console.log('Building APNs JWT...')
     const jwt = await buildApnsJwt(apnsTeamId, apnsKeyId, apnsKey)
+    console.log('JWT built successfully')
 
     // Fetch all device tokens via REST API with service role
-    const tokensRes = await fetch(`${supabaseUrl}/rest/v1/device_tokens?select=token`, {
+    console.log('Fetching device tokens...')
+    const tokensRes = await fetch(`${supabaseUrl}/rest/v1/device_tokens?select=token,environment`, {
       headers: {
         Authorization: `Bearer ${supabaseServiceKey}`,
         apikey: supabaseServiceKey,
       },
     })
     if (!tokensRes.ok) throw new Error(`Failed to fetch tokens: ${await tokensRes.text()}`)
-    const tokens: { token: string }[] = await tokensRes.json()
+    const tokens: { token: string; environment: string }[] = await tokensRes.json()
 
     const apnsPayload = JSON.stringify({
       aps: { alert: { title, body }, sound: 'default' },
@@ -104,8 +107,11 @@ Deno.serve(async (req) => {
     let failed = 0
     const staleTokens: string[] = []
 
-    for (const { token } of tokens) {
-      const res = await fetch(`${APNS_HOST}/3/device/${token}`, {
+    for (const { token, environment } of tokens) {
+      const host = environment === 'sandbox'
+        ? 'https://api.sandbox.push.apple.com'
+        : APNS_HOST
+      const res = await fetch(`${host}/3/device/${token}`, {
         method: 'POST',
         headers: {
           authorization: `bearer ${jwt}`,
@@ -142,8 +148,10 @@ Deno.serve(async (req) => {
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (err) {
+    const message = err instanceof Error ? err.message : JSON.stringify(err)
+    console.error('send-push-notification error:', message)
     return new Response(
-      JSON.stringify({ error: String(err) }),
+      JSON.stringify({ error: message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
