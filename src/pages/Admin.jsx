@@ -29,6 +29,9 @@ export default function Admin() {
   const [sort, setSort] = useState({ key: 'last_seen', dir: 'desc' })
   const [compose, setCompose] = useState(null) // { email, subject, body }
   const [filter, setFilter] = useState('all') // all | reachable
+  const [push, setPush] = useState({ title: '', body: '' })
+  const [pushStatus, setPushStatus] = useState(null) // null | 'sending' | { sent, failed, total } | { error }
+
 
   useEffect(() => {
     if (!user || !ADMIN_EMAILS.includes(user.email)) {
@@ -88,6 +91,19 @@ export default function Admin() {
   })
   const weeks = Object.entries(weekCounts).sort(([a], [b]) => a.localeCompare(b)).slice(-8)
   const maxWeek = Math.max(...weeks.map(([, v]) => v), 1)
+
+  async function sendPushNotification() {
+    if (!push.title.trim() || !push.body.trim()) return
+    setPushStatus('sending')
+    const { data, error } = await supabase.functions.invoke('send-push-notification', {
+      body: { title: push.title.trim(), body: push.body.trim() },
+    })
+    if (error) {
+      setPushStatus({ error: error.message || 'Unknown error' })
+    } else {
+      setPushStatus(data)
+    }
+  }
 
   function SortIcon({ col }) {
     if (sort.key !== col) return <span style={{ opacity: 0.3 }}>↕</span>
@@ -173,6 +189,52 @@ export default function Admin() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Push notifications */}
+      <div className="card" style={{ marginBottom: '2rem', padding: '1.25rem' }}>
+        <div style={{ fontWeight: 600, marginBottom: '1rem' }}>Send push notification</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div>
+            <label style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.25rem' }}>Title</label>
+            <input
+              value={push.title}
+              onChange={e => { setPush(p => ({ ...p, title: e.target.value })); setPushStatus(null) }}
+              placeholder="e.g. Tally for web is here"
+              style={{ width: '100%', boxSizing: 'border-box' }}
+              maxLength={100}
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block', marginBottom: '0.25rem' }}>Body</label>
+            <textarea
+              value={push.body}
+              onChange={e => { setPush(p => ({ ...p, body: e.target.value })); setPushStatus(null) }}
+              placeholder="e.g. Track time, send invoices, and more — now in your browser."
+              rows={3}
+              style={{ width: '100%', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit', fontSize: '0.875rem' }}
+              maxLength={300}
+            />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <button
+              className="btn-primary"
+              onClick={sendPushNotification}
+              disabled={!push.title.trim() || !push.body.trim() || pushStatus === 'sending'}
+              style={{ padding: '0.5rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, opacity: (!push.title.trim() || !push.body.trim()) ? 0.5 : 1 }}
+            >
+              {pushStatus === 'sending' ? 'Sending…' : 'Send to all iOS users'}
+            </button>
+            {pushStatus && pushStatus !== 'sending' && (
+              pushStatus.error
+                ? <span style={{ fontSize: '0.8rem', color: 'var(--color-danger)' }}>Error: {pushStatus.error}</span>
+                : <span style={{ fontSize: '0.8rem', color: '#22c55e' }}>
+                    Sent {pushStatus.sent}/{pushStatus.total} · {pushStatus.failed} failed
+                    {pushStatus.removedStale > 0 ? ` · ${pushStatus.removedStale} stale removed` : ''}
+                  </span>
+            )}
+          </div>
         </div>
       </div>
 
