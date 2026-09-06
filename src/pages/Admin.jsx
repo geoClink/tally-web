@@ -243,13 +243,18 @@ export default function Admin() {
                       <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>free</span>
                     )}
                   </td>
-                  <td style={{ padding: '0.65rem 1rem', color: 'var(--color-text-muted)' }}>{u.signed_up}</td>
+                  <td style={{ padding: '0.65rem 1rem', color: 'var(--color-text-muted)' }}>
+                    {u.signed_up ? new Date(u.signed_up).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
+                  </td>
                   <td style={{ padding: '0.65rem 1rem', color: isActive ? '#22c55e' : 'var(--color-text-muted)' }}>
-                    {u.last_seen ?? '—'}
-                    {daysSinceSeen !== null && <span style={{ marginLeft: '0.35rem', fontSize: '0.75rem' }}>({daysSinceSeen}d ago)</span>}
+                    {u.last_seen
+                      ? daysSinceSeen === 0
+                        ? 'Today'
+                        : `${daysSinceSeen}d ago`
+                      : '—'}
                   </td>
                   <td style={{ padding: '0.65rem 1rem' }}>{u.sessions_count}</td>
-                  <td style={{ padding: '0.65rem 1rem' }}>{u.hours_tracked}</td>
+                  <td style={{ padding: '0.65rem 1rem' }}>{Number(u.hours_tracked).toFixed(1)}</td>
                   <td style={{ padding: '0.65rem 1rem' }}>
                     {canEmail && (
                       <button
