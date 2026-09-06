@@ -552,6 +552,12 @@ export default function Landing() {
               <Link to="/login?mode=signup">Sign up free</Link>
             </div>
             <div className="landing-footer-col">
+              <h4>Resources</h4>
+              <a href="/guides/">Freelancer Guides</a>
+              <a href="/guides/track-billable-hours">Track Billable Hours</a>
+              <a href="/guides/invoice-clients-hourly-work">Invoice Clients</a>
+            </div>
+            <div className="landing-footer-col">
               <h4>Legal</h4>
               <Link to="/privacy">Privacy</Link>
               <Link to="/delete-account">Delete Account</Link>
