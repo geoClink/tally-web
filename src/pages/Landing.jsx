@@ -205,7 +205,7 @@ export default function Landing() {
       <section className="landing-hero">
         <div className="landing-hero-text">
           <h1 className="landing-headline">Bill every hour.<br />On every device.</h1>
-          <p className="landing-platforms">iPhone · iPad · Apple Watch · Web · <span className="landing-platforms-soon">Android in beta</span></p>
+          <p className="landing-platforms">iPhone · iPad · Apple Watch · Mac · Web · <span className="landing-platforms-soon">Android in beta</span></p>
           <p className="landing-subhead">
             Log billable hours with one tap. Send invoices from your phone. Track your whole team when you're ready to grow.
           </p>
@@ -304,9 +304,9 @@ export default function Landing() {
 
       <section className="landing-screenshots fade-up">
         <div className="landing-screenshots-header">
-          <span className="landing-platform-badge">iPhone · iPad · Apple Watch · Web</span>
+          <span className="landing-platform-badge">iPhone · iPad · Apple Watch · Mac · Web</span>
           <h2 className="landing-section-title">Native on every Apple device</h2>
-          <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, and a full web dashboard — one Supabase backend, everything in sync.</p>
+          <p className="landing-screenshots-sub">iPhone, iPad, Apple Watch, Mac, and a full web dashboard — one Supabase backend, everything in sync.</p>
         </div>
         <p className="landing-device-row-label">iPhone</p>
         <div className="landing-scroll-track">
@@ -333,6 +333,28 @@ export default function Landing() {
               <img src={item.src} alt={item.alt} loading="lazy" style={{ width: '100%', borderRadius: '12px', display: 'block' }} />
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="landing-mac fade-up">
+        <div className="landing-mac-header">
+          <span className="landing-platform-badge">Now on Mac</span>
+          <h2 className="landing-section-title">Tally for Mac</h2>
+          <p className="landing-mac-sub">A full native macOS app — not a web wrapper. Your clients, sessions, and billing dashboard live in the Mac sidebar you already know. Syncs instantly with your iPhone.</p>
+        </div>
+        <div className="landing-mac-mockup-wrap">
+          <img
+            src="/images/macbook-bezel.png"
+            alt="Tally running on macOS — client list, live timer, and billing dashboard in a native Mac app"
+            className="landing-mac-mockup"
+            loading="lazy"
+          />
+        </div>
+        <div className="landing-mac-pills">
+          <span className="landing-mac-pill">Native macOS app</span>
+          <span className="landing-mac-pill">Syncs with iPhone &amp; iPad</span>
+          <span className="landing-mac-pill">Menu bar timer</span>
+          <span className="landing-mac-pill">Push notifications</span>
         </div>
       </section>
 

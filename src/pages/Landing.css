@@ -697,6 +697,76 @@
   font-style: italic;
 }
 
+/* ── Now on Mac section ─────────────────────────────────── */
+.landing-mac {
+  padding: 5rem 1.5rem 4rem;
+  text-align: center;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.landing-mac-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.landing-mac-sub {
+  font-size: 1rem;
+  color: var(--text-muted);
+  line-height: 1.65;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.landing-mac-mockup-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0 2rem;
+}
+
+.landing-mac-mockup {
+  max-width: 880px;
+  width: 100%;
+  transform: perspective(1200px) rotateY(-10deg) rotateX(4deg);
+  filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.22));
+  transition: transform 0.45s ease, filter 0.45s ease;
+  border-radius: 4px;
+}
+
+.landing-mac-mockup:hover {
+  transform: perspective(1200px) rotateY(-4deg) rotateX(2deg);
+  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.16));
+}
+
+.landing-mac-pills {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.landing-mac-pill {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  padding: 0.35rem 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .landing-mac-mockup {
+    transform: none;
+    filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.18));
+  }
+}
+
 /* iPhone bezel */
 .landing-phone-mockup {
   width: 100%;
