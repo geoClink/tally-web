@@ -784,12 +784,12 @@
 .landing-iphone-float {
   max-width: 260px;
   width: 100%;
-  transform: perspective(800px) rotateY(8deg) rotateX(3deg);
+  transform: perspective(600px) rotateY(16deg) rotateX(5deg);
   transition: transform 0.45s ease, box-shadow 0.45s ease;
 }
 
 .landing-iphone-float:hover {
-  transform: perspective(800px) rotateY(3deg) rotateX(1deg);
+  transform: perspective(600px) rotateY(8deg) rotateX(2deg);
 }
 
 @media (max-width: 640px) {
@@ -819,24 +819,28 @@
   max-width: 560px;
   width: 70%;
   min-width: 220px;
-  filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.2));
-  transition: filter 0.45s ease;
+  transform: perspective(1400px) rotateY(-10deg) rotateX(4deg);
+  filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.25));
+  transition: transform 0.45s ease, filter 0.45s ease;
 }
 
 .landing-ipad-watch-watch {
   max-width: 160px;
   width: 18%;
   min-width: 90px;
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.22));
-  transition: filter 0.45s ease;
+  transform: perspective(800px) rotateY(10deg) rotateX(4deg);
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.28));
+  transition: transform 0.45s ease, filter 0.45s ease;
 }
 
 .landing-ipad-watch-mockups:hover .landing-ipad-watch-ipad {
-  filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.14));
+  transform: perspective(1400px) rotateY(-4deg) rotateX(2deg);
+  filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.16));
 }
 
 .landing-ipad-watch-mockups:hover .landing-ipad-watch-watch {
-  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.16));
+  transform: perspective(800px) rotateY(4deg) rotateX(2deg);
+  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.18));
 }
 
 @media (max-width: 640px) {
@@ -933,12 +937,14 @@
 .landing-android-mockup {
   max-width: 320px;
   width: 100%;
-  filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.22));
-  transition: filter 0.45s ease;
+  transform: perspective(900px) rotateX(6deg) rotateY(12deg);
+  filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.28));
+  transition: transform 0.45s ease, filter 0.45s ease;
 }
 
 .landing-android-mockup:hover {
-  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.16));
+  transform: perspective(900px) rotateX(2deg) rotateY(4deg);
+  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.18));
 }
 
 @media (max-width: 640px) {
@@ -1182,11 +1188,15 @@
 .landing-email-capture {
   padding: 4rem 1.5rem;
   text-align: center;
-  border-top: 1px solid var(--border);
+  background: var(--accent);
+}
+
+.landing-email-capture .landing-section-title {
+  color: #fff;
 }
 
 .landing-email-sub {
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -1204,26 +1214,35 @@
   flex: 1;
   min-width: 0;
   padding: 0.65rem 1rem;
-  border: 1px solid var(--border);
+  border: none;
   border-radius: 8px;
-  background: var(--surface);
-  color: var(--text);
+  background: rgba(255, 255, 255, 0.95);
+  color: #111;
   font-size: 0.95rem;
   outline: none;
 }
 
 .landing-email-input:focus {
-  border-color: var(--accent);
+  background: #fff;
+}
+
+.landing-email-capture .landing-btn-primary {
+  background: #fff;
+  color: var(--accent);
+}
+
+.landing-email-capture .landing-btn-primary:hover {
+  background: #f0f5ff;
 }
 
 .landing-email-success {
-  color: var(--success);
+  color: rgba(255, 255, 255, 0.9);
   font-size: 0.95rem;
   margin-top: 0.5rem;
 }
 
 .landing-email-error {
-  color: var(--error, #e53e3e);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.85rem;
   margin-top: 0.5rem;
 }

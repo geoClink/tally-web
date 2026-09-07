@@ -562,11 +562,6 @@ export default function Landing() {
         {emailStatus === 'error' && <p className="landing-email-error">Something went wrong — try again.</p>}
       </section>
 
-      <section className="landing-review">
-        <p className="landing-review-text">Love Tally? Leave a review on the App Store — it helps more than you know.</p>
-        <a href={`${APP_STORE_URL}?action=write-review`} target="_blank" rel="noopener noreferrer" className="landing-review-link">Write a review →</a>
-      </section>
-
       <footer className="landing-footer">
         <div className="landing-footer-inner">
           <div className="landing-footer-brand">
@@ -583,6 +578,7 @@ export default function Landing() {
               <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">iOS App</a>
               <button onClick={() => setAndroidModalOpen(true)}>Android Beta</button>
               <a href="/demo" target="_blank" rel="noopener noreferrer">Live Demo</a>
+              <a href={`${APP_STORE_URL}?action=write-review`} target="_blank" rel="noopener noreferrer">Leave a review</a>
             </div>
             <div className="landing-footer-col">
               <h4>Account</h4>
