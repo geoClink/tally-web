@@ -936,13 +936,11 @@
 .landing-android-mockup {
   max-width: 320px;
   width: 100%;
-  transform: perspective(900px) rotateX(6deg) rotateY(12deg);
   filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.28));
-  transition: transform 0.45s ease, filter 0.45s ease;
+  transition: filter 0.45s ease;
 }
 
 .landing-android-mockup:hover {
-  transform: perspective(900px) rotateX(2deg) rotateY(4deg);
   filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.18));
 }
 
