@@ -239,7 +239,7 @@ export default function Landing() {
               </button>
             </div>
           </div>
-          <p className="landing-hero-note">Free to start · No credit card required · <a href="/demo" target="_blank" rel="noopener noreferrer" className="landing-hero-demo-link">Try the live demo →</a></p>
+          <p className="landing-hero-note">Free to start · No credit card required · No time limit</p>
         </div>
         <div className="landing-hero-phone">
           <div className="landing-phone-mockup landing-phone-mockup--video">
@@ -256,30 +256,11 @@ export default function Landing() {
       </header>
 
 <section className="landing-demo fade-up">
-        <h2 className="landing-section-title">Try it live</h2>
-        <p className="landing-demo-sub">No sign-up needed — the full dashboard, right here.</p>
-        <a href="/demo" target="_blank" rel="noopener noreferrer" className="landing-browser-mockup landing-browser-mockup--link">
-          <div className="landing-browser-bar">
-            <div className="landing-browser-dots">
-              <span /><span /><span />
-            </div>
-            <div className="landing-browser-url">tallytimetracker.com/demo</div>
-          </div>
-          <div className="landing-demo-preview">
-            <img
-              src="/images/demo-screenshot.png"
-              alt="Tally web dashboard"
-              className="landing-demo-screenshot"
-              loading="lazy"
-            />
-            <div className="landing-demo-overlay">
-              <span className="landing-demo-cta">Try live demo →</span>
-            </div>
-          </div>
-        </a>
-        <a href="/demo" target="_blank" rel="noopener noreferrer" className="landing-demo-mobile-btn">
-          Try the live demo →
-        </a>
+        <h2 className="landing-section-title">Free to start</h2>
+        <p className="landing-demo-sub">Sign up in seconds — no credit card, no time limit. Upgrade when you're ready.</p>
+        <Link to="/login?mode=signup" className="landing-btn-primary" style={{ display: 'inline-block', marginTop: '1.25rem' }}>
+          Create free account →
+        </Link>
       </section>
 
       <section className="landing-how fade-up">
@@ -590,7 +571,7 @@ export default function Landing() {
               <h4>Product</h4>
               <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">iOS App</a>
               <button onClick={() => setAndroidModalOpen(true)}>Android Beta</button>
-              <a href="/demo" target="_blank" rel="noopener noreferrer">Live Demo</a>
+              <Link to="/login?mode=signup">Sign up free</Link>
               <a href={`${APP_STORE_URL}?action=write-review`} target="_blank" rel="noopener noreferrer">Leave a review</a>
             </div>
             <div className="landing-footer-col">
