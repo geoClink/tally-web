@@ -363,25 +363,12 @@ export default function Landing() {
           <p className="landing-mac-sub">Now available on Google Play. The same app, your same account — on any Android phone.</p>
         </div>
         <div className="landing-android-mockup-wrap">
-          <div className="landing-android-phone landing-android-float">
-            <div className="landing-android-btns-right" />
-            <div className="landing-android-status-bar">
-              <span className="landing-android-status-time">9:41</span>
-              <div className="landing-android-status-icons">
-                <svg width="12" height="8" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="0.5"/><rect x="5" y="5" width="3" height="7" rx="0.5"/><rect x="10" y="2" width="3" height="10" rx="0.5"/><rect x="15" y="0" width="3" height="12" rx="0.5"/></svg>
-                <svg width="12" height="8" viewBox="0 0 16 12"><circle cx="8" cy="11" r="1.5" fill="currentColor"/><path d="M4.5 7.5a5 5 0 0 1 7 0" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M1.5 4.5a9.5 9.5 0 0 1 13 0" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-                <svg width="20" height="8" viewBox="0 0 24 11"><rect x="0.5" y="0.5" width="20" height="10" rx="3" fill="none" stroke="currentColor" strokeOpacity="0.5"/><path d="M21.5 3.5v4a2 2 0 0 0 0-4z" fill="currentColor" fillOpacity="0.5"/><rect x="2" y="2" width="15" height="7" rx="1.5" fill="currentColor"/></svg>
-              </div>
-            </div>
-            <div className="landing-android-screen">
-              <img
-                src="/images/android-bezel.png"
-                alt="Tally on Android — Activity calendar showing hours tracked by day"
-                loading="lazy"
-              />
-            </div>
-            <div className="landing-android-home-bar" />
-          </div>
+          <img
+            src="/images/android-bezel.png"
+            alt="Tally on Android — Activity calendar showing hours tracked by day"
+            className="landing-android-mockup landing-android-float"
+            loading="lazy"
+          />
         </div>
         <div className="landing-mac-pills">
           <span className="landing-mac-pill">Google Play Beta</span>
