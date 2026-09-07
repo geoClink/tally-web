@@ -313,12 +313,12 @@ export default function Landing() {
           <p className="landing-mac-sub">One tap to start billing — timer, clients, invoices, and reports all in one place.</p>
         </div>
         <div className="landing-iphone-mockup-wrap">
-          <img
-            src="/images/tallyios/iphone-frame-1.webp"
-            alt="Tally on iPhone — start tracking in one tap, simple timer running in the background"
-            className="landing-iphone-mockup"
-            loading="lazy"
-          />
+          <div className="landing-phone-mockup landing-iphone-float">
+            <div className="landing-phone-btns-left" />
+            <div className="landing-phone-screen-static">
+              <img src="/images/tallyios/IMG_1216_reports.PNG" alt="Tally Reports — weekly hours by client with bar chart" loading="lazy" />
+            </div>
+          </div>
         </div>
         <div className="landing-mac-pills">
           <span className="landing-mac-pill">One-tap timer</span>
@@ -335,13 +335,13 @@ export default function Landing() {
         </div>
         <div className="landing-ipad-watch-mockups">
           <img
-            src="/images/tallyios/ipad-frame-9.webp"
-            alt="Tally on iPad — persistent sidebar navigation with Reports showing client hours and charts"
+            src="/images/ipad-bezel.png"
+            alt="Tally on iPad — persistent sidebar with Reports showing 64h and $6,080 earned"
             className="landing-ipad-watch-ipad"
             loading="lazy"
           />
           <img
-            src="/images/tallyios/watch-frame-17.webp"
+            src="/images/watch-bezel.png"
             alt="Tally on Apple Watch — timer running showing elapsed time"
             className="landing-ipad-watch-watch"
             loading="lazy"
@@ -383,8 +383,8 @@ export default function Landing() {
         </div>
         <div className="landing-android-mockup-wrap">
           <img
-            src="/images/tallyandroid/android-frame-43.png"
-            alt="Tally on Android — team dashboard showing hours across every member"
+            src="/images/android-bezel.png"
+            alt="Tally on Android — Activity calendar showing hours tracked by day"
             className="landing-android-mockup"
             loading="lazy"
           />

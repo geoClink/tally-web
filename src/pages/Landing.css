@@ -781,24 +781,20 @@
   padding: 1rem 0 2rem;
 }
 
-.landing-iphone-mockup {
-  max-width: 280px;
+.landing-iphone-float {
+  max-width: 260px;
   width: 100%;
   transform: perspective(800px) rotateY(8deg) rotateX(3deg);
-  filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.22));
-  transition: transform 0.45s ease, filter 0.45s ease;
-  border-radius: 12px;
+  transition: transform 0.45s ease, box-shadow 0.45s ease;
 }
 
-.landing-iphone-mockup:hover {
+.landing-iphone-float:hover {
   transform: perspective(800px) rotateY(3deg) rotateX(1deg);
-  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.16));
 }
 
 @media (max-width: 640px) {
-  .landing-iphone-mockup {
+  .landing-iphone-float {
     transform: none;
-    filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.18));
   }
 }
 
@@ -820,42 +816,32 @@
 }
 
 .landing-ipad-watch-ipad {
-  max-width: 460px;
-  width: 55%;
-  min-width: 200px;
+  max-width: 560px;
+  width: 70%;
+  min-width: 220px;
   filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.2));
-  border-radius: 8px;
-  transform: perspective(1000px) rotateY(-6deg) rotateX(2deg);
-  transition: transform 0.45s ease, filter 0.45s ease;
+  transition: filter 0.45s ease;
 }
 
 .landing-ipad-watch-watch {
   max-width: 160px;
-  width: 20%;
-  min-width: 100px;
+  width: 18%;
+  min-width: 90px;
   filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.22));
-  border-radius: 16px;
-  transform: perspective(600px) rotateY(8deg) rotateX(2deg);
-  transition: transform 0.45s ease, filter 0.45s ease;
+  transition: filter 0.45s ease;
 }
 
 .landing-ipad-watch-mockups:hover .landing-ipad-watch-ipad {
-  transform: perspective(1000px) rotateY(-2deg) rotateX(1deg);
   filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.14));
 }
 
 .landing-ipad-watch-mockups:hover .landing-ipad-watch-watch {
-  transform: perspective(600px) rotateY(3deg) rotateX(1deg);
   filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.16));
 }
 
 @media (max-width: 640px) {
-  .landing-ipad-watch-ipad,
   .landing-ipad-watch-watch {
-    transform: none;
-  }
-  .landing-ipad-watch-watch {
-    width: 30%;
+    width: 28%;
   }
 }
 
@@ -945,23 +931,20 @@
 }
 
 .landing-android-mockup {
-  max-width: 280px;
+  max-width: 320px;
   width: 100%;
-  transform: perspective(800px) rotateY(8deg) rotateX(3deg);
   filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.22));
-  transition: transform 0.45s ease, filter 0.45s ease;
-  border-radius: 12px;
+  transition: filter 0.45s ease;
 }
 
 .landing-android-mockup:hover {
-  transform: perspective(800px) rotateY(3deg) rotateX(1deg);
   filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.16));
 }
 
 @media (max-width: 640px) {
   .landing-android-mockup {
-    transform: none;
     filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.18));
+    max-width: 260px;
   }
 }
 
