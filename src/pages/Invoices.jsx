@@ -526,25 +526,30 @@ export default function Invoices() {
       <div className="card" style={{ marginBottom: '1.5rem' }}>
         <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem' }}>New Invoice</h2>
         <form onSubmit={generateInvoice}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Your Name / Company</label>
-              <input
-                type="text"
-                value={yourName}
-                onChange={e => setYourName(e.target.value)}
-                placeholder="Jane Smith"
-              />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {/* Name + Client — stack on mobile, side by side on desktop */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '1rem' }}>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>Your Name / Company</label>
+                <input
+                  type="text"
+                  value={yourName}
+                  onChange={e => setYourName(e.target.value)}
+                  placeholder="Jane Smith"
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>Client</label>
+                <select value={selectedClient} onChange={handleClientChange} required>
+                  <option value="">Select client…</option>
+                  {clients.map(c => (
+                    <option key={c.client} value={c.client}>{c.client}</option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Client</label>
-              <select value={selectedClient} onChange={handleClientChange} required>
-                <option value="">Select client…</option>
-                {clients.map(c => (
-                  <option key={c.client} value={c.client}>{c.client}</option>
-                ))}
-              </select>
-            </div>
+
+            {/* Hourly Rate — full width */}
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label>Hourly Rate ($)</label>
               <input
@@ -556,7 +561,9 @@ export default function Invoices() {
                 step="0.01"
               />
             </div>
-            <div className="form-group" style={{ marginBottom: 0, gridColumn: '1 / -1' }}>
+
+            {/* Quick Period — full width */}
+            <div className="form-group" style={{ marginBottom: 0 }}>
               <label>Quick Period</label>
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                 {[
@@ -574,36 +581,46 @@ export default function Invoices() {
                 ))}
               </div>
             </div>
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Start Date</label>
-              <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} required />
+
+            {/* Start + End Date — always side by side */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>Start Date</label>
+                <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} required />
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>End Date</label>
+                <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} required />
+              </div>
             </div>
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>End Date</label>
-              <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} required />
+
+            {/* Email + Tax Rate — stack on mobile, side by side on desktop */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '1rem' }}>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>Client Email (optional)</label>
+                <input
+                  type="email"
+                  value={clientEmail}
+                  onChange={e => setClientEmail(e.target.value)}
+                  placeholder="client@example.com"
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>Tax Rate % (optional)</label>
+                <input
+                  type="number"
+                  value={taxRate || ''}
+                  onChange={e => setTaxRate(parseFloat(e.target.value) || 0)}
+                  placeholder="0"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                />
+              </div>
             </div>
+
+            {/* Memo — full width */}
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Client Email (optional)</label>
-              <input
-                type="email"
-                value={clientEmail}
-                onChange={e => setClientEmail(e.target.value)}
-                placeholder="client@example.com"
-              />
-            </div>
-            <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Tax Rate % (optional)</label>
-              <input
-                type="number"
-                value={taxRate || ''}
-                onChange={e => setTaxRate(parseFloat(e.target.value) || 0)}
-                placeholder="0"
-                min="0"
-                max="100"
-                step="0.1"
-              />
-            </div>
-            <div className="form-group" style={{ marginBottom: 0, gridColumn: '1 / -1' }}>
               <label>Memo / Notes (optional)</label>
               <input
                 type="text"

@@ -7,6 +7,14 @@ import { todayString } from '../lib/utils'
 import ClientSelect from '../components/ClientSelect'
 import UpgradeModal from '../components/UpgradeModal'
 import { scheduleDailyReminder } from '../lib/notifications'
+import { Capacitor } from '@capacitor/core'
+import { Haptics, ImpactStyle } from '@capacitor/haptics'
+
+async function haptic(style = ImpactStyle.Medium) {
+  if (Capacitor.isNativePlatform()) {
+    try { await Haptics.impact({ style }) } catch {}
+  }
+}
 
 const STORAGE_KEY = 'tally_active_timer'
 
@@ -169,6 +177,7 @@ export default function Track() {
   }
 
   function startTimer() {
+    haptic(ImpactStyle.Medium)
     playTone(880, 0.12)
     setError('')
     const now = new Date()
@@ -187,6 +196,7 @@ export default function Track() {
   }
 
   function pauseTimer() {
+    haptic(ImpactStyle.Light)
     setPaused(true)
     pausedRef.current = true
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
@@ -194,6 +204,7 @@ export default function Track() {
   }
 
   function resumeFromPause() {
+    haptic(ImpactStyle.Medium)
     const newStart = new Date(Date.now() - elapsedRef.current * 1000)
     setStartTime(newStart)
     startTimeRef.current = newStart
@@ -204,6 +215,7 @@ export default function Track() {
   }
 
   function stopTimer() {
+    haptic(ImpactStyle.Heavy)
     playTone(440, 0.18)
     setRunning(false)
     runningRef.current = false

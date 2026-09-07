@@ -196,7 +196,7 @@ export default function Sessions() {
 
       {/* Filter bar */}
       <div className="card" style={{ padding: '0.875rem 1rem', marginBottom: '1rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.75rem', alignItems: 'end' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label style={{ fontSize: '0.78rem' }}>Client</label>
             <select value={filterClient} onChange={e => setFilterClient(e.target.value)}>
@@ -204,13 +204,15 @@ export default function Sessions() {
               {allClients.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label style={{ fontSize: '0.78rem' }}>From</label>
-            <input type="date" value={filterStart} onChange={e => setFilterStart(e.target.value)} />
-          </div>
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label style={{ fontSize: '0.78rem' }}>To</label>
-            <input type="date" value={filterEnd} onChange={e => setFilterEnd(e.target.value)} />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label style={{ fontSize: '0.78rem' }}>From</label>
+              <input type="date" value={filterStart} onChange={e => setFilterStart(e.target.value)} />
+            </div>
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label style={{ fontSize: '0.78rem' }}>To</label>
+              <input type="date" value={filterEnd} onChange={e => setFilterEnd(e.target.value)} />
+            </div>
           </div>
           {hasFilters && (
             <button

@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
 import { supabase } from '../lib/supabase'
 import { Capacitor } from '@capacitor/core'
+import { Browser } from '@capacitor/browser'
 import { isAndroid, initPlayBilling, purchaseProduct, restorePurchases, setOnPurchaseSuccess } from '../lib/playBilling'
 import StripeConnectedBanner from '../components/StripeConnectedBanner'
 
@@ -38,6 +39,7 @@ export default function Billing() {
   const [purchaseError, setPurchaseError] = useState('')
   const [stripeConnected, setStripeConnected] = useState(false)
   const [connectLoading, setConnectLoading] = useState(false)
+  const [connectError, setConnectError] = useState('')
   const [stripeJustConnected, setStripeJustConnected] = useState(false)
   const [disconnecting, setDisconnecting] = useState(false)
 
@@ -90,7 +92,10 @@ export default function Billing() {
 
   async function handleConnectStripe() {
     setConnectLoading(true)
-    const returnUrl = `${window.location.origin}/billing?stripe_connected=true`
+    // On Android the WebView origin is http://localhost — use the real domain so Stripe can redirect back
+    const returnUrl = isNative
+      ? 'https://tallytimetracker.com/billing?stripe_connected=true'
+      : `${window.location.origin}/billing?stripe_connected=true`
     const { data: { session } } = await supabase.auth.getSession()
     const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-connect-account`, {
       method: 'POST',
@@ -103,9 +108,14 @@ export default function Billing() {
     const data = await res.json()
     setConnectLoading(false)
     if (data.url) {
-      window.location.href = data.url
+      if (isNative) {
+        // Open in system browser — WebView can't handle Stripe's OAuth flow
+        await Browser.open({ url: data.url })
+      } else {
+        window.location.href = data.url
+      }
     } else {
-      alert(data.error ?? 'Failed to connect Stripe account')
+      setConnectError(data.error ?? 'Failed to connect Stripe account')
     }
   }
 
@@ -333,13 +343,23 @@ export default function Billing() {
               </div>
             </div>
           ) : (
-            <button
-              className="btn btn-primary"
-              onClick={handleConnectStripe}
-              disabled={connectLoading}
-            >
-              {connectLoading ? 'Redirecting to Stripe…' : 'Connect Stripe account'}
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <button
+                className="btn btn-primary"
+                onClick={handleConnectStripe}
+                disabled={connectLoading}
+              >
+                {connectLoading ? 'Opening Stripe…' : 'Connect Stripe account'}
+              </button>
+              {connectError && (
+                <p style={{ color: 'var(--danger)', fontSize: '0.85rem', margin: 0 }}>{connectError}</p>
+              )}
+              {isNative && (
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', margin: 0, lineHeight: 1.4 }}>
+                  This will open your browser to connect Stripe. After finishing, return to the app — your account will be linked.
+                </p>
+              )}
+            </div>
           )}
         </div>
       )}

@@ -38,6 +38,10 @@ const watchScreenshots = [
   { src: '/images/tallyios/watch-frame-18.webp', alt: 'Pause and resume anytime — step away and pick back up, your time is saved automatically' },
 ]
 
+const androidScreenshots = [
+  { src: '/images/tallyandroid/android-frame-33.png', alt: 'One tap to start billing — client, note, timer done in seconds on Android' },
+]
+
 const features = [
   { title: 'Live Activity & Dynamic Island', body: 'Your running timer stays on the lock screen and Dynamic Island the entire time — no need to open the app.' },
   { title: 'Widgets & Siri', body: 'Small and medium home screen widgets show your active session. Start and stop timers by voice via App Intents and Siri Shortcuts.' },
@@ -352,6 +356,15 @@ export default function Landing() {
         <div className="landing-scroll-track landing-scroll-track--watch">
           {watchScreenshots.map(item => (
             <div key={item.src} className="landing-scroll-item landing-scroll-item--watch">
+              <img src={item.src} alt={item.alt} loading="lazy" style={{ width: '100%', borderRadius: '12px', display: 'block' }} />
+            </div>
+          ))}
+        </div>
+
+        <p className="landing-device-row-label">Android <span style={{ fontSize: '0.75em', fontWeight: 500, color: 'var(--text-muted)', marginLeft: '0.4em' }}>Beta</span></p>
+        <div className="landing-scroll-track">
+          {androidScreenshots.map(item => (
+            <div key={item.src} className="landing-scroll-item">
               <img src={item.src} alt={item.alt} loading="lazy" style={{ width: '100%', borderRadius: '12px', display: 'block' }} />
             </div>
           ))}

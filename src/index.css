@@ -111,8 +111,8 @@ button:focus-visible {
 
 .sidebar {
   width: var(--sidebar-width);
-  background: var(--bg-card);
-  border-right: 1px solid var(--border);
+  background: #0f1629;
+  border-right: none;
   display: flex;
   flex-direction: column;
   padding: 1.25rem 0 1rem;
@@ -123,7 +123,29 @@ button:focus-visible {
   z-index: 100;
   transition: transform 0.2s ease;
   overflow-y: auto;
+  color-scheme: dark;
+  /* Override all CSS variables so every child gets dark colors automatically */
+  --bg: #0f1629;
+  --bg-card: #0f1629;
+  --bg-secondary: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.1);
+  --text: rgba(255,255,255,0.82);
+  --text-muted: rgba(255,255,255,0.4);
+  --accent-light: rgba(26,111,255,0.25);
 }
+
+.sidebar .sidebar-brand { color: #fff; background: #0f1629; }
+.sidebar .sidebar-link { color: rgba(255,255,255,0.72); }
+.sidebar .sidebar-link:hover { color: #fff; }
+.sidebar .sidebar-link:hover .sidebar-icon { color: rgba(255,255,255,0.82); }
+.sidebar .sidebar-link.active { color: #7eb3ff; font-weight: 600; }
+.sidebar .sidebar-link.active .sidebar-icon { color: #7eb3ff; }
+.sidebar .sidebar-icon { color: rgba(255,255,255,0.38); }
+.sidebar .sidebar-link-locked.active { background: none; color: rgba(255,255,255,0.72); font-weight: normal; }
+.sidebar .sidebar-signout:hover { background: rgba(255,255,255,0.07); color: #f87171; }
+.sidebar .tier-business { background: rgba(124,58,237,0.22); color: #c4b5fd; }
+.sidebar .tier-pro { background: rgba(26,111,255,0.22); color: #93bbff; }
+.sidebar .tier-free { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.45); }
 
 .sidebar-overlay {
   display: none;
@@ -222,7 +244,6 @@ button:focus-visible {
   list-style: none;
   flex: 1;
   padding: 0 0.5rem;
-  overflow-y: auto;
 }
 
 .sidebar-group {
@@ -1954,14 +1975,9 @@ button:hover .trash-icon .trash-lid {
    DASHBOARD — mobile
    ============================================= */
 
-/* 3 stat cards: 2-col top row + Weekly Goal spanning full bottom row on tablet and below */
 @media (max-width: 900px) {
   .card-grid {
     grid-template-columns: 1fr 1fr;
-  }
-  .card-grid .card:nth-child(3) {
-    grid-column: 1 / -1;
-    text-align: center;
   }
 }
 

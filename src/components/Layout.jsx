@@ -1,12 +1,19 @@
 // Like a SwiftUI NavigationSplitView — sidebar on the left, content on the right.
 // <Outlet /> is where the current page renders (like the detail view in a split view).
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const location = useLocation()
+  const sidebarRef = useRef(null)
+
+  useEffect(() => {
+    if (sidebarOpen && sidebarRef.current) {
+      sidebarRef.current.scrollTop = 0
+    }
+  }, [sidebarOpen])
 
   return (
     <div className="app-layout">
@@ -14,7 +21,7 @@ export default function Layout() {
         className={`sidebar-overlay${sidebarOpen ? ' visible' : ''}`}
         onClick={() => setSidebarOpen(false)}
       />
-      <nav className={`sidebar${sidebarOpen ? ' open' : ''}`}>
+      <nav ref={sidebarRef} className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <Sidebar onClose={() => setSidebarOpen(false)} />
       </nav>
       <div className="main-content">
