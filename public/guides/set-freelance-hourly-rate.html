@@ -16,7 +16,7 @@
     a { color: #1a6fff; text-decoration: none; }
     a:hover { text-decoration: underline; }
     .nav { background: #fff; border-bottom: 1px solid #e8e8ed; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 56px; }
-    .nav-logo { font-weight: 700; font-size: 1.1rem; color: #111; }
+    .nav-logo { font-weight: 700; font-size: 1.1rem; color: #111; display: flex; align-items: center; gap: 0.4rem; text-decoration: none; }
     .nav-cta { background: #1a6fff; color: #fff; padding: 0.4rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; }
     .nav-cta:hover { text-decoration: none; background: #0057e7; }
     .article { max-width: 680px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
@@ -92,7 +92,7 @@
 </head>
 <body>
   <nav class="nav">
-    <a href="/" class="nav-logo">Tally</a>
+    <a href="/" class="nav-logo"><img src="/favicon.svg" alt="" width="22" height="22" style="border-radius:6px;" aria-hidden="true">Tally</a>
     <a href="/login?mode=signup" class="nav-cta">Get started free</a>
   </nav>
 

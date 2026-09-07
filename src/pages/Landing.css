@@ -767,6 +767,112 @@
   }
 }
 
+/* iPad section */
+.landing-ipad {
+  padding: 5rem 1.5rem 4rem;
+  text-align: center;
+  background: var(--bg-secondary);
+  overflow: hidden;
+}
+
+.landing-ipad-mockup-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0 2rem;
+}
+
+.landing-ipad-mockup {
+  max-width: 560px;
+  width: 100%;
+  transform: perspective(1200px) rotateY(-8deg) rotateX(3deg);
+  filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.22));
+  transition: transform 0.45s ease, filter 0.45s ease;
+  border-radius: 8px;
+}
+
+.landing-ipad-mockup:hover {
+  transform: perspective(1200px) rotateY(-3deg) rotateX(1deg);
+  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.16));
+}
+
+@media (max-width: 640px) {
+  .landing-ipad-mockup {
+    transform: none;
+    filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.18));
+  }
+}
+
+/* Watch section */
+.landing-watch {
+  padding: 5rem 1.5rem 4rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+.landing-watch-mockup-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0 2rem;
+}
+
+.landing-watch-mockup {
+  max-width: 200px;
+  width: 100%;
+  transform: perspective(600px) rotateY(8deg) rotateX(3deg);
+  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.24));
+  transition: transform 0.45s ease, filter 0.45s ease;
+  border-radius: 20px;
+}
+
+.landing-watch-mockup:hover {
+  transform: perspective(600px) rotateY(3deg) rotateX(1deg);
+  filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.18));
+}
+
+@media (max-width: 640px) {
+  .landing-watch-mockup {
+    transform: none;
+    filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.2));
+  }
+}
+
+/* Android section */
+.landing-android {
+  padding: 5rem 1.5rem 4rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+.landing-android-mockup-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0 2rem;
+}
+
+.landing-android-mockup {
+  max-width: 280px;
+  width: 100%;
+  transform: perspective(800px) rotateY(8deg) rotateX(3deg);
+  filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.22));
+  transition: transform 0.45s ease, filter 0.45s ease;
+  border-radius: 12px;
+}
+
+.landing-android-mockup:hover {
+  transform: perspective(800px) rotateY(3deg) rotateX(1deg);
+  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.16));
+}
+
+@media (max-width: 640px) {
+  .landing-android-mockup {
+    transform: none;
+    filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.18));
+  }
+}
+
 /* iPhone bezel */
 .landing-phone-mockup {
   width: 100%;
