@@ -282,49 +282,6 @@ export default function Landing() {
         </a>
       </section>
 
-      <section className="landing-mac fade-up">
-        <div className="landing-mac-header">
-          <span className="landing-platform-badge">Now on Mac</span>
-          <h2 className="landing-section-title">Tally for Mac</h2>
-          <p className="landing-mac-sub">A full native macOS app — not a web wrapper. Your clients, sessions, and billing dashboard live in the Mac sidebar you already know. Syncs instantly with your iPhone.</p>
-        </div>
-        <div className="landing-mac-mockup-wrap">
-          <img
-            src="/images/macbook-bezel.png"
-            alt="Tally running on macOS — client list, live timer, and billing dashboard in a native Mac app"
-            className="landing-mac-mockup"
-            loading="lazy"
-          />
-        </div>
-        <div className="landing-mac-pills">
-          <span className="landing-mac-pill">Native macOS app</span>
-          <span className="landing-mac-pill">Syncs with iPhone &amp; iPad</span>
-
-          <span className="landing-mac-pill">Push notifications</span>
-        </div>
-      </section>
-
-      <section className="landing-android fade-up">
-        <div className="landing-mac-header">
-          <span className="landing-platform-badge">Beta on Android</span>
-          <h2 className="landing-section-title">Tally for Android</h2>
-          <p className="landing-mac-sub">Now available on Google Play. The same app, your same account — on any Android phone.</p>
-        </div>
-        <div className="landing-android-mockup-wrap">
-          <img
-            src="/images/tallyandroid/android-frame-33.png"
-            alt="Tally on Android — one tap to start billing, client and timer done in seconds"
-            className="landing-android-mockup"
-            loading="lazy"
-          />
-        </div>
-        <div className="landing-mac-pills">
-          <span className="landing-mac-pill">Google Play Beta</span>
-          <span className="landing-mac-pill">Same account as iOS &amp; web</span>
-          <span className="landing-mac-pill">Full feature parity</span>
-        </div>
-      </section>
-
       <section className="landing-how fade-up">
         <div className="landing-how-header">
           <h2 className="landing-section-title">How it works</h2>
@@ -349,60 +306,93 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-screenshots fade-up">
-        <div className="landing-screenshots-header">
+      <section className="landing-iphone fade-up">
+        <div className="landing-mac-header">
           <span className="landing-platform-badge">iPhone</span>
           <h2 className="landing-section-title">Built for iPhone</h2>
-          <p className="landing-screenshots-sub">One tap to start billing — timer, clients, invoices, and reports all in one place.</p>
+          <p className="landing-mac-sub">One tap to start billing — timer, clients, invoices, and reports all in one place.</p>
         </div>
-        <div className="landing-scroll-track">
-          {productSlides.map(item => (
-            <div key={item.src} className="landing-scroll-item">
-              <img src={item.src} alt={item.alt} loading="lazy" style={{ width: '100%', borderRadius: '12px', display: 'block' }} />
-            </div>
-          ))}
+        <div className="landing-iphone-mockup-wrap">
+          <img
+            src="/images/tallyios/iphone-frame-1.webp"
+            alt="Tally on iPhone — start tracking in one tap, simple timer running in the background"
+            className="landing-iphone-mockup"
+            loading="lazy"
+          />
+        </div>
+        <div className="landing-mac-pills">
+          <span className="landing-mac-pill">One-tap timer</span>
+          <span className="landing-mac-pill">Client rates &amp; invoicing</span>
+          <span className="landing-mac-pill">Live Activity &amp; widgets</span>
         </div>
       </section>
 
-      <section className="landing-ipad fade-up">
+      <section className="landing-ipad-watch fade-up">
         <div className="landing-mac-header">
-          <span className="landing-platform-badge">On iPad</span>
-          <h2 className="landing-section-title">Tally for iPad</h2>
-          <p className="landing-mac-sub">Extra screen space means a persistent sidebar — Timer, Reports, Activity, and Team always one tap away without covering the main view.</p>
+          <span className="landing-platform-badge">iPad &amp; Apple Watch</span>
+          <h2 className="landing-section-title">Tally for iPad &amp; Apple Watch</h2>
+          <p className="landing-mac-sub">Extra screen space on iPad means a persistent sidebar. On Apple Watch, start and stop timers from your wrist — no phone needed.</p>
         </div>
-        <div className="landing-ipad-mockup-wrap">
+        <div className="landing-ipad-watch-mockups">
           <img
             src="/images/tallyios/ipad-frame-9.webp"
             alt="Tally on iPad — persistent sidebar navigation with Reports showing client hours and charts"
-            className="landing-ipad-mockup"
+            className="landing-ipad-watch-ipad"
             loading="lazy"
           />
-        </div>
-        <div className="landing-mac-pills">
-          <span className="landing-mac-pill">Persistent sidebar</span>
-          <span className="landing-mac-pill">Full Reports &amp; Activity</span>
-          <span className="landing-mac-pill">Same account as iPhone</span>
-        </div>
-      </section>
-
-      <section className="landing-watch fade-up">
-        <div className="landing-mac-header">
-          <span className="landing-platform-badge">On Apple Watch</span>
-          <h2 className="landing-section-title">Tally for Apple Watch</h2>
-          <p className="landing-mac-sub">Start, pause, and stop a timer from your wrist — no phone needed. Syncs to the same session in real time.</p>
-        </div>
-        <div className="landing-watch-mockup-wrap">
           <img
             src="/images/tallyios/watch-frame-17.webp"
             alt="Tally on Apple Watch — timer running showing elapsed time"
-            className="landing-watch-mockup"
+            className="landing-ipad-watch-watch"
             loading="lazy"
           />
         </div>
         <div className="landing-mac-pills">
+          <span className="landing-mac-pill">Persistent sidebar on iPad</span>
           <span className="landing-mac-pill">Start from your wrist</span>
-          <span className="landing-mac-pill">No phone needed</span>
-          <span className="landing-mac-pill">Syncs in real time</span>
+          <span className="landing-mac-pill">All synced in real time</span>
+        </div>
+      </section>
+
+      <section className="landing-mac fade-up">
+        <div className="landing-mac-header">
+          <span className="landing-platform-badge">Now on Mac</span>
+          <h2 className="landing-section-title">Tally for Mac</h2>
+          <p className="landing-mac-sub">A full native macOS app — not a web wrapper. Your clients, sessions, and billing dashboard live in the Mac sidebar you already know. Syncs instantly with your iPhone.</p>
+        </div>
+        <div className="landing-mac-mockup-wrap">
+          <img
+            src="/images/macbook-bezel.png"
+            alt="Tally running on macOS — client list, live timer, and billing dashboard in a native Mac app"
+            className="landing-mac-mockup"
+            loading="lazy"
+          />
+        </div>
+        <div className="landing-mac-pills">
+          <span className="landing-mac-pill">Native macOS app</span>
+          <span className="landing-mac-pill">Syncs with iPhone &amp; iPad</span>
+          <span className="landing-mac-pill">Push notifications</span>
+        </div>
+      </section>
+
+      <section className="landing-android fade-up">
+        <div className="landing-mac-header">
+          <span className="landing-platform-badge">Beta on Android</span>
+          <h2 className="landing-section-title">Tally for Android</h2>
+          <p className="landing-mac-sub">Now available on Google Play. The same app, your same account — on any Android phone.</p>
+        </div>
+        <div className="landing-android-mockup-wrap">
+          <img
+            src="/images/tallyandroid/android-frame-43.png"
+            alt="Tally on Android — team dashboard showing hours across every member"
+            className="landing-android-mockup"
+            loading="lazy"
+          />
+        </div>
+        <div className="landing-mac-pills">
+          <span className="landing-mac-pill">Google Play Beta</span>
+          <span className="landing-mac-pill">Same account as iOS &amp; web</span>
+          <span className="landing-mac-pill">Full feature parity</span>
         </div>
       </section>
 
