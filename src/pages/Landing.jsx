@@ -382,12 +382,16 @@ export default function Landing() {
           <p className="landing-mac-sub">Now available on Google Play. The same app, your same account — on any Android phone.</p>
         </div>
         <div className="landing-android-mockup-wrap">
-          <img
-            src="/images/android-bezel.png"
-            alt="Tally on Android — Activity calendar showing hours tracked by day"
-            className="landing-android-mockup"
-            loading="lazy"
-          />
+          <div className="landing-android-phone landing-android-float">
+            <div className="landing-android-btns-right" />
+            <div className="landing-android-screen">
+              <img
+                src="/images/android-bezel.png"
+                alt="Tally on Android — Activity calendar showing hours tracked by day"
+                loading="lazy"
+              />
+            </div>
+          </div>
         </div>
         <div className="landing-mac-pills">
           <span className="landing-mac-pill">Google Play Beta</span>
