@@ -14,6 +14,11 @@
     { "source": "/support", "destination": "/support.html" },
     { "source": "/android-beta", "destination": "/android-beta.html" },
     { "source": "/confirm", "destination": "/confirm.html" },
+    { "source": "/guides", "destination": "/guides/index.html" },
+    { "source": "/guides/track-billable-hours", "destination": "/guides/track-billable-hours.html" },
+    { "source": "/guides/invoice-clients-hourly-work", "destination": "/guides/invoice-clients-hourly-work.html" },
+    { "source": "/guides/freelance-time-tracking", "destination": "/guides/freelance-time-tracking.html" },
+    { "source": "/guides/set-freelance-hourly-rate", "destination": "/guides/set-freelance-hourly-rate.html" },
     { "source": "/:path*", "destination": "/index.html" }
   ],
   "headers": [
