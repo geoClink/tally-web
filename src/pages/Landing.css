@@ -743,6 +743,10 @@
   filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.16));
 }
 
+.landing-mac-mockup:active {
+  transform: scale(0.98);
+}
+
 .landing-mac-pills {
   display: flex;
   gap: 0.75rem;
@@ -793,6 +797,10 @@
   transform: perspective(600px) rotateY(8deg) rotateX(2deg);
 }
 
+.landing-iphone-float:active {
+  transform: scale(0.97);
+}
+
 @media (max-width: 640px) {
   .landing-iphone-float {
     transform: none;
@@ -841,6 +849,14 @@
 .landing-ipad-watch-mockups:hover .landing-ipad-watch-watch {
   transform: perspective(800px) rotateY(4deg) rotateX(2deg);
   filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.18));
+}
+
+.landing-ipad-watch-ipad:active {
+  transform: scale(0.97);
+}
+
+.landing-ipad-watch-watch:active {
+  transform: scale(0.95);
 }
 
 @media (max-width: 640px) {
