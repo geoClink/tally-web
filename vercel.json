@@ -10,7 +10,12 @@
     }
   ],
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "/:path*", "destination": "/index.html" }],
+  "rewrites": [
+    { "source": "/support", "destination": "/support.html" },
+    { "source": "/android-beta", "destination": "/android-beta.html" },
+    { "source": "/confirm", "destination": "/confirm.html" },
+    { "source": "/:path*", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
