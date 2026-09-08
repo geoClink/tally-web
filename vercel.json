@@ -10,7 +10,8 @@
       "schedule": "0 9 * * 1"
     }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "outputDirectory": "dist",
+  "rewrites": [{ "source": "/:path*", "destination": "/index.html" }],
   "headers": [
     {
       "source": "/(.*)",
