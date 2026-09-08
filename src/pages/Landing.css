@@ -1334,10 +1334,15 @@
 .landing-email-capture .landing-btn-primary {
   background: #1e293b;
   color: #fff;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
 }
 
 .landing-email-capture .landing-btn-primary:hover {
   background: #0f172a;
+  box-shadow: none;
+  transform: none;
 }
 
 .landing-email-success {
