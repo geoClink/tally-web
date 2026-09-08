@@ -791,12 +791,12 @@
 .landing-iphone-float {
   max-width: 260px;
   width: 100%;
-  transform: perspective(600px) rotateY(16deg) rotateX(5deg);
+  transform: perspective(600px) rotateY(8deg) rotateX(3deg);
   transition: transform 0.45s ease, box-shadow 0.45s ease;
 }
 
 .landing-iphone-float:hover {
-  transform: perspective(600px) rotateY(8deg) rotateX(2deg);
+  transform: perspective(600px) rotateY(3deg) rotateX(1deg);
 }
 
 .landing-iphone-float:active {
@@ -954,18 +954,19 @@
 .landing-android-mockup-img {
   max-width: 300px;
   width: 100%;
-  filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.18));
-  transition: filter 0.45s ease, transform 0.2s ease;
+  border-radius: 28px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18);
+  transition: box-shadow 0.45s ease, transform 0.2s ease;
 }
 
 .landing-android-mockup-img:hover {
-  filter: drop-shadow(0 32px 60px rgba(0, 0, 0, 0.28));
+  box-shadow: 0 32px 60px rgba(0, 0, 0, 0.28);
   transform: scale(1.03);
 }
 
 .landing-android-mockup-img:active {
   transform: scale(0.97);
-  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.14));
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
 }
 
 /* Pixel Pro phone body — Obsidian colorway */
