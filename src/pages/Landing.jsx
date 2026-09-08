@@ -396,7 +396,6 @@ export default function Landing() {
       <section className="landing-visionpro-strip fade-up" id="visionpro">
         <div className="landing-visionpro-strip-inner">
           <div className="landing-visionpro-strip-text">
-            <span className="landing-platform-badge landing-platform-badge--soon">Coming Soon</span>
             <p className="landing-visionpro-strip-label">Tally for Apple Vision Pro</p>
             <p className="landing-visionpro-strip-sub">A native visionOS app is in development — your account and sessions sync automatically when it ships.</p>
             <Link to="/login?mode=signup" className="landing-visionpro-strip-btn">Sign up to be first →</Link>
