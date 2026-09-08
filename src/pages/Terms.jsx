@@ -50,7 +50,7 @@ export default function Terms() {
         <p>We may update these Terms. Continued use after notice of changes constitutes acceptance. Material changes will be communicated via email or in-app notice.</p>
 
         <h2>13. Contact</h2>
-        <p>Questions? Reach out via the <a href="https://apps.apple.com/us/app/tally-time-tracker/id6775275483" target="_blank" rel="noopener noreferrer">App Store support page</a>.</p>
+        <p>Questions? Email us at <a href="mailto:help@tallytimetracker.com">help@tallytimetracker.com</a>.</p>
       </div>
     </div>
   )

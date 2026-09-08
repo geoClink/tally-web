@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Freelancer Guides — Tally Time Tracker</title>
-  <meta name="description" content="Free guides for freelancers: how to track billable hours, invoice clients, set your hourly rate, and get paid for every minute you work." />
-  <link rel="canonical" href="https://tallytimetracker.com/guides/" />
-  <meta property="og:title" content="Freelancer Guides — Tally Time Tracker" />
-  <meta property="og:description" content="Free guides for freelancers: how to track billable hours, invoice clients, and get paid for every minute you work." />
-  <meta property="og:url" content="https://tallytimetracker.com/guides/" />
+  <title>Support — Tally Time Tracker</title>
+  <meta name="description" content="Get help with Tally — contact support or find answers to common questions." />
+  <link rel="canonical" href="https://tallytimetracker.com/support" />
+  <meta property="og:title" content="Support — Tally Time Tracker" />
+  <meta property="og:url" content="https://tallytimetracker.com/support" />
   <meta name="apple-itunes-app" content="app-id=6775275483" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f9f9fb; color: #111; line-height: 1.6; }
     a { color: #1a6fff; text-decoration: none; }
     a:hover { text-decoration: underline; }
-        .nav { background: rgba(248,249,250,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid #e8e8ed; padding: 0.875rem 1.75rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 0 #e8e8ed; height: auto; }
+    .nav { background: rgba(248,249,250,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid #e8e8ed; padding: 0.875rem 1.75rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 0 #e8e8ed; }
     .nav-brand { display: flex; align-items: center; gap: 0.5rem; }
     .nav-logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.03em; background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none; }
     .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
@@ -26,14 +25,17 @@
     .hero { background: #fff; padding: 4rem 1.5rem 3rem; text-align: center; border-bottom: 1px solid #e8e8ed; }
     .hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; line-height: 1.2; margin-bottom: 1rem; }
     .hero p { font-size: 1.1rem; color: #555; max-width: 520px; margin: 0 auto; }
-    .guides { max-width: 800px; margin: 3rem auto; padding: 0 1.5rem; display: grid; gap: 1.25rem; }
-    .guide-card { background: #fff; border: 1px solid #e8e8ed; border-radius: 14px; padding: 1.5rem; display: block; transition: box-shadow 0.2s; }
-    .guide-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-decoration: none; }
-    .guide-tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #1a6fff; margin-bottom: 0.5rem; }
-    .guide-card h2 { font-size: 1.15rem; font-weight: 700; color: #111; margin-bottom: 0.4rem; }
-    .guide-card p { font-size: 0.95rem; color: #555; }
-    .guide-meta { font-size: 0.8rem; color: #999; margin-top: 0.75rem; }
-    .site-footer { border-top: 1px solid #e8e8ed; padding: 3rem 1.5rem 2.5rem; margin-top: 4rem; }
+    .content { max-width: 720px; margin: 3rem auto; padding: 0 1.5rem 4rem; display: grid; gap: 1.5rem; }
+    .card { background: #fff; border: 1px solid #e8e8ed; border-radius: 14px; padding: 2rem; }
+    .card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; }
+    .card p { font-size: 0.95rem; color: #555; line-height: 1.65; }
+    .contact-email { display: inline-block; margin-top: 0.75rem; font-size: 1rem; font-weight: 600; color: #2563eb; }
+    .faq-list { display: flex; flex-direction: column; gap: 0; }
+    .faq-item { padding: 1.25rem 0; border-bottom: 1px solid #e8e8ed; }
+    .faq-item:first-child { border-top: 1px solid #e8e8ed; }
+    .faq-q { font-size: 0.95rem; font-weight: 600; color: #111; margin-bottom: 0.35rem; }
+    .faq-a { font-size: 0.9rem; color: #555; line-height: 1.6; }
+    .site-footer { border-top: 1px solid #e8e8ed; padding: 3rem 1.5rem 2.5rem; margin-top: 2rem; }
     .site-footer-inner { max-width: 960px; margin: 0 auto; display: flex; justify-content: space-between; gap: 3rem; flex-wrap: wrap; }
     .site-footer-brand { display: flex; flex-direction: column; gap: 0.4rem; min-width: 140px; }
     .site-footer-logo-row { display: flex; align-items: center; gap: 0.5rem; }
@@ -54,7 +56,8 @@
   </style>
 </head>
 <body>
-    <nav class="nav">
+
+  <nav class="nav">
     <div class="nav-brand">
       <img src="/favicon.svg" alt="" width="28" height="28" style="border-radius:7px;" aria-hidden="true">
       <a href="/" class="nav-logo">Tally</a>
@@ -66,41 +69,47 @@
   </nav>
 
   <div class="hero">
-    <h1>Guides for Freelancers</h1>
-    <p>Practical advice on tracking time, billing clients, and running a freelance business.</p>
+    <h1>Support</h1>
+    <p>Have a question or running into an issue? We're here to help.</p>
   </div>
 
-  <div class="guides">
-    <a href="/guides/track-billable-hours" class="guide-card">
-      <div class="guide-tag">Time Tracking</div>
-      <h2>How to Track Billable Hours as a Freelancer</h2>
-      <p>Stop losing money on untracked time. Learn the best methods for logging billable hours accurately, from one-tap timers to weekly reconciliation.</p>
-      <div class="guide-meta">5 min read</div>
-    </a>
+  <div class="content">
 
-    <a href="/guides/invoice-clients-hourly-work" class="guide-card">
-      <div class="guide-tag">Invoicing</div>
-      <h2>How to Invoice Clients for Hourly Work</h2>
-      <p>What to include on a freelance invoice, when to send it, and how to get paid faster — including how to send invoices directly from your time tracker.</p>
-      <div class="guide-meta">6 min read</div>
-    </a>
+    <div class="card">
+      <h2>Contact Support</h2>
+      <p>Email us and we'll get back to you as soon as possible.</p>
+      <a href="mailto:help@tallytimetracker.com" class="contact-email">help@tallytimetracker.com</a>
+    </div>
 
-    <a href="/guides/freelance-time-tracking" class="guide-card">
-      <div class="guide-tag">Getting Started</div>
-      <h2>Freelance Time Tracking: The Complete Guide</h2>
-      <p>Everything a freelancer needs to know about tracking time — why it matters, which tools to use, and how to build a habit that protects your income.</p>
-      <div class="guide-meta">8 min read</div>
-    </a>
+    <div class="card">
+      <h2>Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <p class="faq-q">How do I delete my account?</p>
+          <p class="faq-a">Open Tally and go to <strong>Settings → Delete Account</strong>. This permanently removes your account and all associated data. If you have an active Business subscription, cancel it first through Stripe or the App Store to avoid future charges.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">How do I restore my purchases?</p>
+          <p class="faq-a">Open Tally, go to <strong>Settings</strong>, and tap <strong>Restore Purchases</strong>. Make sure you're signed in to the Apple ID used for the original purchase.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">I upgraded but still see the Free tier.</p>
+          <p class="faq-a">Refresh the page or restart the app. If it still shows Free, try signing out and back in. If the issue persists, email us at <a href="mailto:help@tallytimetracker.com">help@tallytimetracker.com</a>.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">My team hours aren't showing up on the Team Dashboard.</p>
+          <p class="faq-a">Check that the workspace's Client Name exactly matches what your members log time under — including capitalization and spacing. This is the most common cause.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Can I use Tally on my phone?</p>
+          <p class="faq-a">Yes — native apps are available for <a href="https://apps.apple.com/us/app/tally-time-tracker/id6775275483" target="_blank" rel="noopener noreferrer">iOS</a> and Android. The web app is also mobile-responsive and works in any browser.</p>
+        </div>
+      </div>
+    </div>
 
-    <a href="/guides/set-freelance-hourly-rate" class="guide-card">
-      <div class="guide-tag">Pricing</div>
-      <h2>How to Set Your Freelance Hourly Rate</h2>
-      <p>A practical formula for calculating what you need to charge to hit your income goals — including how to factor in taxes, downtime, and expenses.</p>
-      <div class="guide-meta">5 min read</div>
-    </a>
   </div>
 
-    <footer class="site-footer">
+  <footer class="site-footer">
     <div class="site-footer-inner">
       <div class="site-footer-brand">
         <div class="site-footer-logo-row">
@@ -125,8 +134,6 @@
         <div class="site-footer-col">
           <h4>Resources</h4>
           <a href="/guides/">Freelancer Guides</a>
-          <a href="/guides/track-billable-hours">Track Billable Hours</a>
-          <a href="/guides/invoice-clients-hourly-work">Invoice Clients</a>
         </div>
         <div class="site-footer-col">
           <h4>Legal</h4>
@@ -135,11 +142,11 @@
         </div>
         <div class="site-footer-col">
           <h4>Support</h4>
-          <a href="/support">Help &amp; FAQ</a>
-          <a href="mailto:help@tallytimetracker.com">Contact Us</a>
+          <a href="mailto:help@tallytimetracker.com">help@tallytimetracker.com</a>
         </div>
       </div>
     </div>
   </footer>
+
 </body>
 </html>

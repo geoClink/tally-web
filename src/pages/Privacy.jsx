@@ -29,7 +29,7 @@ export default function Privacy() {
         <p>All data is stored in Supabase with row-level security enabled — each user can only access their own records. Connections are encrypted in transit via HTTPS.</p>
 
         <h2>Contact</h2>
-        <p>Questions about this policy? Reach out via the <a href="https://apps.apple.com/us/app/tally-time-tracker/id6775275483" target="_blank" rel="noopener noreferrer">App Store support page</a>.</p>
+        <p>Questions about this policy? Email us at <a href="mailto:help@tallytimetracker.com">help@tallytimetracker.com</a>.</p>
       </div>
     </div>
   )
