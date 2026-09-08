@@ -441,14 +441,6 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-testimonial fade-up">
-        <div className="landing-testimonial-inner">
-          <p className="landing-testimonial-quote">"I really like how smooth and straightforward the app is."</p>
-          <div className="landing-testimonial-author">
-            <span className="landing-testimonial-role">Freelance Product Designer</span>
-          </div>
-        </div>
-      </section>
 
       <section className="landing-pricing fade-up" id="pricing">
         <h2 className="landing-section-title">Pricing</h2>
