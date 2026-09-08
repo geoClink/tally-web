@@ -624,6 +624,7 @@ export default function Landing() {
             <div className="landing-footer-col">
               <h4>Product</h4>
               <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">iOS App</a>
+              <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">Mac App</a>
               <button onClick={() => setAndroidModalOpen(true)}>Android Beta</button>
               <Link to="/login?mode=signup">Sign up free</Link>
               <a href={`${APP_STORE_URL}?action=write-review`} target="_blank" rel="noopener noreferrer">Leave a review</a>
