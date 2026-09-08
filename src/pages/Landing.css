@@ -937,15 +937,17 @@
   max-width: 300px;
   width: 100%;
   filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.18));
-  transition: filter 0.45s ease;
+  transition: filter 0.45s ease, transform 0.2s ease;
 }
 
 .landing-android-mockup-img:hover {
-  filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.12));
+  filter: drop-shadow(0 32px 60px rgba(0, 0, 0, 0.28));
+  transform: scale(1.03);
 }
 
 .landing-android-mockup-img:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
+  filter: drop-shadow(0 12px 28px rgba(0, 0, 0, 0.14));
 }
 
 /* Pixel Pro phone body — Obsidian colorway */
