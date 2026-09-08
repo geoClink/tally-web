@@ -1821,6 +1821,175 @@
   }
 }
 
+/* ── Vision Pro section ── */
+.landing-visionpro {
+  padding: 5rem 1.5rem 4rem;
+  text-align: center;
+  background: linear-gradient(150deg, #1e1b4b 0%, #312e81 100%);
+}
+
+.landing-visionpro .landing-section-title {
+  color: #fff;
+}
+
+.landing-visionpro .landing-section-title::after {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.landing-visionpro .landing-mac-sub {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.landing-platform-badge--soon {
+  color: #a855f7;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.landing-visionpro .landing-btn-primary {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  box-shadow: none;
+}
+
+.landing-visionpro .landing-btn-primary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+/* ── Business callout banner ── */
+.landing-business-callout {
+  background: var(--accent);
+  padding: 3rem 1.5rem;
+}
+
+.landing-business-callout-inner {
+  max-width: 780px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.landing-business-callout-text h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.35rem;
+}
+
+.landing-business-callout-text p {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.55;
+  max-width: 440px;
+}
+
+.landing-business-callout .landing-btn-primary {
+  background: #fff;
+  color: var(--accent);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.landing-business-callout .landing-btn-primary:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--accent-hover);
+  box-shadow: none;
+}
+
+@media (max-width: 640px) {
+  .landing-business-callout-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .landing-business-callout-text p {
+    max-width: 100%;
+  }
+  .landing-business-callout .landing-btn-primary {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ── Testimonial ── */
+.landing-testimonial {
+  padding: 5rem 1.5rem;
+  text-align: center;
+  background: var(--bg-secondary);
+}
+
+.landing-testimonial-inner {
+  max-width: 580px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.landing-testimonial-stars {
+  color: #facc15;
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+}
+
+.landing-testimonial-quote {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.7;
+  font-style: italic;
+}
+
+.landing-testimonial-author {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.landing-testimonial-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.landing-testimonial-role {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ── Changelog toggle ── */
+.landing-changelog-toggle {
+  display: block;
+  margin: 1.5rem auto 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.landing-changelog-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── Hero rating link ── */
+.landing-hero-rating {
+  text-decoration: none;
+  display: inline-flex;
+}
+
 /* ── App Store group (badges side by side) ── */
 .landing-appstore-group {
   display: flex;

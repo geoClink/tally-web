@@ -168,6 +168,7 @@ export default function Landing() {
   const [emailInput, setEmailInput] = useState('')
   const [emailStatus, setEmailStatus] = useState('idle')
   const [openFaq, setOpenFaq] = useState(null)
+  const [changelogOpen, setChangelogOpen] = useState(false)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -240,6 +241,10 @@ export default function Landing() {
             </div>
           </div>
           <p className="landing-hero-note">Free to start · No credit card required · No time limit</p>
+          <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" className="landing-hero-rating">
+            <span className="landing-stars">★★★★★</span>
+            <span className="landing-rating-text">4.8 on the App Store</span>
+          </a>
         </div>
         <div className="landing-hero-phone">
           <div className="landing-phone-mockup landing-phone-mockup--video">
@@ -255,15 +260,7 @@ export default function Landing() {
       </section>
       </header>
 
-<section className="landing-demo fade-up">
-        <h2 className="landing-section-title">Free to start</h2>
-        <p className="landing-demo-sub">Sign up in seconds — no credit card, no time limit. Upgrade when you're ready.</p>
-        <Link to="/login?mode=signup" className="landing-btn-primary" style={{ display: 'inline-block', marginTop: '1.25rem' }}>
-          Create free account →
-        </Link>
-      </section>
-
-      <section className="landing-how fade-up">
+<section className="landing-how fade-up">
         <div className="landing-how-header">
           <h2 className="landing-section-title">How it works</h2>
           <p className="landing-how-sub">From first tap to paid invoice — the whole workflow in one app.</p>
@@ -392,6 +389,17 @@ export default function Landing() {
         </div>
       </section>
 
+      <section className="landing-visionpro fade-up">
+        <div className="landing-mac-header">
+          <span className="landing-platform-badge landing-platform-badge--soon">Coming Soon</span>
+          <h2 className="landing-section-title">Tally for Apple Vision Pro</h2>
+          <p className="landing-mac-sub">Track time in spatial computing. A native visionOS app is in development — your account and sessions sync automatically when it ships.</p>
+        </div>
+        <Link to="/login?mode=signup" className="landing-btn-primary" style={{ display: 'inline-block', marginTop: '1.5rem' }}>
+          Sign up to be first →
+        </Link>
+      </section>
+
       <section className="landing-features-section fade-up">
         <div className="landing-features-header">
           <h2 className="landing-section-title">Built for how freelancers actually work</h2>
@@ -407,7 +415,28 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-pricing fade-up">
+      <section className="landing-business-callout fade-up">
+        <div className="landing-business-callout-inner">
+          <div className="landing-business-callout-text">
+            <h3>Running a team?</h3>
+            <p>Invite members, assign clients, and see everyone's hours in one place. Includes invoicing and a 7-day free trial.</p>
+          </div>
+          <a href="#pricing" className="landing-btn-primary">See Business plan →</a>
+        </div>
+      </section>
+
+      <section className="landing-testimonial fade-up">
+        <div className="landing-testimonial-inner">
+          <div className="landing-testimonial-stars">★★★★★</div>
+          <p className="landing-testimonial-quote">"I've tried every time tracker out there. Tally is the only one I've actually kept using — one tap and I'm billing, no friction."</p>
+          <div className="landing-testimonial-author">
+            <span className="landing-testimonial-name">Sarah M.</span>
+            <span className="landing-testimonial-role">Freelance Brand Designer</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="landing-pricing fade-up" id="pricing">
         <h2 className="landing-section-title">Pricing</h2>
         <p className="landing-pricing-sub">No subscriptions for solo users. Pay once, own it forever.</p>
         <div className="landing-pricing-grid">
@@ -468,7 +497,7 @@ export default function Landing() {
           <p className="landing-features-sub">Updated regularly across iOS and web.</p>
         </div>
         <div className="landing-changelog-list">
-          {versions.map((v) => (
+          {versions.slice(0, changelogOpen ? versions.length : 1).map((v) => (
             <div key={v.version} className="landing-changelog-item">
               <div className="landing-changelog-version">
                 <span className="landing-changelog-num">v{v.version}</span>
@@ -482,6 +511,12 @@ export default function Landing() {
             </div>
           ))}
         </div>
+        <button
+          className="landing-changelog-toggle"
+          onClick={() => setChangelogOpen(!changelogOpen)}
+        >
+          {changelogOpen ? 'Show less ↑' : `Show ${versions.length - 1} older versions ↓`}
+        </button>
       </section>
 
       <section className="landing-faq fade-up">
