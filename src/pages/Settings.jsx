@@ -416,7 +416,7 @@ export default function Settings() {
                 <thead>
                   <tr>
                     <th>Client</th>
-                    <th>Weekly Hours</th>
+                    <th style={{ textAlign: 'right' }}>Weekly Hours</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -424,7 +424,7 @@ export default function Settings() {
                   {clientGoals.map(g => (
                     <tr key={g.client}>
                       <td>{g.client}</td>
-                      <td>{g.weekly_hours}h</td>
+                      <td style={{ textAlign: 'right' }}>{g.weekly_hours}h</td>
                       <td style={{ textAlign: 'right' }}>
                         <button
                           type="button"

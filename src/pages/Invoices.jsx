@@ -566,6 +566,24 @@ export default function Invoices() {
                     <option key={c.client} value={c.client}>{c.client}</option>
                   ))}
                 </select>
+                {(() => {
+                  const found = clients.find(c => c.client === selectedClient)
+                  if (!found) return null
+                  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+                  const ordinal = d => {
+                    if (d >= 11 && d <= 13) return `${d}th`
+                    const s = ['th','st','nd','rd']
+                    return `${d}${s[d % 10] ?? 'th'}`
+                  }
+                  let label = null
+                  if (found.billing_cycle === 'weekly' && found.billing_weekday != null) {
+                    label = `Weekly · starts every ${DAYS[found.billing_weekday]}`
+                  } else if (found.billing_start_day) {
+                    label = `Monthly · starts the ${ordinal(found.billing_start_day)}`
+                  }
+                  if (!label) return null
+                  return <p style={{ margin: '0.35rem 0 0', fontSize: '0.75rem', color: 'var(--text-muted, #6b7280)' }}>{label}</p>
+                })()}
               </div>
             </div>
 
