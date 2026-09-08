@@ -93,9 +93,19 @@ export default function Help() {
         </div>
 
         <div className="card">
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Client rates</h2>
+          <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Client rates &amp; billing cycles</h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
-            Pro and Business accounts can set a default hourly rate per client on the <strong>Client Rates</strong> page. When you generate an invoice, Tally pre-fills the rate for each client automatically.
+            Pro and Business accounts can set a default hourly rate per client on the <strong>Client Rates</strong> page (also accessible from <strong>Settings → Client Management</strong>). When you generate an invoice, Tally pre-fills the rate automatically.
+          </p>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
+            Each client also has a <strong>Billing Cycle</strong> setting:
+          </p>
+          <ul style={{ fontSize: '0.875rem', paddingLeft: '1.25rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '0.4rem', marginBottom: '0.6rem' }}>
+            <li><strong>Monthly</strong> — set the day of the month your cycle starts (e.g. the 1st or the 15th).</li>
+            <li><strong>Weekly</strong> — set which weekday your cycle starts (e.g. every Tuesday).</li>
+          </ul>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
+            Once set, a <strong>Last Billing Period</strong> button appears on the invoice form for that client — click it to automatically fill in the correct date range for the previous billing period.
           </p>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
             You can override the rate for any individual invoice on the invoice form.
