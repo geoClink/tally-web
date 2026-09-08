@@ -339,7 +339,6 @@ export default function Dashboard() {
           </ol>
           <div className="onboarding-actions">
             <Link to="/track" className="btn btn-primary">Start tracking →</Link>
-            <Link to="/demo" className="btn btn-secondary">Try the demo first</Link>
           </div>
         </div>
       ) : (
