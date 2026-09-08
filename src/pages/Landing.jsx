@@ -379,6 +379,9 @@ export default function Landing() {
           <span className="landing-mac-pill">Same account as iOS &amp; web</span>
           <span className="landing-mac-pill">Full feature parity</span>
         </div>
+        <button onClick={() => setAndroidModalOpen(true)} className="landing-btn-primary" style={{ marginTop: '1.5rem' }}>
+          Join Beta →
+        </button>
       </section>
 
       <section className="landing-visionpro fade-up" id="visionpro">
