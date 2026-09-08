@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Support — Tally Time Tracker</title>
-  <meta name="description" content="Get help with Tally — contact support or find answers to common questions." />
-  <link rel="canonical" href="https://tallytimetracker.com/support" />
-  <meta property="og:title" content="Support — Tally Time Tracker" />
-  <meta property="og:url" content="https://tallytimetracker.com/support" />
+  <title>Join the Android Beta — Tally</title>
+  <meta name="description" content="Get early access to Tally on Android. Three steps to join the open beta on Google Play." />
+  <link rel="canonical" href="https://tallytimetracker.com/android-beta" />
+  <meta property="og:title" content="Join the Android Beta — Tally" />
+  <meta property="og:description" content="Get early access to Tally on Android. Three steps to join the open beta on Google Play." />
+  <meta property="og:url" content="https://tallytimetracker.com/android-beta" />
   <meta name="apple-itunes-app" content="app-id=6775275483" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -22,20 +23,22 @@
     .nav-signin:hover { color: #2563eb; text-decoration: none; }
     .nav-cta { background: #2563eb; color: #fff !important; padding: 0.45rem 0.9rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; text-decoration: none; display: inline-block; }
     .nav-cta:hover { background: #1d4ed8; text-decoration: none; }
-    .hero { background: #fff; padding: 4rem 1.5rem 3rem; text-align: center; border-bottom: 1px solid #e8e8ed; }
-    .hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; line-height: 1.2; margin-bottom: 1rem; }
-    .hero p { font-size: 1.1rem; color: #555; max-width: 520px; margin: 0 auto; }
-    .content { max-width: 720px; margin: 3rem auto; padding: 0 1.5rem 4rem; display: grid; gap: 1.5rem; }
-    .card { background: #fff; border: 1px solid #e8e8ed; border-radius: 14px; padding: 2rem; }
-    .card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem; }
-    .card p { font-size: 0.95rem; color: #555; line-height: 1.65; }
-    .contact-email { display: inline-block; margin-top: 0.75rem; font-size: 1rem; font-weight: 600; color: #2563eb; }
-    .faq-list { display: flex; flex-direction: column; gap: 0; }
-    .faq-item { padding: 1.25rem 0; border-bottom: 1px solid #e8e8ed; }
-    .faq-item:first-child { border-top: 1px solid #e8e8ed; }
-    .faq-q { font-size: 0.95rem; font-weight: 600; color: #111; margin-bottom: 0.35rem; }
-    .faq-a { font-size: 0.9rem; color: #555; line-height: 1.6; }
-    .site-footer { border-top: 1px solid #e8e8ed; padding: 3rem 1.5rem 2.5rem; margin-top: 2rem; }
+    .hero { background: linear-gradient(150deg, #1e3a8a 0%, #2563eb 100%); padding: 4rem 1.5rem 3.5rem; text-align: center; }
+    .hero-eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 0.75rem; }
+    .hero h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; color: #fff; margin-bottom: 0.75rem; }
+    .hero p { font-size: 1rem; color: rgba(255,255,255,0.75); max-width: 480px; margin: 0 auto; line-height: 1.65; }
+    .content { max-width: 600px; margin: 3rem auto 4rem; padding: 0 1.5rem; }
+    .steps { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+    .step { background: #fff; border: 1px solid #e8e8ed; border-radius: 14px; padding: 1.5rem; display: flex; gap: 1rem; align-items: flex-start; }
+    .step-num { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: #2563eb; color: #fff; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+    .step-body { flex: 1; min-width: 0; }
+    .step-label { font-size: 0.975rem; font-weight: 700; color: #111; margin-bottom: 0.3rem; }
+    .step-desc { font-size: 0.875rem; color: #555; line-height: 1.55; margin-bottom: 0.75rem; }
+    .step-btn { display: inline-block; padding: 0.5rem 1rem; background: #2563eb; color: #fff !important; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-decoration: none; transition: background 0.15s; }
+    .step-btn:hover { background: #1d4ed8; text-decoration: none; }
+    .note { font-size: 0.85rem; color: #9ca3af; text-align: center; border-top: 1px solid #e8e8ed; padding-top: 1.5rem; line-height: 1.6; }
+    .note a { color: #2563eb; }
+    .site-footer { border-top: 1px solid #e8e8ed; padding: 3rem 1.5rem 2.5rem; }
     .site-footer-inner { max-width: 960px; margin: 0 auto; display: flex; justify-content: space-between; gap: 3rem; flex-wrap: wrap; }
     .site-footer-brand { display: flex; flex-direction: column; gap: 0.4rem; min-width: 140px; }
     .site-footer-logo-row { display: flex; align-items: center; gap: 0.5rem; }
@@ -51,7 +54,6 @@
     @media (max-width: 640px) {
       .site-footer-inner { flex-direction: column; gap: 1.75rem; }
       .site-footer-cols { gap: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; }
-      .site-footer-copy { padding-top: 0.5rem; }
     }
   </style>
 </head>
@@ -69,44 +71,40 @@
   </nav>
 
   <div class="hero">
-    <h1>Support</h1>
-    <p>Have a question or running into an issue? We're here to help.</p>
+    <p class="hero-eyebrow">Android · Open Beta</p>
+    <h1>Join the Android Beta</h1>
+    <p>Tally is in open testing on Google Play. Three quick steps to get early access — takes about two minutes.</p>
   </div>
 
   <div class="content">
+    <ol class="steps">
+      <li class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <p class="step-label">Join the tester group</p>
+          <p class="step-desc">Request to join the Google Group — this grants you access to the beta.</p>
+          <a class="step-btn" href="https://groups.google.com/g/tally-time-tracker" target="_blank" rel="noopener noreferrer">Join the group →</a>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <p class="step-label">Opt into testing</p>
+          <p class="step-desc">Visit this link to become an official beta tester on Google Play. It may take a few minutes after joining the group for this link to activate.</p>
+          <a class="step-btn" href="https://play.google.com/apps/testing/name.georgeclinkscales.tally" target="_blank" rel="noopener noreferrer">Opt in on Google Play →</a>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <p class="step-label">Download on Google Play</p>
+          <p class="step-desc">After opting in, install Tally from the Play Store.</p>
+          <a class="step-btn" href="https://play.google.com/store/apps/details?id=name.georgeclinkscales.tally" target="_blank" rel="noopener noreferrer">Download Tally →</a>
+        </div>
+      </li>
+    </ol>
 
-    <div class="card">
-      <h2>Contact Support</h2>
-      <p>Email us and we'll get back to you as soon as possible.</p>
-      <a href="mailto:help@tallytimetracker.com" class="contact-email">help@tallytimetracker.com</a>
-    </div>
-
-    <div class="card">
-      <h2>Frequently Asked Questions</h2>
-      <div class="faq-list">
-        <div class="faq-item">
-          <p class="faq-q">How do I delete my account?</p>
-          <p class="faq-a">Open Tally and go to <strong>Settings → Delete Account</strong>. This permanently removes your account and all associated data. If you have an active Business subscription, cancel it first through Stripe or the App Store to avoid future charges.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">How do I restore my purchases?</p>
-          <p class="faq-a">Open Tally, go to <strong>Settings</strong>, and tap <strong>Restore Purchases</strong>. Make sure you're signed in to the Apple ID used for the original purchase.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">I upgraded but still see the Free tier.</p>
-          <p class="faq-a">Refresh the page or restart the app. If it still shows Free, try signing out and back in. If the issue persists, email us at <a href="mailto:help@tallytimetracker.com">help@tallytimetracker.com</a>.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">My team hours aren't showing up on the Team Dashboard.</p>
-          <p class="faq-a">Check that the workspace's Client Name exactly matches what your members log time under — including capitalization and spacing. This is the most common cause.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">Can I use Tally on my phone?</p>
-          <p class="faq-a">Yes — native apps are available for <a href="https://apps.apple.com/us/app/tally-time-tracker/id6775275483" target="_blank" rel="noopener noreferrer">iOS</a> and Android. The web app is also mobile-responsive and works in any browser.</p>
-        </div>
-      </div>
-    </div>
-
+    <p class="note">Having trouble? Email <a href="mailto:help@tallytimetracker.com">help@tallytimetracker.com</a> or visit the <a href="/support">support page</a>.</p>
   </div>
 
   <footer class="site-footer">
@@ -123,7 +121,7 @@
         <div class="site-footer-col">
           <h4>Product</h4>
           <a href="https://apps.apple.com/us/app/tally-time-tracker/id6775275483" target="_blank" rel="noopener noreferrer">iOS App</a>
-          <a href="/#mac">Mac App</a>
+          <a href="/android-beta">Android Beta</a>
           <a href="/login?mode=signup">Sign up free</a>
         </div>
         <div class="site-footer-col">
@@ -142,7 +140,8 @@
         </div>
         <div class="site-footer-col">
           <h4>Support</h4>
-          <a href="mailto:help@tallytimetracker.com">help@tallytimetracker.com</a>
+          <a href="/support">Help &amp; FAQ</a>
+          <a href="mailto:help@tallytimetracker.com">Contact Us</a>
         </div>
       </div>
     </div>
