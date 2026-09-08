@@ -241,10 +241,6 @@ export default function Landing() {
             </div>
           </div>
           <p className="landing-hero-note">Free to start · No credit card required · No time limit</p>
-          <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" className="landing-hero-rating">
-            <span className="landing-stars">★★★★★</span>
-            <span className="landing-rating-text">4.8 on the App Store</span>
-          </a>
         </div>
         <div className="landing-hero-phone">
           <div className="landing-phone-mockup landing-phone-mockup--video">
