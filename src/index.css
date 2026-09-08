@@ -1872,9 +1872,19 @@ button:hover .trash-icon .trash-lid {
   flex: 1;
 }
 
+.android-modal-step-label::after {
+  content: ' →';
+  opacity: 0.6;
+  font-size: 0.8rem;
+}
+
 .android-modal-step-label:hover {
   color: #fff;
-  text-decoration: none;
+  text-decoration: underline;
+}
+
+.android-modal-step-label:hover::after {
+  opacity: 1;
 }
 
 .android-modal-cta {
