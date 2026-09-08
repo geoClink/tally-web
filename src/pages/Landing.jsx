@@ -436,7 +436,6 @@ export default function Landing() {
 
       <section className="landing-testimonial fade-up">
         <div className="landing-testimonial-inner">
-          <div className="landing-testimonial-stars">★★★★★</div>
           <p className="landing-testimonial-quote">"I really like how smooth and straightforward the app is."</p>
           <div className="landing-testimonial-author">
             <span className="landing-testimonial-role">Freelance Product Designer</span>
