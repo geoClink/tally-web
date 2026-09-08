@@ -6,7 +6,7 @@ import { useSubscription } from '../context/SubscriptionContext'
 import { todayString } from '../lib/utils'
 import ClientSelect from '../components/ClientSelect'
 import UpgradeModal from '../components/UpgradeModal'
-import { scheduleDailyReminder } from '../lib/notifications'
+import { scheduleDailyReminder, registerPushNotifications } from '../lib/notifications'
 import { Capacitor } from '@capacitor/core'
 import { Haptics, ImpactStyle } from '@capacitor/haptics'
 
@@ -348,6 +348,7 @@ export default function Track() {
     fetchClients()
     showSuccess('Session saved!')
     scheduleDailyReminder()
+    registerPushNotifications()
   }
 
   function discardTimer() {
@@ -431,6 +432,7 @@ export default function Track() {
     fetchClients()
     showSuccess('Session saved!')
     scheduleDailyReminder()
+    registerPushNotifications()
   }
 
   function showSuccess(msg) {

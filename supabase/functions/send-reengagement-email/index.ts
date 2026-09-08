@@ -1,5 +1,39 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
+const BUNDLE_ID = 'name.GeorgeClinkscales.Tally'
+
+async function buildApnsJwt(teamId: string, keyId: string, privateKeyPem: string): Promise<string> {
+  const keyData = privateKeyPem
+    .replace(/-----BEGIN PRIVATE KEY-----/g, '')
+    .replace(/-----END PRIVATE KEY-----/g, '')
+    .replace(/\s/g, '')
+  const keyBuffer = Uint8Array.from(atob(keyData), c => c.charCodeAt(0))
+  const key = await crypto.subtle.importKey('pkcs8', keyBuffer.buffer, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign'])
+  const toB64url = (obj: object) => btoa(JSON.stringify(obj)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+  const header = toB64url({ alg: 'ES256', kid: keyId })
+  const payload = toB64url({ iss: teamId, iat: Math.floor(Date.now() / 1000) })
+  const signingInput = `${header}.${payload}`
+  const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, new TextEncoder().encode(signingInput))
+  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+  return `${signingInput}.${sigB64}`
+}
+
+async function sendPush(token: string, environment: string, jwt: string, title: string, body: string) {
+  const host = environment === 'sandbox' ? 'https://api.sandbox.push.apple.com' : 'https://api.push.apple.com'
+  const res = await fetch(`${host}/3/device/${token}`, {
+    method: 'POST',
+    headers: {
+      authorization: `bearer ${jwt}`,
+      'apns-topic': BUNDLE_ID,
+      'apns-push-type': 'alert',
+      'apns-priority': '10',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({ aps: { alert: { title, body }, sound: 'default' } }),
+  })
+  return res.status
+}
+
 // Call weekly via cron. Emails users who haven't logged a session in 7–30 days.
 // Requires x-digest-secret header matching DIGEST_SECRET env var.
 Deno.serve(async (req) => {
@@ -46,22 +80,43 @@ Deno.serve(async (req) => {
     }
   }
 
+  // Load device tokens for inactive users
+  const { data: deviceTokens } = await supabase
+    .from('device_tokens')
+    .select('user_id, token, environment')
+    .in('user_id', inactiveIds)
+
+  const tokenMap: Record<string, { token: string; environment: string }[]> = {}
+  for (const dt of deviceTokens ?? []) {
+    if (!tokenMap[dt.user_id]) tokenMap[dt.user_id] = []
+    tokenMap[dt.user_id].push({ token: dt.token, environment: dt.environment })
+  }
+
+  // Build APNs JWT once if credentials are available
+  const apnsKey = Deno.env.get('APNS_PRIVATE_KEY')
+  const apnsKeyId = Deno.env.get('APNS_KEY_ID')
+  const apnsTeamId = Deno.env.get('APNS_TEAM_ID')
+  const apnsJwt = (apnsKey && apnsKeyId && apnsTeamId)
+    ? await buildApnsJwt(apnsTeamId, apnsKeyId, apnsKey)
+    : null
+
   let sent = 0
+  let pushSent = 0
   for (const userId of inactiveIds) {
     const email = emailMap[userId]
-    if (!email) continue
 
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${resendKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'Tally <noreply@tallytimetracker.com>',
-        to: email,
-        subject: 'Still tracking time?',
-        html: `<!DOCTYPE html>
+    if (email) {
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'Tally <noreply@tallytimetracker.com>',
+          to: email,
+          subject: 'Still tracking time?',
+          html: `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -131,13 +186,26 @@ Deno.serve(async (req) => {
   </table>
 </body>
 </html>`,
-      }),
-    })
+        }),
+      })
 
-    if (res.ok) sent++
+      if (res.ok) sent++
+    }
+
+    // Send push to any device tokens this user has registered
+    if (apnsJwt && tokenMap[userId]) {
+      for (const { token, environment } of tokenMap[userId]) {
+        const status = await sendPush(
+          token, environment, apnsJwt,
+          'Still tracking time?',
+          'Your data is waiting. Tap to pick up where you left off.'
+        )
+        if (status === 200) pushSent++
+      }
+    }
   }
 
-  return new Response(JSON.stringify({ sent, inactive: inactiveIds.length }), {
+  return new Response(JSON.stringify({ sent, pushSent, inactive: inactiveIds.length }), {
     headers: { 'Content-Type': 'application/json' },
   })
 })

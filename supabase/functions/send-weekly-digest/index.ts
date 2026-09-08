@@ -1,5 +1,39 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 
+const BUNDLE_ID = 'name.GeorgeClinkscales.Tally'
+
+async function buildApnsJwt(teamId: string, keyId: string, privateKeyPem: string): Promise<string> {
+  const keyData = privateKeyPem
+    .replace(/-----BEGIN PRIVATE KEY-----/g, '')
+    .replace(/-----END PRIVATE KEY-----/g, '')
+    .replace(/\s/g, '')
+  const keyBuffer = Uint8Array.from(atob(keyData), c => c.charCodeAt(0))
+  const key = await crypto.subtle.importKey('pkcs8', keyBuffer.buffer, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign'])
+  const toB64url = (obj: object) => btoa(JSON.stringify(obj)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+  const header = toB64url({ alg: 'ES256', kid: keyId })
+  const payload = toB64url({ iss: teamId, iat: Math.floor(Date.now() / 1000) })
+  const signingInput = `${header}.${payload}`
+  const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, new TextEncoder().encode(signingInput))
+  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+  return `${signingInput}.${sigB64}`
+}
+
+async function sendPush(token: string, environment: string, jwt: string, title: string, body: string) {
+  const host = environment === 'sandbox' ? 'https://api.sandbox.push.apple.com' : 'https://api.push.apple.com'
+  const res = await fetch(`${host}/3/device/${token}`, {
+    method: 'POST',
+    headers: {
+      authorization: `bearer ${jwt}`,
+      'apns-topic': BUNDLE_ID,
+      'apns-push-type': 'alert',
+      'apns-priority': '10',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({ aps: { alert: { title, body }, sound: 'default' } }),
+  })
+  return res.status
+}
+
 // Called by a weekly cron. Requires the DIGEST_SECRET header to match DIGEST_SECRET env var
 // so random callers can't trigger mass emails.
 Deno.serve(async (req) => {
@@ -55,32 +89,53 @@ Deno.serve(async (req) => {
     if (userIds.includes(u.id) && u.email) emailMap[u.id] = u.email
   }
 
+  // Load device tokens for active users so we can send push alongside email
+  const { data: deviceTokens } = await supabase
+    .from('device_tokens')
+    .select('user_id, token, environment')
+    .in('user_id', userIds)
+
+  const tokenMap: Record<string, { token: string; environment: string }[]> = {}
+  for (const dt of deviceTokens ?? []) {
+    if (!tokenMap[dt.user_id]) tokenMap[dt.user_id] = []
+    tokenMap[dt.user_id].push({ token: dt.token, environment: dt.environment })
+  }
+
+  // Build APNs JWT once if credentials are available
+  const apnsKey = Deno.env.get('APNS_PRIVATE_KEY')
+  const apnsKeyId = Deno.env.get('APNS_KEY_ID')
+  const apnsTeamId = Deno.env.get('APNS_TEAM_ID')
+  const apnsJwt = (apnsKey && apnsKeyId && apnsTeamId)
+    ? await buildApnsJwt(apnsTeamId, apnsKeyId, apnsKey)
+    : null
+
   let sent = 0
+  let pushSent = 0
   for (const [userId, data] of Object.entries(byUser)) {
     const email = emailMap[userId]
-    if (!email) continue
-
     const total = data.totalHours
-    const clientRows = Object.entries(data.clients)
-      .sort((a, b) => b[1] - a[1])
-      .map(([client, hours]) => `
-        <tr>
-          <td style="padding:8px 0;font-size:14px;color:#111827;border-bottom:1px solid #f3f4f6;">${client}</td>
-          <td style="padding:8px 0;font-size:14px;color:#111827;text-align:right;border-bottom:1px solid #f3f4f6;font-variant-numeric:tabular-nums;">${hours.toFixed(1)}h</td>
-        </tr>`)
-      .join('')
 
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${resendKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'Tally <noreply@tallytimetracker.com>',
-        to: email,
-        subject: `Your week in Tally — ${total.toFixed(1)} hours tracked`,
-        html: `<!DOCTYPE html>
+    if (email) {
+      const clientRows = Object.entries(data.clients)
+        .sort((a, b) => b[1] - a[1])
+        .map(([client, hours]) => `
+          <tr>
+            <td style="padding:8px 0;font-size:14px;color:#111827;border-bottom:1px solid #f3f4f6;">${client}</td>
+            <td style="padding:8px 0;font-size:14px;color:#111827;text-align:right;border-bottom:1px solid #f3f4f6;font-variant-numeric:tabular-nums;">${hours.toFixed(1)}h</td>
+          </tr>`)
+        .join('')
+
+      const res = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${resendKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'Tally <noreply@tallytimetracker.com>',
+          to: email,
+          subject: `Your week in Tally — ${total.toFixed(1)} hours tracked`,
+          html: `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -157,13 +212,26 @@ Deno.serve(async (req) => {
   </table>
 </body>
 </html>`,
-      }),
-    })
+        }),
+      })
 
-    if (res.ok) sent++
+      if (res.ok) sent++
+    }
+
+    // Send push to any device tokens this user has registered
+    if (apnsJwt && tokenMap[userId]) {
+      for (const { token, environment } of tokenMap[userId]) {
+        const status = await sendPush(
+          token, environment, apnsJwt,
+          'Weekly summary',
+          `You tracked ${total.toFixed(1)} hours this week.`
+        )
+        if (status === 200) pushSent++
+      }
+    }
   }
 
-  return new Response(JSON.stringify({ sent }), {
+  return new Response(JSON.stringify({ sent, pushSent }), {
     headers: { 'Content-Type': 'application/json' },
   })
 })
