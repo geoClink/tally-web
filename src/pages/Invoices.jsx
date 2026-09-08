@@ -590,19 +590,32 @@ export default function Invoices() {
                   { label: 'Last Week',   action: () => { const r = lastWeekRange(weekStart); setStartDate(r.start); setEndDate(r.end) } },
                   { label: 'This Month',  action: () => { setStartDate(monthStartString()); setEndDate(todayString()) } },
                   { label: 'Last Month',  action: () => { const r = lastMonthRange(); setStartDate(r.start); setEndDate(r.end) } },
-                  ...(() => {
-                    const found = clients.find(c => c.client === selectedClient)
-                    if (!found) return []
-                    if (found.billing_cycle === 'weekly' && found.billing_weekday != null) {
-                      return [{ label: 'Last Billing Period', action: () => { const r = lastWeeklyBillingPeriodRange(found.billing_weekday); setStartDate(r.start); setEndDate(r.end) } }]
-                    }
-                    const bsd = found?.billing_start_day
-                    if (!bsd) return []
-                    return [{ label: 'Last Billing Period', action: () => { const r = lastBillingPeriodRange(bsd); setStartDate(r.start); setEndDate(r.end) } }]
-                  })(),
                 ].map(({ label, action }) => (
                   <button key={label} type="button" className="btn btn-secondary btn-sm" onClick={action}>{label}</button>
                 ))}
+                {(() => {
+                  const found = clients.find(c => c.client === selectedClient)
+                  if (!found) return null
+                  const hasWeekly = found.billing_cycle === 'weekly' && found.billing_weekday != null
+                  const hasMonthly = found.billing_cycle !== 'weekly' && found.billing_start_day
+                  const enabled = hasWeekly || hasMonthly
+                  const handleClick = () => {
+                    if (hasWeekly) { const r = lastWeeklyBillingPeriodRange(found.billing_weekday); setStartDate(r.start); setEndDate(r.end) }
+                    else if (hasMonthly) { const r = lastBillingPeriodRange(found.billing_start_day); setStartDate(r.start); setEndDate(r.end) }
+                  }
+                  return (
+                    <button
+                      type="button"
+                      className="btn btn-secondary btn-sm"
+                      onClick={handleClick}
+                      disabled={!enabled}
+                      title={!enabled ? 'Set a billing cycle in Client Rates to use this' : undefined}
+                      style={!enabled ? { opacity: 0.45, cursor: 'not-allowed' } : undefined}
+                    >
+                      Last Billing Period
+                    </button>
+                  )
+                })()}
               </div>
             </div>
 
