@@ -166,17 +166,13 @@
 .landing-nav-signin {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--text);
+  color: #111;
   text-decoration: none;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 0.4rem 0.85rem;
-  transition: border-color 0.15s, color 0.15s;
+  transition: color 0.15s;
 }
 
 .landing-nav-signin:hover {
   color: var(--accent);
-  border-color: var(--accent);
   text-decoration: none;
 }
 
@@ -1327,17 +1323,21 @@
   outline: none;
 }
 
+.landing-email-input::placeholder {
+  color: #888;
+}
+
 .landing-email-input:focus {
   background: #fff;
 }
 
 .landing-email-capture .landing-btn-primary {
-  background: #fff;
-  color: var(--accent);
+  background: #1e293b;
+  color: #fff;
 }
 
 .landing-email-capture .landing-btn-primary:hover {
-  background: #f0f5ff;
+  background: #0f172a;
 }
 
 .landing-email-success {
