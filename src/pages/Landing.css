@@ -1412,19 +1412,27 @@
 }
 
 .landing-footer-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
   font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: auto;
   padding-top: 1.5rem;
 }
 
-.landing-footer-copy a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+.landing-footer-built {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.5;
+  text-decoration: none;
+  transition: opacity 0.15s, color 0.15s;
 }
 
-.landing-footer-copy a:hover { color: var(--accent); }
+.landing-footer-built:hover {
+  opacity: 1;
+  color: var(--accent);
+}
 
 .landing-footer-cols {
   display: flex;
@@ -2210,5 +2218,91 @@
 
   .landing-section-title {
     font-size: 1.5rem;
+  }
+}
+
+/* ── Vision Pro compact strip ── */
+.landing-visionpro-strip {
+  background: linear-gradient(150deg, #1e1b4b 0%, #312e81 100%);
+  padding: 3rem 1.5rem;
+  overflow: hidden;
+}
+
+.landing-visionpro-strip-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.landing-visionpro-strip-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.landing-visionpro-strip-label {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.landing-visionpro-strip-sub {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.55;
+  max-width: 420px;
+}
+
+.landing-visionpro-strip-btn {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius);
+  padding: 0.55rem 1.1rem;
+  width: fit-content;
+  transition: background 0.15s, color 0.15s;
+}
+
+.landing-visionpro-strip-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  text-decoration: none;
+}
+
+.landing-visionpro-strip-img {
+  width: 220px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.5));
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.landing-visionpro-strip-img:hover {
+  transform: scale(1.04);
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
+}
+
+@media (max-width: 640px) {
+  .landing-visionpro-strip-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  .landing-visionpro-strip-text {
+    align-items: center;
+  }
+  .landing-visionpro-strip-sub {
+    max-width: 100%;
+  }
+  .landing-visionpro-strip-img {
+    width: 160px;
   }
 }

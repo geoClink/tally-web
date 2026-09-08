@@ -48,7 +48,7 @@ const features = [
   { title: 'Apple Watch', body: 'Full watchOS companion app synced via WatchConnectivity. Log sessions and check your weekly progress from your wrist.' },
   { title: 'Focus Mode', body: 'A custom App Intent filter lets Tally activate automatically when your Work focus turns on.' },
   { title: 'Reports & export', body: 'Swift Charts visualize hours by client across weekly and all-time views. Pro includes CSV export for invoicing.' },
-  { title: 'Team workspaces', body: 'Invite members, assign clients, and roll up hours across your whole team. Business tier adds Stripe invoicing.' },
+  { title: 'Team workspaces', body: 'Invite members, assign clients, and roll up hours across your whole team. Business tier includes invoicing — send a payment link directly from the app.' },
 ]
 
 const versions = [
@@ -153,7 +153,7 @@ const tiers = [
     price: '$4.99',
     period: 'per user / month',
     badge: 'Best Value',
-    features: ['Team workspaces', 'Client invoicing via email', '7-day free trial (iOS)', 'All Pro features'],
+    features: ['Team workspaces', 'Send invoices & collect payment via Stripe', '7-day free trial (iOS)', 'All Pro features'],
     cta: 'Start free trial on iOS',
     note: 'Secure checkout via Stripe · Cards & Apple Pay accepted',
     ctaHref: APP_STORE_URL,
@@ -393,24 +393,20 @@ export default function Landing() {
         </button>
       </section>
 
-      <section className="landing-visionpro fade-up" id="visionpro">
-        <div className="landing-visionpro-inner">
-          <div className="landing-visionpro-text">
+      <section className="landing-visionpro-strip fade-up" id="visionpro">
+        <div className="landing-visionpro-strip-inner">
+          <div className="landing-visionpro-strip-text">
             <span className="landing-platform-badge landing-platform-badge--soon">Coming Soon</span>
-            <h2 className="landing-section-title" style={{ textAlign: 'left' }}>Tally for Apple Vision Pro</h2>
-            <p className="landing-mac-sub" style={{ textAlign: 'left', margin: 0 }}>Track time in spatial computing. A native visionOS app is in development — your account and sessions sync automatically when it ships.</p>
-            <Link to="/login?mode=signup" className="landing-btn-primary" style={{ display: 'inline-block', marginTop: '1.5rem' }}>
-              Sign up to be first →
-            </Link>
+            <p className="landing-visionpro-strip-label">Tally for Apple Vision Pro</p>
+            <p className="landing-visionpro-strip-sub">A native visionOS app is in development — your account and sessions sync automatically when it ships.</p>
+            <Link to="/login?mode=signup" className="landing-visionpro-strip-btn">Sign up to be first →</Link>
           </div>
-          <div className="landing-visionpro-image">
-            <img
-              src="/images/APV-asset.png"
-              alt="Apple Vision Pro headset"
-              className="landing-visionpro-img"
-              loading="lazy"
-            />
-          </div>
+          <img
+            src="/images/APV-asset.png"
+            alt="Apple Vision Pro headset"
+            className="landing-visionpro-strip-img"
+            loading="lazy"
+          />
         </div>
       </section>
 
@@ -442,7 +438,7 @@ export default function Landing() {
       <section className="landing-testimonial fade-up">
         <div className="landing-testimonial-inner">
           <div className="landing-testimonial-stars">★★★★★</div>
-          <p className="landing-testimonial-quote">"I really like how smooth and straightforward the app is, and it already covers the main things I need."</p>
+          <p className="landing-testimonial-quote">"I really like how smooth and straightforward the app is."</p>
           <div className="landing-testimonial-author">
             <span className="landing-testimonial-role">Freelance Product Designer</span>
           </div>
@@ -566,7 +562,7 @@ export default function Landing() {
                 <span className="landing-appstore-main">App Store</span>
               </span>
             </a>
-            <button onClick={() => setAndroidModalOpen(true)} className="landing-appstore-badge landing-appstore-badge--android" aria-label="Android app coming soon">
+            <button onClick={() => setAndroidModalOpen(true)} className="landing-appstore-badge landing-appstore-badge--android" aria-label="Android beta on Google Play">
               <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
                 <path d="M3 1.8L3 12L12 12Z" fill="#4285F4"/>
                 <path d="M3 12L3 22.2L12 12Z" fill="#34A853"/>
@@ -574,7 +570,7 @@ export default function Landing() {
                 <path d="M3 22.2L21.5 12L12 12Z" fill="#EA4335"/>
               </svg>
               <span className="landing-appstore-text">
-                <span className="landing-appstore-sub">Coming soon to</span>
+                <span className="landing-appstore-sub">Now in beta on</span>
                 <span className="landing-appstore-main">Google Play</span>
               </span>
             </button>
@@ -614,7 +610,10 @@ export default function Landing() {
               <span className="landing-logo">Tally</span>
             </div>
             <p className="landing-footer-tagline">Your time, your money.</p>
-            <span className="landing-footer-copy">© 2026 Tally · Made by <a href="https://georgeclinkscalesdev.com" target="_blank" rel="noopener noreferrer">George Clinkscales</a></span>
+            <div className="landing-footer-copy">
+              <span>© 2026 Tally</span>
+              <a href="https://georgeclinkscalesdev.com" className="landing-footer-built" target="_blank" rel="noopener noreferrer">Built by George Clinkscales</a>
+            </div>
           </div>
           <div className="landing-footer-cols">
             <div className="landing-footer-col">
@@ -638,6 +637,7 @@ export default function Landing() {
             <div className="landing-footer-col">
               <h4>Legal</h4>
               <Link to="/privacy">Privacy</Link>
+              <Link to="/terms">Terms of Service</Link>
               <Link to="/delete-account">Delete Account</Link>
               <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
             </div>
