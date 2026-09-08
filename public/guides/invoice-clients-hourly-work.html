@@ -15,10 +15,14 @@
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f9f9fb; color: #111; line-height: 1.7; }
     a { color: #1a6fff; text-decoration: none; }
     a:hover { text-decoration: underline; }
-    .nav { background: #fff; border-bottom: 1px solid #e8e8ed; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; height: 56px; }
-    .nav-logo { font-weight: 700; font-size: 1.1rem; color: #111; display: flex; align-items: center; gap: 0.4rem; text-decoration: none; }
-    .nav-cta { background: #1a6fff; color: #fff; padding: 0.4rem 1rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; }
-    .nav-cta:hover { text-decoration: none; background: #0057e7; }
+        .nav { background: rgba(248,249,250,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid #e8e8ed; padding: 0.875rem 1.75rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 0 #e8e8ed; height: auto; }
+    .nav-brand { display: flex; align-items: center; gap: 0.5rem; }
+    .nav-logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.03em; background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-decoration: none; }
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+    .nav-signin { font-size: 0.875rem; color: #6b7280; text-decoration: none; }
+    .nav-signin:hover { color: #2563eb; text-decoration: none; }
+    .nav-cta { background: #2563eb; color: #fff !important; padding: 0.45rem 0.9rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600; text-decoration: none; display: inline-block; }
+    .nav-cta:hover { background: #1d4ed8; text-decoration: none; }
     .article { max-width: 680px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
     .breadcrumb { font-size: 0.85rem; color: #999; margin-bottom: 2rem; }
     .breadcrumb a { color: #999; }
@@ -90,9 +94,15 @@
   </script>
 </head>
 <body>
-  <nav class="nav">
-    <a href="/" class="nav-logo"><img src="/favicon.svg" alt="" width="22" height="22" style="border-radius:6px;" aria-hidden="true">Tally</a>
-    <a href="/login?mode=signup" class="nav-cta">Get started free</a>
+    <nav class="nav">
+    <div class="nav-brand">
+      <img src="/favicon.svg" alt="" width="28" height="28" style="border-radius:7px;" aria-hidden="true">
+      <a href="/" class="nav-logo">Tally</a>
+    </div>
+    <div class="nav-actions">
+      <a href="/login" class="nav-signin">Sign in</a>
+      <a href="/login?mode=signup" class="nav-cta">Sign up free →</a>
+    </div>
   </nav>
 
   <article class="article">
@@ -198,8 +208,41 @@
   </article>
 
   <div style="max-width:680px;margin:2rem auto 0;padding:0 1.5rem;"><p style="font-size:0.8rem;color:#999;border-top:1px solid #e8e8ed;padding-top:1.25rem;">This guide is for general informational purposes only and does not constitute legal, tax, or financial advice. Consult a qualified professional for advice specific to your situation.</p></div>
-  <footer>
-    <a href="/guides/">← All guides</a> · <a href="/">Tally</a> · <a href="/privacy">Privacy</a>
+    <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div class="site-footer-brand">
+        <div class="site-footer-logo-row">
+          <img src="/favicon.svg" alt="" width="24" height="24" style="border-radius:6px;" aria-hidden="true">
+          <span class="site-footer-logo">Tally</span>
+        </div>
+        <p class="site-footer-tagline">Your time, your money.</p>
+        <span class="site-footer-copy">© 2026 Tally · <a href="https://georgeclinkscalesdev.com" target="_blank" rel="noopener noreferrer">George Clinkscales</a></span>
+      </div>
+      <div class="site-footer-cols">
+        <div class="site-footer-col">
+          <h4>Product</h4>
+          <a href="https://apps.apple.com/us/app/tally-time-tracker/id6775275483" target="_blank" rel="noopener noreferrer">iOS App</a>
+          <a href="/#mac">Mac App</a>
+          <a href="/login?mode=signup">Sign up free</a>
+        </div>
+        <div class="site-footer-col">
+          <h4>Account</h4>
+          <a href="/login">Sign in</a>
+          <a href="/login?mode=signup">Sign up free</a>
+        </div>
+        <div class="site-footer-col">
+          <h4>Resources</h4>
+          <a href="/guides/">Freelancer Guides</a>
+          <a href="/guides/track-billable-hours">Track Billable Hours</a>
+          <a href="/guides/invoice-clients-hourly-work">Invoice Clients</a>
+        </div>
+        <div class="site-footer-col">
+          <h4>Legal</h4>
+          <a href="/privacy">Privacy</a>
+          <a href="/delete-account">Delete Account</a>
+        </div>
+      </div>
+    </div>
   </footer>
 </body>
 </html>

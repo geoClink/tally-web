@@ -944,6 +944,10 @@
   filter: drop-shadow(0 16px 36px rgba(0, 0, 0, 0.12));
 }
 
+.landing-android-mockup-img:active {
+  transform: scale(0.98);
+}
+
 /* Pixel Pro phone body — Obsidian colorway */
 .landing-pixel-mockup {
   max-width: 300px;
@@ -1862,6 +1866,16 @@
 .landing-visionpro-img {
   width: 100%;
   filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.5));
+  transition: filter 0.45s ease, transform 0.45s ease;
+}
+
+.landing-visionpro-img:hover {
+  filter: drop-shadow(0 20px 48px rgba(0, 0, 0, 0.65));
+  transform: scale(1.03);
+}
+
+.landing-visionpro-img:active {
+  transform: scale(0.97);
 }
 
 @media (max-width: 860px) {
