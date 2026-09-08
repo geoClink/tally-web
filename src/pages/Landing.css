@@ -1312,6 +1312,8 @@
 }
 
 .landing-email-input {
+  -webkit-appearance: none;
+  appearance: none;
   flex: 1;
   min-width: 0;
   padding: 0.65rem 1rem;
