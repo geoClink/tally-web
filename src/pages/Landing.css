@@ -168,10 +168,15 @@
   font-weight: 500;
   color: var(--text);
   text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.85rem;
+  transition: border-color 0.15s, color 0.15s;
 }
 
 .landing-nav-signin:hover {
   color: var(--accent);
+  border-color: var(--accent);
   text-decoration: none;
 }
 
@@ -1454,11 +1459,18 @@
 @media (max-width: 640px) {
   .landing-footer-inner {
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.75rem;
   }
   .landing-footer-cols {
-    gap: 2rem;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .landing-footer-brand {
+    gap: 0.25rem;
+  }
+  .landing-footer-copy {
+    padding-top: 0.5rem;
   }
 }
 
