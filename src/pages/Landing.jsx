@@ -121,12 +121,12 @@ const versions = [
 ]
 
 const faqs = [
-  { q: 'How do I sign in?', a: 'Email/password, Sign in with Apple, or Sign in with Google — all three work on both iOS and web.' },
+  { q: 'How do I sign in?', a: 'Email/password, Sign in with Apple, or Sign in with Google — all three work on iOS and web. On Mac, Google Sign-In is not available; use email/password or Sign in with Apple.' },
   { q: 'How do I report a bug or get help?', a: 'Use the "Report a bug" link in the footer or inside Settings on the web dashboard. On iOS, use the feedback option in the app. We read every report.' },
   { q: 'Is Pro really a one-time payment?', a: 'Yes. $9.99 once, yours forever. No recurring fees for solo users — ever.' },
-  { q: 'What happens when I hit the 5-client limit on Free?', a: "You'll be prompted to upgrade. All your existing data stays intact — upgrading just unlocks more clients and full session history." },
+  { q: 'What happens when I hit the 5-client limit on Free?', a: "You'll be prompted to upgrade. On Free, you can see the last 7 days of session history — upgrading to Pro unlocks more clients and your full session history going forward." },
   { q: 'Does the web dashboard work without the iOS app?', a: 'Fully standalone. Create an account on the web and use it on its own. The iOS app syncs to the same account when you add it.' },
-  { q: 'What does Business add over Pro?', a: 'Team workspaces let you invite members, assign clients, and roll up hours across your team, plus client invoicing via email. Business is $4.99/user/month — each team member needs their own subscription. 7-day free trial on iOS.' },
+  { q: 'What does Business add over Pro?', a: 'Team workspaces let you invite members, assign clients, and roll up hours across your team, plus PDF invoicing with Stripe — send a payment link directly to your client. Business is $4.99/user/month — each team member needs their own subscription. 7-day free trial on iOS.' },
 ]
 
 const tiers = [
