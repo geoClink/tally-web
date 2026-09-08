@@ -10,7 +10,7 @@
       "schedule": "0 9 * * 1"
     }
   ],
-  "rewrites": [{ "source": "/((?!api/|guides/).*)", "destination": "/index.html" }],
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
     {
       "source": "/(.*)",
