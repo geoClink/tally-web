@@ -284,7 +284,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-iphone fade-up">
+      <section className="landing-iphone fade-up" id="iphone">
         <div className="landing-mac-header">
           <span className="landing-platform-badge">iPhone</span>
           <h2 className="landing-section-title">Built for iPhone</h2>
@@ -305,7 +305,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-ipad-watch fade-up">
+      <section className="landing-ipad-watch fade-up" id="ipad">
         <div className="landing-mac-header">
           <span className="landing-platform-badge">iPad &amp; Apple Watch</span>
           <h2 className="landing-section-title">Tally for iPad &amp; Apple Watch</h2>
@@ -332,7 +332,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-mac fade-up">
+      <section className="landing-mac fade-up" id="mac">
         <div className="landing-mac-header">
           <span className="landing-platform-badge">Now on Mac</span>
           <h2 className="landing-section-title">Tally for Mac</h2>
@@ -364,23 +364,19 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-android fade-up">
+      <section className="landing-android fade-up" id="android">
         <div className="landing-mac-header">
           <span className="landing-platform-badge">Beta on Android</span>
           <h2 className="landing-section-title">Tally for Android</h2>
           <p className="landing-mac-sub">Now available on Google Play. The same app, your same account — on any Android phone.</p>
         </div>
         <div className="landing-android-mockup-wrap">
-          <div className="landing-pixel-mockup landing-android-float">
-            <div className="landing-pixel-btns-left" />
-            <div className="landing-android-screen">
-              <img
-                src="/images/android-bezel.png"
-                alt="Tally on Android — Activity calendar showing hours tracked by day"
-                loading="lazy"
-              />
-            </div>
-          </div>
+          <img
+            src="/images/android-tally-4.png"
+            alt="Tally on Android — Activity calendar showing hours tracked by day"
+            className="landing-android-mockup-img"
+            loading="lazy"
+          />
         </div>
         <div className="landing-mac-pills">
           <span className="landing-mac-pill">Google Play Beta</span>
@@ -389,7 +385,7 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="landing-visionpro fade-up">
+      <section className="landing-visionpro fade-up" id="visionpro">
         <div className="landing-mac-header">
           <span className="landing-platform-badge landing-platform-badge--soon">Coming Soon</span>
           <h2 className="landing-section-title">Tally for Apple Vision Pro</h2>
