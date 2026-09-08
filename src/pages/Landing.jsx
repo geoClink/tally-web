@@ -379,8 +379,17 @@ export default function Landing() {
           <span className="landing-mac-pill">Same account as iOS &amp; web</span>
           <span className="landing-mac-pill">Full feature parity</span>
         </div>
-        <button onClick={() => setAndroidModalOpen(true)} className="landing-btn-primary" style={{ marginTop: '1.5rem' }}>
-          Join Beta →
+        <button onClick={() => setAndroidModalOpen(true)} className="landing-appstore-badge landing-appstore-badge--android" style={{ marginTop: '1.5rem' }} aria-label="Join Android beta">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 1.8L3 12L12 12Z" fill="#4285F4"/>
+            <path d="M3 12L3 22.2L12 12Z" fill="#34A853"/>
+            <path d="M3 1.8L12 12L21.5 12Z" fill="#FBBC04"/>
+            <path d="M3 22.2L21.5 12L12 12Z" fill="#EA4335"/>
+          </svg>
+          <span className="landing-appstore-text">
+            <span className="landing-appstore-sub">Now in beta on</span>
+            <span className="landing-appstore-main">Google Play</span>
+          </span>
         </button>
       </section>
 
