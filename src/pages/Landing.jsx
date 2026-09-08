@@ -646,6 +646,11 @@ export default function Landing() {
               <Link to="/delete-account">Delete Account</Link>
               <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
             </div>
+            <div className="landing-footer-col">
+              <h4>Support</h4>
+              <a href="/support">Help &amp; FAQ</a>
+              <a href="mailto:help@tallytimetracker.com">Contact Us</a>
+            </div>
           </div>
         </div>
       </footer>
