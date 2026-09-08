@@ -1835,15 +1835,61 @@
 /* ── Vision Pro section ── */
 .landing-visionpro {
   padding: 5rem 1.5rem 4rem;
-  text-align: center;
   background: linear-gradient(150deg, #1e1b4b 0%, #312e81 100%);
+}
+
+.landing-visionpro-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+}
+
+.landing-visionpro-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.landing-visionpro-image {
+  flex-shrink: 0;
+  width: 420px;
+}
+
+.landing-visionpro-img {
+  width: 100%;
+  filter: drop-shadow(0 32px 64px rgba(0, 0, 0, 0.5));
+}
+
+@media (max-width: 860px) {
+  .landing-visionpro-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+  .landing-visionpro-text {
+    align-items: center;
+  }
+  .landing-visionpro-text .landing-section-title,
+  .landing-visionpro-text .landing-mac-sub {
+    text-align: center !important;
+  }
+  .landing-visionpro-image {
+    width: 100%;
+    max-width: 340px;
+  }
 }
 
 .landing-visionpro .landing-section-title {
   color: #fff;
+  margin-bottom: 0;
 }
 
 .landing-visionpro .landing-section-title::after {
+  margin: 0.75rem 0 0;
   background: rgba(255, 255, 255, 0.4);
 }
 

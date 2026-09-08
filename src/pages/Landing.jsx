@@ -382,14 +382,24 @@ export default function Landing() {
       </section>
 
       <section className="landing-visionpro fade-up" id="visionpro">
-        <div className="landing-mac-header">
-          <span className="landing-platform-badge landing-platform-badge--soon">Coming Soon</span>
-          <h2 className="landing-section-title">Tally for Apple Vision Pro</h2>
-          <p className="landing-mac-sub">Track time in spatial computing. A native visionOS app is in development — your account and sessions sync automatically when it ships.</p>
+        <div className="landing-visionpro-inner">
+          <div className="landing-visionpro-text">
+            <span className="landing-platform-badge landing-platform-badge--soon">Coming Soon</span>
+            <h2 className="landing-section-title" style={{ textAlign: 'left' }}>Tally for Apple Vision Pro</h2>
+            <p className="landing-mac-sub" style={{ textAlign: 'left', margin: 0 }}>Track time in spatial computing. A native visionOS app is in development — your account and sessions sync automatically when it ships.</p>
+            <Link to="/login?mode=signup" className="landing-btn-primary" style={{ display: 'inline-block', marginTop: '1.5rem' }}>
+              Sign up to be first →
+            </Link>
+          </div>
+          <div className="landing-visionpro-image">
+            <img
+              src="/images/APV-asset.png"
+              alt="Apple Vision Pro headset"
+              className="landing-visionpro-img"
+              loading="lazy"
+            />
+          </div>
         </div>
-        <Link to="/login?mode=signup" className="landing-btn-primary" style={{ display: 'inline-block', marginTop: '1.5rem' }}>
-          Sign up to be first →
-        </Link>
       </section>
 
       <section className="landing-features-section fade-up">
