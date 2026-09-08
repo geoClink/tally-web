@@ -7,6 +7,10 @@
     {
       "path": "/api/send-reengagement-email",
       "schedule": "0 9 * * 1"
+    },
+    {
+      "path": "/api/send-billing-reminder",
+      "schedule": "0 9 * * *"
     }
   ],
   "outputDirectory": "dist",
