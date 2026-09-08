@@ -14,16 +14,22 @@ export default function ClientRates() {
   const [editingId, setEditingId] = useState(null)
   const [editRate, setEditRate] = useState('')
   const [editBudget, setEditBudget] = useState('')
+  const [editBillingCycle, setEditBillingCycle] = useState('monthly')
   const [editBillingStartDay, setEditBillingStartDay] = useState('')
+  const [editBillingWeekday, setEditBillingWeekday] = useState('')
   const [editEmail, setEditEmail] = useState('')
   const [newClient, setNewClient] = useState('')
   const [newRate, setNewRate] = useState('')
   const [newBudget, setNewBudget] = useState('')
+  const [newBillingCycle, setNewBillingCycle] = useState('monthly')
   const [newBillingStartDay, setNewBillingStartDay] = useState('')
+  const [newBillingWeekday, setNewBillingWeekday] = useState('')
   const [newEmail, setNewEmail] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const [confirmingDeleteId, setConfirmingDeleteId] = useState(null)
+
+  const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
   useEffect(() => {
     fetchAll()
@@ -49,7 +55,9 @@ export default function ClientRates() {
     setEditingId(r.id)
     setEditRate(r.hourly_rate)
     setEditBudget(r.budget_hours ?? '')
+    setEditBillingCycle(r.billing_cycle ?? 'monthly')
     setEditBillingStartDay(r.billing_start_day ?? '')
+    setEditBillingWeekday(r.billing_weekday ?? '')
     setEditEmail(r.client_email ?? '')
   }
 
@@ -58,17 +66,18 @@ export default function ClientRates() {
     if (isNaN(rate) || rate < 0) { setError('Enter a valid rate'); return }
     const budget = editBudget !== '' ? parseFloat(editBudget) : null
     if (budget !== null && (isNaN(budget) || budget < 0)) { setError('Enter a valid budget'); return }
-    const billingDay = editBillingStartDay !== '' ? parseInt(editBillingStartDay) : null
+    const billingDay = (editBillingCycle === 'monthly' && editBillingStartDay !== '') ? parseInt(editBillingStartDay) : null
     if (billingDay !== null && (isNaN(billingDay) || billingDay < 1 || billingDay > 28)) { setError('Billing start day must be 1–28'); return }
+    const billingWeekday = (editBillingCycle === 'weekly' && editBillingWeekday !== '') ? parseInt(editBillingWeekday) : null
     setSaving(true)
     const { error: err } = await supabase
       .from('client_rates')
-      .update({ hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay, client_email: editEmail.trim() || null })
+      .update({ hourly_rate: rate, budget_hours: budget, billing_cycle: editBillingCycle, billing_start_day: billingDay, billing_weekday: billingWeekday, client_email: editEmail.trim() || null })
       .eq('id', id)
       .eq('user_id', user.id)
     setSaving(false)
     if (err) { setError(err.message); return }
-    setRates(prev => prev.map(r => r.id === id ? { ...r, hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay, client_email: editEmail.trim() || null } : r))
+    setRates(prev => prev.map(r => r.id === id ? { ...r, hourly_rate: rate, budget_hours: budget, billing_cycle: editBillingCycle, billing_start_day: billingDay, billing_weekday: billingWeekday, client_email: editEmail.trim() || null } : r))
     setEditingId(null)
     setError('')
   }
@@ -81,8 +90,9 @@ export default function ClientRates() {
     if (isNaN(rate) || rate < 0) { setError('Enter a valid rate'); return }
     const budget = newBudget !== '' ? parseFloat(newBudget) : null
     if (budget !== null && (isNaN(budget) || budget < 0)) { setError('Enter a valid budget'); return }
-    const billingDay = newBillingStartDay !== '' ? parseInt(newBillingStartDay) : null
+    const billingDay = (newBillingCycle === 'monthly' && newBillingStartDay !== '') ? parseInt(newBillingStartDay) : null
     if (billingDay !== null && (isNaN(billingDay) || billingDay < 1 || billingDay > 28)) { setError('Billing start day must be 1–28'); return }
+    const billingWeekday = (newBillingCycle === 'weekly' && newBillingWeekday !== '') ? parseInt(newBillingWeekday) : null
 
     if (!isPro && rates.length >= 5) {
       setError('Free tier allows up to 5 clients. Upgrade to Pro for unlimited clients.')
@@ -92,7 +102,7 @@ export default function ClientRates() {
     setSaving(true)
     const { data, error: err } = await supabase
       .from('client_rates')
-      .insert({ user_id: user.id, client: newClient.trim(), hourly_rate: rate, budget_hours: budget, billing_start_day: billingDay, client_email: newEmail.trim() || null })
+      .insert({ user_id: user.id, client: newClient.trim(), hourly_rate: rate, budget_hours: budget, billing_cycle: newBillingCycle, billing_start_day: billingDay, billing_weekday: billingWeekday, client_email: newEmail.trim() || null })
       .select()
       .single()
     setSaving(false)
@@ -101,7 +111,9 @@ export default function ClientRates() {
     setNewClient('')
     setNewRate('')
     setNewBudget('')
+    setNewBillingCycle('monthly')
     setNewBillingStartDay('')
+    setNewBillingWeekday('')
     setNewEmail('')
   }
 
@@ -167,16 +179,35 @@ export default function ClientRates() {
                         />
                       </div>
                       <div className="form-group" style={{ marginBottom: 0 }}>
-                        <label>Billing Start Day <span className="add-client-optional">optional</span></label>
-                        <input
-                          type="number"
-                          value={editBillingStartDay}
-                          onChange={e => setEditBillingStartDay(e.target.value)}
-                          min="1"
-                          max="28"
-                          placeholder="1"
-                        />
+                        <label>Billing Cycle <span className="add-client-optional">optional</span></label>
+                        <select value={editBillingCycle} onChange={e => setEditBillingCycle(e.target.value)}>
+                          <option value="monthly">Monthly</option>
+                          <option value="weekly">Weekly</option>
+                        </select>
                       </div>
+                      {editBillingCycle === 'monthly' ? (
+                        <div className="form-group" style={{ marginBottom: 0 }}>
+                          <label>Start Day <span className="add-client-optional">1–28</span></label>
+                          <input
+                            type="number"
+                            value={editBillingStartDay}
+                            onChange={e => setEditBillingStartDay(e.target.value)}
+                            min="1"
+                            max="28"
+                            placeholder="1"
+                          />
+                        </div>
+                      ) : (
+                        <div className="form-group" style={{ marginBottom: 0 }}>
+                          <label>Billing Day</label>
+                          <select value={editBillingWeekday} onChange={e => setEditBillingWeekday(e.target.value)}>
+                            <option value="">Pick a day</option>
+                            {WEEKDAY_NAMES.map((name, i) => (
+                              <option key={i} value={i}>{name}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                       <div className="form-group" style={{ marginBottom: 0 }}>
                         <label>Client Email <span className="add-client-optional">optional</span></label>
                         <input
@@ -202,7 +233,10 @@ export default function ClientRates() {
                           {hasBudget && (
                             <span> · {formatHours(used)} of {formatHours(r.budget_hours)} used</span>
                           )}
-                          {r.billing_start_day != null && (
+                          {r.billing_cycle === 'weekly' && r.billing_weekday != null && (
+                            <span> · Bills every {WEEKDAY_NAMES[r.billing_weekday]}</span>
+                          )}
+                          {(r.billing_cycle == null || r.billing_cycle === 'monthly') && r.billing_start_day != null && (
                             <span> · Bills from the {r.billing_start_day}{r.billing_start_day === 1 ? 'st' : r.billing_start_day === 2 ? 'nd' : r.billing_start_day === 3 ? 'rd' : 'th'}</span>
                           )}
                         </div>
@@ -300,16 +334,35 @@ export default function ClientRates() {
               />
             </div>
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Billing Start Day <span className="add-client-optional">optional, 1–28</span></label>
-              <input
-                type="number"
-                value={newBillingStartDay}
-                onChange={e => setNewBillingStartDay(e.target.value)}
-                placeholder="1"
-                min="1"
-                max="28"
-              />
+              <label>Billing Cycle <span className="add-client-optional">optional</span></label>
+              <select value={newBillingCycle} onChange={e => setNewBillingCycle(e.target.value)}>
+                <option value="monthly">Monthly</option>
+                <option value="weekly">Weekly</option>
+              </select>
             </div>
+            {newBillingCycle === 'monthly' ? (
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>Start Day <span className="add-client-optional">1–28</span></label>
+                <input
+                  type="number"
+                  value={newBillingStartDay}
+                  onChange={e => setNewBillingStartDay(e.target.value)}
+                  placeholder="1"
+                  min="1"
+                  max="28"
+                />
+              </div>
+            ) : (
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label>Billing Day</label>
+                <select value={newBillingWeekday} onChange={e => setNewBillingWeekday(e.target.value)}>
+                  <option value="">Pick a day</option>
+                  {WEEKDAY_NAMES.map((name, i) => (
+                    <option key={i} value={i}>{name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="form-group" style={{ marginBottom: 0 }}>
               <label>Client Email <span className="add-client-optional">optional</span></label>
               <input

@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import TrashIcon from '../components/TrashIcon'
 import { createAvatar } from '@dicebear/core'
 import { lorelei } from '@dicebear/collection'
@@ -475,6 +475,16 @@ export default function Settings() {
           {saved ? 'Saved ✓' : saving ? 'Saving…' : 'Save Settings'}
         </button>
       </form>
+
+      <div className="card" style={{ marginTop: '2rem' }}>
+        <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Client Management</h2>
+        <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
+          Add or edit clients, hourly rates, budgets, and billing cycles.
+        </p>
+        <Link to="/clients" className="btn btn-secondary" style={{ display: 'inline-block' }}>
+          Go to Client Rates →
+        </Link>
+      </div>
 
       <div className="card" style={{ marginTop: '2rem' }}>
         <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.4rem' }}>Change Password</h2>

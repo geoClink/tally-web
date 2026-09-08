@@ -4,7 +4,7 @@ import TrashIcon from '../components/TrashIcon'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useSubscription } from '../context/SubscriptionContext'
-import { formatHours, formatCurrency, todayString, monthStartString, lastMonthRange, billingPeriodStart } from '../lib/utils'
+import { formatHours, formatCurrency, todayString, monthStartString, lastMonthRange, billingPeriodStart, weeklyBillingPeriodStart } from '../lib/utils'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
 
@@ -27,6 +27,18 @@ function lastBillingPeriodRange(startDay) {
   prevEnd.setDate(prevEnd.getDate() - 1)
   const prevStart = new Date(prevEnd.getFullYear(), prevEnd.getMonth(), startDay)
   if (prevStart > prevEnd) prevStart.setMonth(prevStart.getMonth() - 1)
+  return {
+    start: prevStart.toISOString().split('T')[0],
+    end: prevEnd.toISOString().split('T')[0],
+  }
+}
+
+function lastWeeklyBillingPeriodRange(weekday) {
+  const currentStart = new Date(weeklyBillingPeriodStart(weekday))
+  const prevEnd = new Date(currentStart)
+  prevEnd.setDate(prevEnd.getDate() - 1)
+  const prevStart = new Date(prevEnd)
+  prevStart.setDate(prevEnd.getDate() - 6)
   return {
     start: prevStart.toISOString().split('T')[0],
     end: prevEnd.toISOString().split('T')[0],
@@ -104,17 +116,25 @@ export default function Invoices() {
 
   async function fetchClients() {
     const [{ data: rates }, { data: sessionData }] = await Promise.all([
-      supabase.from('client_rates').select('client, hourly_rate, client_email, billing_start_day').eq('user_id', user.id),
+      supabase.from('client_rates').select('client, hourly_rate, client_email, billing_cycle, billing_start_day, billing_weekday').eq('user_id', user.id),
       supabase.from('sessions').select('client').eq('user_id', user.id),
     ])
     const rateMap = {}
     const emailMap = {}
     const bsdMap = {}
-    rates?.forEach(r => { rateMap[r.client] = r.hourly_rate; emailMap[r.client] = r.client_email ?? ''; bsdMap[r.client] = r.billing_start_day ?? null })
+    const bcMap = {}
+    const bwdMap = {}
+    rates?.forEach(r => {
+      rateMap[r.client] = r.hourly_rate
+      emailMap[r.client] = r.client_email ?? ''
+      bsdMap[r.client] = r.billing_start_day ?? null
+      bcMap[r.client] = r.billing_cycle ?? 'monthly'
+      bwdMap[r.client] = r.billing_weekday ?? null
+    })
     const allClients = [...new Set([
       ...(rates?.map(r => r.client) ?? []),
       ...(sessionData?.map(s => s.client) ?? []),
-    ])].sort().map(c => ({ client: c, hourly_rate: rateMap[c] ?? 0, client_email: emailMap[c] ?? '', billing_start_day: bsdMap[c] ?? null }))
+    ])].sort().map(c => ({ client: c, hourly_rate: rateMap[c] ?? 0, client_email: emailMap[c] ?? '', billing_cycle: bcMap[c] ?? 'monthly', billing_start_day: bsdMap[c] ?? null, billing_weekday: bwdMap[c] ?? null }))
     setClients(allClients)
   }
 
@@ -572,6 +592,10 @@ export default function Invoices() {
                   { label: 'Last Month',  action: () => { const r = lastMonthRange(); setStartDate(r.start); setEndDate(r.end) } },
                   ...(() => {
                     const found = clients.find(c => c.client === selectedClient)
+                    if (!found) return []
+                    if (found.billing_cycle === 'weekly' && found.billing_weekday != null) {
+                      return [{ label: 'Last Billing Period', action: () => { const r = lastWeeklyBillingPeriodRange(found.billing_weekday); setStartDate(r.start); setEndDate(r.end) } }]
+                    }
                     const bsd = found?.billing_start_day
                     if (!bsd) return []
                     return [{ label: 'Last Billing Period', action: () => { const r = lastBillingPeriodRange(bsd); setStartDate(r.start); setEndDate(r.end) } }]

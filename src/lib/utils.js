@@ -39,6 +39,16 @@ export function billingPeriodStart(startDay) {
   return new Date(year, month - 1, startDay).toISOString().split('T')[0]
 }
 
+// Returns the start of the current weekly billing period as YYYY-MM-DD.
+// weekday: 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+export function weeklyBillingPeriodStart(weekday) {
+  const today = new Date()
+  const diff = (today.getDay() - weekday + 7) % 7
+  const start = new Date(today)
+  start.setDate(today.getDate() - diff)
+  return start.toISOString().split('T')[0]
+}
+
 // Returns the first day of the current month as YYYY-MM-DD
 export function monthStartString() {
   const d = new Date()
