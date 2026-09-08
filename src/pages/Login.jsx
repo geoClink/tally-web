@@ -140,14 +140,10 @@ export default function Login() {
         </div>
 
         <div className="auth-links">
-          <Link to="/demo">Try demo</Link>
           {!isNative && (
-            <>
-              <span className="auth-links-dot">·</span>
-              <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">App Store</a>
-            </>
+            <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">App Store</a>
           )}
-          <span className="auth-links-dot">·</span>
+          {!isNative && <span className="auth-links-dot">·</span>}
           <button onClick={() => setBugModalOpen(true)}>Report a bug</button>
         </div>
       </div>
