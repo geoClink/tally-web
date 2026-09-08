@@ -179,6 +179,13 @@ export default function Landing() {
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => {
+    if (window.location.hash) {
+      const el = document.querySelector(window.location.hash)
+      if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100)
+    }
+  }, [])
+
   async function handleEmailSubmit(e) {
     e.preventDefault()
     setEmailStatus('loading')
@@ -397,7 +404,7 @@ export default function Landing() {
         <div className="landing-visionpro-strip-inner">
           <div className="landing-visionpro-strip-text">
             <p className="landing-visionpro-strip-label">Tally for Apple Vision Pro</p>
-            <p className="landing-visionpro-strip-sub">A native visionOS app is in development — your account and sessions sync automatically when it ships.</p>
+            <p className="landing-visionpro-strip-sub">Open Tally as a volume and it floats alongside your work — a live timer you can see without switching apps. Tap to pause, tap to resume. Your client hours tracked without breaking focus.</p>
             <Link to="/login?mode=signup" className="landing-visionpro-strip-btn">Sign up to be first →</Link>
           </div>
           <img
