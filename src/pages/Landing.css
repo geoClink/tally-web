@@ -938,11 +938,9 @@
   max-width: 300px;
   width: 100%;
   background: #1c1c1e;
-  /* Pixel Pro has flatter, more squared-off sides than iPhone */
-  border-radius: 44px;
-  padding: 4px 4px 8px;
+  border-radius: 36px;
+  padding: 2px 2px 4px;
   position: relative;
-  /* Polished dark aluminum frame */
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.06),
     0 0 0 1.5px #7a7a80,
@@ -988,7 +986,7 @@
 }
 
 .landing-android-screen {
-  border-radius: 40px;
+  border-radius: 32px;
   overflow: hidden;
 }
 
