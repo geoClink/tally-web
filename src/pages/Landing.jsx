@@ -424,10 +424,9 @@ export default function Landing() {
       <section className="landing-testimonial fade-up">
         <div className="landing-testimonial-inner">
           <div className="landing-testimonial-stars">★★★★★</div>
-          <p className="landing-testimonial-quote">"I've tried every time tracker out there. Tally is the only one I've actually kept using — one tap and I'm billing, no friction."</p>
+          <p className="landing-testimonial-quote">"I really like how smooth and straightforward the app is, and it already covers the main things I need."</p>
           <div className="landing-testimonial-author">
-            <span className="landing-testimonial-name">Sarah M.</span>
-            <span className="landing-testimonial-role">Freelance Brand Designer</span>
+            <span className="landing-testimonial-role">Freelance Product Designer</span>
           </div>
         </div>
       </section>

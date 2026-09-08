@@ -934,7 +934,7 @@
 }
 
 .landing-android-mockup-img {
-  max-width: 560px;
+  max-width: 880px;
   width: 100%;
   filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.18));
   transition: filter 0.45s ease;
