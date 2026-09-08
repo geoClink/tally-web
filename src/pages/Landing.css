@@ -933,24 +933,91 @@
   padding: 1rem 0 2rem;
 }
 
-/* Android mockup — rendered device image */
-.landing-android-mockup {
+/* Pixel Pro phone body — Obsidian colorway */
+.landing-pixel-mockup {
   max-width: 300px;
+  width: 100%;
+  background: #1c1c1e;
+  /* Pixel Pro has flatter, more squared-off sides than iPhone */
+  border-radius: 44px;
+  padding: 4px 4px 8px;
+  position: relative;
+  /* Polished dark aluminum frame */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 0 1.5px #7a7a80,
+    0 0 0 3.5px #1c1c1e,
+    0 0 0 5px #52525a,
+    0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+/* Power button — right side */
+.landing-pixel-mockup::before {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 130px;
+  width: 4px;
+  height: 52px;
+  background: #58585e;
+  border-radius: 0 3px 3px 0;
+  z-index: 15;
+}
+
+/* Volume rocker — left side (Pixel puts both buttons on left) */
+.landing-pixel-btns-left {
+  position: absolute;
+  left: -8px;
+  top: 100px;
+  width: 4px;
+  height: 34px;
+  background: #58585e;
+  border-radius: 3px 0 0 3px;
+  z-index: 15;
+}
+
+.landing-pixel-btns-left::before {
+  content: '';
+  position: absolute;
+  top: 42px;
+  left: 0;
+  width: 4px;
+  height: 34px;
+  background: #58585e;
+  border-radius: 3px 0 0 3px;
+}
+
+.landing-android-screen {
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+.landing-android-screen img {
   width: 100%;
   display: block;
 }
 
 .landing-android-float {
-  filter: drop-shadow(0 24px 52px rgba(0, 0, 0, 0.35));
-  transition: filter 0.45s ease;
+  transition: box-shadow 0.45s ease;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 0 1.5px #7a7a80,
+    0 0 0 3.5px #1c1c1e,
+    0 0 0 5px #52525a,
+    0 24px 52px rgba(0, 0, 0, 0.45);
 }
 
 .landing-android-float:hover {
-  filter: drop-shadow(0 14px 36px rgba(0, 0, 0, 0.2));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 0 0 1.5px #7a7a80,
+    0 0 0 3.5px #1c1c1e,
+    0 0 0 5px #52525a,
+    0 14px 36px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 640px) {
-  .landing-android-mockup {
+  .landing-pixel-mockup {
     max-width: 240px;
   }
 }
