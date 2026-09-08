@@ -407,7 +407,7 @@ export default function Settings() {
         <div className="card" style={{ marginBottom: '1.5rem' }}>
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.25rem' }}>Per-Client Weekly Goals</h2>
           <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
-            Set how many hours per week you want to work for each client.
+            Set how many hours per week you want to work for each client. These show as progress bars on your Dashboard.
           </p>
 
           {clientGoals.length > 0 && (
@@ -431,6 +431,7 @@ export default function Settings() {
                           className="btn-icon"
                           onClick={() => removeClientGoal(g.client)}
                           title="Remove goal"
+                          aria-label={`Remove weekly goal for ${g.client}`}
                         >
                           <TrashIcon size={14} />
                         </button>

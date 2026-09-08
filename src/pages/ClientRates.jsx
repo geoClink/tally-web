@@ -258,6 +258,7 @@ export default function ClientRates() {
                               className="btn-icon"
                               onClick={() => setConfirmingDeleteId(r.id)}
                               title="Remove client"
+                              aria-label={`Remove ${r.client}`}
                             >
                               <TrashIcon />
                             </button>
@@ -303,8 +304,9 @@ export default function ClientRates() {
         <form onSubmit={addRate}>
           <div className="add-client-fields">
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Client Name</label>
+              <label htmlFor="new-client-name">Client Name</label>
               <input
+                id="new-client-name"
                 type="text"
                 value={newClient}
                 onChange={e => setNewClient(e.target.value)}
@@ -312,8 +314,9 @@ export default function ClientRates() {
               />
             </div>
             <div className="form-group" style={{ marginBottom: 0 }}>
-              <label>Hourly Rate ($)</label>
+              <label htmlFor="new-client-rate">Hourly Rate ($)</label>
               <input
+                id="new-client-rate"
                 type="number"
                 value={newRate}
                 onChange={e => setNewRate(e.target.value)}

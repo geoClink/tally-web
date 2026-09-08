@@ -536,11 +536,13 @@ export default function Track() {
                   className="btn btn-primary"
                   onClick={startTimer}
                   disabled={!timerClient.trim()}
+                  aria-disabled={!timerClient.trim()}
+                  aria-describedby={!timerClient.trim() ? 'start-timer-hint' : undefined}
                 >
                   Start Timer
                 </button>
                 {!timerClient.trim() && (
-                  <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: 0 }}>
+                  <p id="start-timer-hint" style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', margin: 0 }}>
                     Type a client name above to unlock
                   </p>
                 )}
@@ -585,6 +587,7 @@ export default function Track() {
             <button
               onClick={toggleVoice}
               title="Voice control"
+              aria-label={listening ? 'Stop voice control' : 'Start voice control'}
               style={{
                 width: 52,
                 height: 52,
