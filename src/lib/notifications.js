@@ -53,11 +53,13 @@ export async function scheduleDailyReminder() {
   }
 }
 
-// Call once after the user's first session save on iOS.
-// Asks for APNs permission, gets the device token, and saves it to Supabase
+// Call once after the user's first session save on iOS or Android.
+// Asks for push permission, gets the device token, and saves it to Supabase
 // so admin push notifications can reach this device.
+// iOS uses APNs; Android uses FCM (requires google-services.json in android/app/).
 export async function registerPushNotifications() {
-  if (Capacitor.getPlatform() !== 'ios') return
+  const platform = Capacitor.getPlatform()
+  if (platform !== 'ios' && platform !== 'android') return
   if (localStorage.getItem(PUSH_REG_KEY)) return
 
   try {
@@ -66,15 +68,17 @@ export async function registerPushNotifications() {
 
     // Wire up listeners before calling register() so we don't miss the event
     await PushNotifications.addListener('registration', async (token) => {
-      // Sandbox tokens come from debug/TestFlight builds; production from App Store.
-      // VITE_APNS_ENV defaults to 'production' — set to 'sandbox' in .env.local for dev.
-      const environment = import.meta.env.VITE_APNS_ENV ?? 'production'
-
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
 
+      // iOS: sandbox = debug/TestFlight, production = App Store
+      // Android: FCM has no sandbox/production distinction
+      const environment = platform === 'ios'
+        ? (import.meta.env.VITE_APNS_ENV ?? 'production')
+        : 'production'
+
       await supabase.from('device_tokens').upsert(
-        { user_id: user.id, token: token.value, platform: 'ios', environment },
+        { user_id: user.id, token: token.value, platform, environment },
         { onConflict: 'user_id,token' }
       )
 

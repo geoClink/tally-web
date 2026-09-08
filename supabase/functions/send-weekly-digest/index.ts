@@ -34,6 +34,36 @@ async function sendPush(token: string, environment: string, jwt: string, title: 
   return res.status
 }
 
+async function buildFcmAccessToken(serviceAccountJson: string): Promise<{ token: string; projectId: string }> {
+  const sa = JSON.parse(serviceAccountJson)
+  const now = Math.floor(Date.now() / 1000)
+  const toB64url = (obj: object) => btoa(JSON.stringify(obj)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+  const header = toB64url({ alg: 'RS256', typ: 'JWT' })
+  const jwtPayload = toB64url({ iss: sa.client_email, scope: 'https://www.googleapis.com/auth/firebase.messaging', aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 })
+  const signingInput = `${header}.${jwtPayload}`
+  const keyData = sa.private_key.replace(/-----BEGIN PRIVATE KEY-----/g, '').replace(/-----END PRIVATE KEY-----/g, '').replace(/\s/g, '')
+  const keyBuffer = Uint8Array.from(atob(keyData), c => c.charCodeAt(0))
+  const key = await crypto.subtle.importKey('pkcs8', keyBuffer.buffer, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign'])
+  const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, new TextEncoder().encode(signingInput))
+  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+  const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${signingInput}.${sigB64}`,
+  })
+  const tokenData = await tokenRes.json()
+  return { token: tokenData.access_token, projectId: sa.project_id }
+}
+
+async function sendFcm(deviceToken: string, accessToken: string, projectId: string, title: string, body: string): Promise<number> {
+  const res = await fetch(`https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message: { token: deviceToken, notification: { title, body }, android: { priority: 'high' } } }),
+  })
+  return res.status
+}
+
 // Called by a weekly cron. Requires the DIGEST_SECRET header to match DIGEST_SECRET env var
 // so random callers can't trigger mass emails.
 Deno.serve(async (req) => {
@@ -92,13 +122,13 @@ Deno.serve(async (req) => {
   // Load device tokens for active users so we can send push alongside email
   const { data: deviceTokens } = await supabase
     .from('device_tokens')
-    .select('user_id, token, environment')
+    .select('user_id, token, environment, platform')
     .in('user_id', userIds)
 
-  const tokenMap: Record<string, { token: string; environment: string }[]> = {}
+  const tokenMap: Record<string, { token: string; environment: string; platform: string }[]> = {}
   for (const dt of deviceTokens ?? []) {
     if (!tokenMap[dt.user_id]) tokenMap[dt.user_id] = []
-    tokenMap[dt.user_id].push({ token: dt.token, environment: dt.environment })
+    tokenMap[dt.user_id].push({ token: dt.token, environment: dt.environment, platform: dt.platform ?? 'ios' })
   }
 
   // Build APNs JWT once if credentials are available
@@ -108,6 +138,10 @@ Deno.serve(async (req) => {
   const apnsJwt = (apnsKey && apnsKeyId && apnsTeamId)
     ? await buildApnsJwt(apnsTeamId, apnsKeyId, apnsKey)
     : null
+
+  // Build FCM access token once if credentials are available
+  const fcmServiceAccount = Deno.env.get('FCM_SERVICE_ACCOUNT_JSON')
+  const fcmAuth = fcmServiceAccount ? await buildFcmAccessToken(fcmServiceAccount) : null
 
   let sent = 0
   let pushSent = 0
@@ -219,13 +253,14 @@ Deno.serve(async (req) => {
     }
 
     // Send push to any device tokens this user has registered
-    if (apnsJwt && tokenMap[userId]) {
-      for (const { token, environment } of tokenMap[userId]) {
-        const status = await sendPush(
-          token, environment, apnsJwt,
-          'Weekly summary',
-          `You tracked ${total.toFixed(1)} hours this week.`
-        )
+    if (tokenMap[userId]) {
+      for (const { token, environment, platform } of tokenMap[userId]) {
+        let status = 0
+        if (platform === 'android' && fcmAuth) {
+          status = await sendFcm(token, fcmAuth.token, fcmAuth.projectId, 'Weekly summary', `You tracked ${total.toFixed(1)} hours this week.`)
+        } else if (apnsJwt) {
+          status = await sendPush(token, environment, apnsJwt, 'Weekly summary', `You tracked ${total.toFixed(1)} hours this week.`)
+        }
         if (status === 200) pushSent++
       }
     }

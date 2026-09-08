@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "834780201147",
+    "project_id": "tally-android",
+    "storage_bucket": "tally-android.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:834780201147:android:718166aa2a53357bce699e",
+        "android_client_info": {
+          "package_name": "name.georgeclinkscales.tally"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8BZv_0Br6g3_Z5npWIGF8mELISQLRExY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
