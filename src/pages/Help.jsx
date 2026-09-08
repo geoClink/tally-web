@@ -95,7 +95,7 @@ export default function Help() {
         <div className="card">
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Client rates &amp; billing cycles</h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
-            Pro and Business accounts can set a default hourly rate per client on the <strong>Client Rates</strong> page (also accessible from <strong>Settings → Client Management</strong>). When you generate an invoice, Tally pre-fills the rate automatically.
+            Pro and Business accounts can set a default hourly rate per client on the <strong>Clients</strong> page (also accessible from <strong>Settings → Client Management</strong>). When you generate an invoice, Tally pre-fills the rate automatically.
           </p>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
             Each client also has a <strong>Billing Cycle</strong> setting:

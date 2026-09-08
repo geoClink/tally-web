@@ -65,7 +65,7 @@ const NAV_GROUPS = [
   {
     label: 'Money',
     items: [
-      { to: '/clients',  label: 'Client Rates', icon: ICONS.clients },
+      { to: '/clients',  label: 'Clients', icon: ICONS.clients },
       { to: '/invoices', label: 'Invoices',      icon: ICONS.invoices, tier: 'business' },
     ],
   },

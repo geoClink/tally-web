@@ -53,8 +53,17 @@ const features = [
 
 const versions = [
   {
-    version: '1.5.0',
+    version: '1.6.0',
     label: 'Latest',
+    items: [
+      'Weekly billing cycles — set a weekday (e.g. every Monday) instead of a day of the month',
+      'Client settings now accessible directly from the Settings page',
+      'Invoice fixes — your email pre-fills correctly, weekly billing period now populates the right date range',
+      'visionOS improvements — Start Timer button now works on Apple Vision Pro',
+    ],
+  },
+  {
+    version: '1.5.0',
     items: [
       'Invoices — generate PDF invoices from tracked sessions, collect payment via Stripe, and mark invoices paid or unpaid',
       'Connect Stripe directly from the iOS app — no web login needed',
