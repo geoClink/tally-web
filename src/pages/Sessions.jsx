@@ -173,8 +173,6 @@ export default function Sessions() {
     }
   }
 
-  if (loading) return <div className="loading">Loading…</div>
-
   return (
     <div>
       <div className="page-header">
@@ -182,18 +180,26 @@ export default function Sessions() {
           <div>
             <h1 className="page-title">Sessions</h1>
             <p className="page-subtitle">
-              {hasFilters ? `${filtered.length} of ${sessions.length}` : sessions.length} session{sessions.length !== 1 ? 's' : ''}
-              {!isPro && ' (last 7 days)'}
+              {loading ? 'Loading…' : (
+                <>
+                  {hasFilters ? `${filtered.length} of ${sessions.length}` : sessions.length} session{sessions.length !== 1 ? 's' : ''}
+                  {!isPro && ' (last 7 days)'}
+                </>
+              )}
             </p>
           </div>
           {isPro ? (
-            <button className="btn btn-secondary" onClick={exportCSV}>Export CSV</button>
+            <button className="btn btn-secondary" onClick={exportCSV} disabled={loading}>Export CSV</button>
           ) : (
             <Link to="/billing" className="btn btn-secondary">Upgrade for CSV Export</Link>
           )}
         </div>
       </div>
 
+      {loading ? (
+        <div className="loading">Loading…</div>
+      ) : (
+        <>
       {/* Filter bar */}
       <div className="card" style={{ padding: '0.875rem 1rem', marginBottom: '1rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -232,7 +238,9 @@ export default function Sessions() {
 
       {filtered.length === 0 ? (
         <div className="empty-state">
-          {hasFilters ? 'No sessions match your filters.' : 'No sessions found. Track time in the Tally app.'}
+          {hasFilters ? 'No sessions match your filters.' : (
+            <>No sessions yet. <Link to="/track">Start tracking →</Link></>
+          )}
         </div>
       ) : (
         <div className="table-wrapper dashboard-sessions">
@@ -380,6 +388,8 @@ export default function Sessions() {
             </Link>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   )

@@ -164,6 +164,11 @@ export default function Calendar() {
           <span className="text-muted" style={{ fontSize: '0.72rem' }}>8h</span>
           <span className="text-muted" style={{ fontSize: '0.72rem' }}>8h+</span>
         </div>
+        {!loading && monthTotal === 0 && (
+          <p className="text-muted" style={{ fontSize: '0.8rem', textAlign: 'center', marginTop: '0.75rem' }}>
+            No time tracked this month. <a href="/track" style={{ color: 'var(--accent)' }}>Go to Track Time →</a>
+          </p>
+        )}
       </div>
 
       {selectedDay && sessionsByDay[selectedDay] && (

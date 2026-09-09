@@ -17,7 +17,7 @@ export default function Help() {
           </p>
           <ul style={{ fontSize: '0.875rem', paddingLeft: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
             <li><strong>Timer</strong> — pick a client, hit Start, then Stop when you're done. The session is saved automatically.</li>
-            <li><strong>Manual entry</strong> — enter a start time, end time, and client name to log past work.</li>
+            <li><strong>Manual entry</strong> — pick a date, enter the number of hours worked, and choose a client name to log past work.</li>
           </ul>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: '0.75rem' }}>
             Free accounts are limited to 5 clients and can only view the last 7 days of history.
@@ -138,10 +138,10 @@ export default function Help() {
         <div className="card">
           <h2 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '0.75rem' }}>Daily reminders</h2>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.6rem' }}>
-            Enable daily reminders in <strong>Settings</strong> to get a notification at a time you choose. Useful if you forget to log time at the end of the day.
+            Daily reminders are scheduled automatically each time you save a session. Useful if you forget to log time at the end of the day.
           </p>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-            On iOS and Android, reminders are delivered as push notifications. On the web, they require notification permission in your browser.
+            On iOS and Android, reminders arrive as push notifications. On the web, your browser will prompt for notification permission the first time you track time.
           </p>
         </div>
 

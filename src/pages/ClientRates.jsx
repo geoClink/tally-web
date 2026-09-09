@@ -123,14 +123,16 @@ export default function ClientRates() {
     setRates(prev => prev.filter(r => r.id !== id))
   }
 
-  if (loading) return <div className="loading">Loading…</div>
-
   return (
     <div>
       <div className="page-header">
         <h1 className="page-title">Client Rates</h1>
         <p className="page-subtitle">Hourly rates and project budgets</p>
       </div>
+
+      {loading ? (
+        <div className="loading">Loading…</div>
+      ) : (<>
 
       {error && <div className="auth-error">{error}</div>}
 
@@ -381,6 +383,7 @@ export default function ClientRates() {
           </button>
         </form>
       </div>
+      </>)}
     </div>
   )
 }

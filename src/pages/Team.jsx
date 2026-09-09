@@ -25,7 +25,10 @@ export default function Team() {
   const [resending, setResending] = useState(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
-  const [copiedInvite, setCopiedInvite] = useState(false)
+  const [copiedInvite, setCopiedInvite] = useState({}) // { [email]: bool }
+  const [confirmRemoveMemberId, setConfirmRemoveMemberId] = useState(null)
+  const [confirmLeave, setConfirmLeave] = useState(false)
+  const [confirmDeleteWs, setConfirmDeleteWs] = useState(false)
   const [teamWeekHours, setTeamWeekHours] = useState(null)
 
   // Create workspace
@@ -202,8 +205,8 @@ export default function Team() {
     const link = `https://www.tallytimetracker.com/login?mode=signup&redirect=/team&email=${encodeURIComponent(email)}`
     const msg = `Hey! I've invited you to join the "${workspace.name}" workspace on Tally — a time tracking app.\n\nClick this link to accept:\n${link}\n\nIt'll create your account and drop you straight into our team workspace. Let me know if you have any trouble!`
     navigator.clipboard.writeText(msg).then(() => {
-      setCopiedInvite(true)
-      setTimeout(() => setCopiedInvite(false), 2000)
+      setCopiedInvite(prev => ({ ...prev, [email]: true }))
+      setTimeout(() => setCopiedInvite(prev => ({ ...prev, [email]: false })), 2000)
     })
   }
 
@@ -224,9 +227,9 @@ export default function Team() {
     showSuccess(`Invite resent to ${member.invited_email}.`)
   }
 
-  async function removeMember(id, email) {
+  async function removeMember(id) {
     if (demoGuard()) return
-    if (!confirm(`Remove ${email} from the workspace?`)) return
+    setConfirmRemoveMemberId(null)
     await supabase.from('workspace_members').delete().eq('id', id)
     setMembers(prev => prev.filter(m => m.id !== id))
   }
@@ -243,7 +246,7 @@ export default function Team() {
 
   async function leaveWorkspace() {
     if (demoGuard()) return
-    if (!confirm('Leave this workspace? You will lose access to the team.')) return
+    setConfirmLeave(false)
     const myMember = members.find(m => m.invited_email === user.email)
     if (!myMember) return
     const { error: err } = await supabase.from('workspace_members').delete().eq('id', myMember.id)
@@ -254,8 +257,7 @@ export default function Team() {
 
   async function deleteWorkspace() {
     if (demoGuard()) return
-    if (!confirm('Delete this workspace? All members will lose access. This cannot be undone.')) return
-    if (!confirm('Are you sure? This permanently deletes the workspace.')) return
+    setConfirmDeleteWs(false)
     // Delete members first, then workspace
     await supabase.from('workspace_members').delete().eq('workspace_id', workspace.id)
     const { error: err } = await supabase.from('workspaces').delete().eq('id', workspace.id)
@@ -354,7 +356,7 @@ export default function Team() {
             )}
           </div>
           {workspace && (
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
               <span className={`current-tier ${isOwner ? 'tier-business' : 'tier-pro'}`}>
                 {isOwner ? 'Owner' : currentMember?.role ?? 'Member'}
               </span>
@@ -362,7 +364,15 @@ export default function Team() {
                 <button className="btn btn-secondary btn-sm" onClick={startEdit}>Edit</button>
               )}
               {!isOwner && (
-                <button className="btn btn-secondary btn-sm" onClick={leaveWorkspace}>Leave</button>
+                confirmLeave ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Leave workspace?</span>
+                    <button className="btn btn-danger btn-sm" onClick={leaveWorkspace}>Yes</button>
+                    <button className="btn btn-secondary btn-sm" onClick={() => setConfirmLeave(false)}>No</button>
+                  </div>
+                ) : (
+                  <button className="btn btn-secondary btn-sm" onClick={() => setConfirmLeave(true)}>Leave</button>
+                )
               )}
             </div>
           )}
@@ -586,7 +596,7 @@ export default function Team() {
                           </span>
                           {isPending && isAdmin && (
                             <button className="btn-link" onClick={() => copyInviteMessage(m.invited_email)}>
-                              {copiedInvite ? 'Copied!' : 'Copy invite message'}
+                              {copiedInvite[m.invited_email] ? 'Copied!' : 'Copy invite message'}
                             </button>
                           )}
                         </div>
@@ -615,9 +625,17 @@ export default function Team() {
                         <span style={{ textTransform: 'capitalize', fontSize: '0.85rem', color: 'var(--text-muted)' }}>{m.role}</span>
                       )}
                       {isAdmin && m.invited_email !== user.email && (
-                        <button className="btn-icon" onClick={() => removeMember(m.id, m.invited_email)} title={isPending ? 'Cancel invite' : 'Remove member'}>
-                          <TrashIcon />
-                        </button>
+                        confirmRemoveMemberId === m.id ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{isPending ? 'Cancel invite?' : 'Remove?'}</span>
+                            <button className="btn btn-danger btn-sm" onClick={() => removeMember(m.id)}>Yes</button>
+                            <button className="btn btn-secondary btn-sm" onClick={() => setConfirmRemoveMemberId(null)}>No</button>
+                          </div>
+                        ) : (
+                          <button className="btn-icon" onClick={() => setConfirmRemoveMemberId(m.id)} title={isPending ? 'Cancel invite' : 'Remove member'}>
+                            <TrashIcon />
+                          </button>
+                        )
                       )}
                     </div>
                   </div>
@@ -635,7 +653,19 @@ export default function Team() {
               <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
                 Permanently removes the workspace and removes all members. Sessions are not deleted.
               </p>
-              <button className="btn btn-danger" onClick={deleteWorkspace}>Delete Workspace</button>
+              {confirmDeleteWs ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--danger)', fontWeight: 500, margin: 0 }}>
+                    All members will lose access. This cannot be undone.
+                  </p>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button className="btn btn-danger" onClick={deleteWorkspace}>Yes, delete workspace</button>
+                    <button className="btn btn-secondary" onClick={() => setConfirmDeleteWs(false)}>Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <button className="btn btn-danger" onClick={() => setConfirmDeleteWs(true)}>Delete Workspace</button>
+              )}
             </div>
           )}
         </>

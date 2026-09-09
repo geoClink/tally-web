@@ -42,6 +42,8 @@ export default function Billing() {
   const [connectError, setConnectError] = useState('')
   const [stripeJustConnected, setStripeJustConnected] = useState(false)
   const [disconnecting, setDisconnecting] = useState(false)
+  const [confirmDisconnect, setConfirmDisconnect] = useState(false)
+  const [upgradeError, setUpgradeError] = useState('')
 
   useEffect(() => {
     if (!user) return
@@ -74,7 +76,7 @@ export default function Billing() {
   }, [user])
 
   async function handleDisconnectStripe() {
-    if (!window.confirm('Disconnect your Stripe account? You can reconnect at any time.')) return
+    setConfirmDisconnect(false)
     setDisconnecting(true)
     const { data: { session } } = await supabase.auth.getSession()
     await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-connect-account`, {
@@ -153,13 +155,14 @@ export default function Billing() {
   }
 
   function handleUpgrade(plan) {
+    setUpgradeError('')
     if (user?.email === import.meta.env.VITE_DEMO_EMAIL) {
-      alert('This is a demo account. Sign up for a real account to upgrade.')
+      setUpgradeError('This is a demo account. Sign up for a real account to upgrade.')
       return
     }
     const link = import.meta.env[plan.envKey]
     if (!link) {
-      alert(`Set ${plan.envKey} in your .env file to enable Stripe payments.`)
+      setUpgradeError(`Payment link not configured. Set ${plan.envKey} in your .env file.`)
       return
     }
     // Append user info so Stripe can associate the payment
@@ -192,7 +195,7 @@ export default function Billing() {
           </span>
           {subscription?.source && (
             <span className="text-muted" style={{ fontSize: '0.85rem' }}>
-              via {subscription.source === 'ios' ? 'iOS App' : 'Stripe'}
+              via {subscription.source === 'ios' ? 'iOS App' : subscription.source === 'android' ? 'Android App' : 'Stripe'}
             </span>
           )}
           {subscription?.expires_at && (
@@ -214,6 +217,7 @@ export default function Billing() {
       </div>
 
       {purchaseError && <div className="auth-error" style={{ marginBottom: '1rem' }}>{purchaseError}</div>}
+      {upgradeError && <div className="auth-error" style={{ marginBottom: '1rem' }}>{upgradeError}</div>}
 
       {isAndroid ? (
         <>
@@ -326,17 +330,26 @@ export default function Billing() {
           )}
           {stripeConnected ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success)', fontWeight: 500 }}>
                   <span>✓</span> Stripe account connected
                 </div>
-                <button
-                  onClick={handleDisconnectStripe}
-                  disabled={disconnecting}
-                  style={{ background: 'none', border: 'none', fontSize: '0.8rem', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.25rem 0' }}
-                >
-                  {disconnecting ? 'Disconnecting…' : 'Disconnect'}
-                </button>
+                {confirmDisconnect ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Disconnect Stripe?</span>
+                    <button className="btn btn-danger btn-sm" onClick={handleDisconnectStripe} disabled={disconnecting}>
+                      {disconnecting ? 'Disconnecting…' : 'Yes'}
+                    </button>
+                    <button className="btn btn-secondary btn-sm" onClick={() => setConfirmDisconnect(false)}>No</button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setConfirmDisconnect(true)}
+                    style={{ background: 'none', border: 'none', fontSize: '0.8rem', color: 'var(--text-muted)', cursor: 'pointer', padding: '0.25rem 0' }}
+                  >
+                    Disconnect
+                  </button>
+                )}
               </div>
               <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', lineHeight: '1.5' }}>
                 <strong style={{ color: 'var(--text)' }}>How to use it:</strong> Go to <strong style={{ color: 'var(--text)' }}>Invoices</strong>, create an invoice, and click <strong style={{ color: 'var(--text)' }}>Save &amp; Send</strong>. Your client receives a Stripe email with a Pay Now link — payments deposit directly to your connected bank account. Stripe sends automatic reminders for unpaid invoices.

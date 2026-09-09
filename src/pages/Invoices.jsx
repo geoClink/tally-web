@@ -96,6 +96,9 @@ export default function Invoices() {
   const [viewingInvoice, setViewingInvoice] = useState(null)
   const [stripeConnected, setStripeConnected] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
+  const [sendError, setSendError] = useState('')
+  const [saveError, setSaveError] = useState('')
+  const [confirmingDeleteInvoiceId, setConfirmingDeleteInvoiceId] = useState(null)
 
   useEffect(() => {
     if (isBusiness) {
@@ -206,7 +209,8 @@ export default function Invoices() {
       })),
     })
     setSaving(false)
-    if (error) { console.error(error); return }
+    if (error) { setSaveError('Failed to save invoice. Please try again.'); return }
+    setSaveError('')
     setGenerated(false)
     setSessions([])
     setClientEmail('')
@@ -220,9 +224,10 @@ export default function Invoices() {
 
   async function sendInvoice(inv) {
     if (!inv.client_email) {
-      alert('No client email on this invoice. Edit it to add one.')
+      setSendError('No client email on this invoice. Edit it to add one.')
       return
     }
+    setSendError('')
     setSending(inv.id)
     const { error } = await supabase.functions.invoke('send-invoice', {
       body: {
@@ -238,16 +243,17 @@ export default function Invoices() {
         totalAmount: inv.total_amount,
       },
     })
-    if (error) { setSending(null); alert('Failed to send: ' + error.message); return }
+    if (error) { setSending(null); setSendError('Failed to send: ' + error.message); return }
     await updateStatus(inv.id, 'sent')
     setSending(null)
   }
 
   async function saveAndSend() {
     if (!clientEmail.trim()) {
-      alert('Add a client email before sending.')
+      setSendError('Add a client email before sending.')
       return
     }
+    setSendError('')
     setSaving(true)
     const totalHours = sessions.reduce((sum, s) => sum + (s.hours ?? 0), 0)
     const subtotal = totalHours * rate
@@ -276,27 +282,28 @@ export default function Invoices() {
       })),
     }
     const { data: saved, error } = await supabase.from('invoices').insert(invData).select().single()
-    setSaving(false)
-    if (error || !saved) { console.error(error); return }
+    if (error || !saved) { setSaving(false); setSaveError('Failed to save invoice. Please try again.'); return }
     setGenerated(false)
     setSessions([])
     setClientEmail('')
     setMemo('')
     setTaxRate(0)
     await fetchSavedInvoices()
-    // Send immediately
+    // Send immediately — keep saving=true so the button stays disabled through the whole flow
     if (stripeConnected) {
       await sendStripeInvoice(saved)
     } else {
       await sendInvoice(saved)
     }
+    setSaving(false)
   }
 
   async function sendStripeInvoice(inv) {
     if (!inv.client_email) {
-      alert('No client email on this invoice. Edit it to add one.')
+      setSendError('No client email on this invoice. Edit it to add one.')
       return
     }
+    setSendError('')
     setSendingStripe(inv.id)
     const { data: { session } } = await supabase.auth.getSession()
     const lineItems = (inv.line_items ?? []).map(item => ({
@@ -320,7 +327,7 @@ export default function Invoices() {
     const data = await res.json()
     setSendingStripe(null)
     if (!res.ok || data.error) {
-      alert(data.error ?? 'Failed to send Stripe invoice')
+      setSendError(data.error ?? 'Failed to send Stripe invoice. Please try again.')
       return
     }
     await supabase.from('invoices').update({
@@ -343,7 +350,7 @@ export default function Invoices() {
   }
 
   async function deleteInvoice(id) {
-    if (!confirm('Delete this invoice?')) return
+    setConfirmingDeleteInvoiceId(null)
     await supabase.from('invoices').delete().eq('id', id)
     setSavedInvoices(prev => prev.filter(inv => inv.id !== id))
     if (viewingInvoice?.id === id) setViewingInvoice(null)
@@ -428,8 +435,11 @@ export default function Invoices() {
 
       {saveSuccess && (
         <div className="alert alert-success" style={{ marginBottom: '1rem' }}>
-          Invoice saved! Find it in Invoice History above.
+          Invoice saved!{savedInvoices.length > 0 ? ' Find it in Invoice History above.' : ''}
         </div>
+      )}
+      {(sendError || saveError) && (
+        <div className="alert alert-danger" style={{ marginBottom: '1rem' }}>{sendError || saveError}</div>
       )}
 
       {outstandingTotal > 0 && (
@@ -525,16 +535,24 @@ export default function Invoices() {
                       View
                     </button>
 
-                    {/* Trash icon — pushed to far right */}
-                    <button
-                      onClick={() => deleteInvoice(inv.id)}
-                      title="Delete invoice"
-                      style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '0.25rem', borderRadius: '4px', display: 'flex', alignItems: 'center' }}
-                      onMouseEnter={e => e.currentTarget.style.color = 'var(--danger)'}
-                      onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
-                    >
-                      <TrashIcon />
-                    </button>
+                    {/* Delete — inline confirm, pushed to far right */}
+                    {confirmingDeleteInvoiceId === inv.id ? (
+                      <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Delete?</span>
+                        <button className="btn btn-danger btn-sm" onClick={() => deleteInvoice(inv.id)}>Yes</button>
+                        <button className="btn btn-secondary btn-sm" onClick={() => setConfirmingDeleteInvoiceId(null)}>No</button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmingDeleteInvoiceId(inv.id)}
+                        title="Delete invoice"
+                        style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: '0.25rem', borderRadius: '4px', display: 'flex', alignItems: 'center' }}
+                        onMouseEnter={e => e.currentTarget.style.color = 'var(--danger)'}
+                        onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+                      >
+                        <TrashIcon />
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

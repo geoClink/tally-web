@@ -156,8 +156,8 @@ export default function Admin() {
               <button className="btn" onClick={() => setCompose(null)}>Cancel</button>
               <a
                 href={`mailto:${compose.email}?subject=${encodeURIComponent(compose.subject)}&body=${encodeURIComponent(compose.body)}`}
-                className="btn-primary"
-                style={{ textDecoration: 'none', padding: '0.5rem 1.25rem', borderRadius: 6, fontSize: '0.875rem', fontWeight: 600 }}
+                className="btn btn-primary"
+                style={{ textDecoration: 'none' }}
                 onClick={() => setCompose(null)}
               >
                 Open in Mail →
@@ -245,10 +245,10 @@ export default function Admin() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <button
-              className="btn-primary"
+              className="btn btn-primary"
               onClick={sendPushNotification}
               disabled={!push.title.trim() || !push.body.trim() || pushStatus === 'sending'}
-              style={{ padding: '0.5rem 1.25rem', fontSize: '0.875rem', fontWeight: 600, opacity: (!push.title.trim() || !push.body.trim()) ? 0.5 : 1 }}
+              style={{ opacity: (!push.title.trim() || !push.body.trim()) ? 0.5 : 1 }}
             >
               {pushStatus === 'sending' ? 'Sending…' : 'Send notification'}
             </button>

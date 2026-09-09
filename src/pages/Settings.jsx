@@ -56,6 +56,7 @@ export default function Settings() {
   const [avatarSeed, setAvatarSeed] = useState('felix')
   const [avatarColor, setAvatarColor] = useState('#2563eb')
   const [bugModalOpen, setBugModalOpen] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const [theme, setTheme] = useState(() => localStorage.getItem('tally_theme') ?? 'system')
   const [bgEffect, setBgEffect] = useState(() => localStorage.getItem('tally_bg') !== 'off')
   const [saved, setSaved] = useState(false)
@@ -149,9 +150,11 @@ export default function Settings() {
 
   function addClientGoal(e) {
     e.preventDefault()
-    if (!newClientGoalName || !newClientGoalHours) return
+    if (!newClientGoalName) { setError('Select a client first.'); return }
+    if (!newClientGoalHours) { setError('Enter a valid number of hours.'); return }
     const hours = parseFloat(newClientGoalHours)
-    if (isNaN(hours) || hours <= 0) return
+    if (isNaN(hours) || hours <= 0) { setError('Hours must be greater than 0.'); return }
+    setError('')
     setClientGoals(prev => {
       const filtered = prev.filter(g => g.client !== newClientGoalName)
       return [...filtered, { client: newClientGoalName, weekly_hours: hours }]
@@ -196,8 +199,7 @@ export default function Settings() {
   }
 
   async function deleteAccount() {
-    if (!confirm('This will permanently delete your account and all data. This cannot be undone. Continue?')) return
-    if (!confirm('Last chance — are you absolutely sure?')) return
+    setConfirmDelete(false)
     setDeleting(true)
 
     // Delete owned workspaces and their members
@@ -518,14 +520,30 @@ export default function Settings() {
         <p className="text-muted" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>
           Permanently deletes all your sessions, goals, subscriptions, and workspace data. This cannot be undone.
         </p>
-        <button
-          type="button"
-          className="btn btn-danger"
-          onClick={deleteAccount}
-          disabled={deleting}
-        >
-          {deleting ? 'Deleting…' : 'Delete My Account'}
-        </button>
+        {confirmDelete ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <p style={{ fontSize: '0.875rem', color: 'var(--danger)', fontWeight: 500, margin: 0 }}>
+              Are you absolutely sure? This cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <button type="button" className="btn btn-danger" onClick={deleteAccount} disabled={deleting}>
+                {deleting ? 'Deleting…' : 'Yes, delete everything'}
+              </button>
+              <button type="button" className="btn btn-secondary" onClick={() => setConfirmDelete(false)} disabled={deleting}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="btn btn-danger"
+            onClick={() => setConfirmDelete(true)}
+            disabled={deleting}
+          >
+            Delete My Account
+          </button>
+        )}
       </div>
       {bugModalOpen && <BugReportModal onClose={() => setBugModalOpen(false)} />}
     </div>
