@@ -141,7 +141,7 @@ export default function Help() {
             Daily reminders are scheduled automatically each time you save a session. Useful if you forget to log time at the end of the day.
           </p>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-            On iOS and Android, reminders arrive as push notifications. On the web, your browser will prompt for notification permission the first time you track time.
+            On Android, reminders arrive as push notifications. In the browser, your browser will prompt for notification permission the first time you track time.
           </p>
         </div>
 
